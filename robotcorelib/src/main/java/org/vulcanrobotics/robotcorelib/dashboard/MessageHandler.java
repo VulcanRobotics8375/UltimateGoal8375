@@ -1,4 +1,4 @@
-package org.vulcanrobotics.robotcorelib.Dashboard;
+package org.vulcanrobotics.robotcorelib.dashboard;
 
 public class MessageHandler {
 

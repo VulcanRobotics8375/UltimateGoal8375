@@ -1,4 +1,4 @@
-package org.vulcanrobotics.robotcorelib.Dashboard.Hardware;
+package org.vulcanrobotics.robotcorelib.dashboard.hardware;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 
@@ -9,7 +9,7 @@ public class Odometer {
 
     /**
      * Odometer uses the same hardwareMap as the motor port that it is attached to.
-     * Though we could just use getCurrentPosition of that motor port, this separates the definitions much more clearly.
+     * Though we could just use getCurrentPosition of that motor port with DashboardMotor, this separates the definitions much more clearly.
      **/
     public Odometer(DcMotor pod) {
         this.pod = pod;

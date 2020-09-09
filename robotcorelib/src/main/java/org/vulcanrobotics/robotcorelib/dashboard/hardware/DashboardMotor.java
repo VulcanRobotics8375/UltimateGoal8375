@@ -1,8 +1,8 @@
-package org.vulcanrobotics.robotcorelib.Dashboard.Hardware;
+package org.vulcanrobotics.robotcorelib.dashboard.hardware;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.vulcanrobotics.robotcorelib.Dashboard.Dashboard;
+import org.vulcanrobotics.robotcorelib.dashboard.Dashboard;
 
 public class DashboardMotor {
     public int id;
@@ -13,23 +13,19 @@ public class DashboardMotor {
 
     public DashboardMotor() {}
 
-    public DashboardMotor(DcMotor motor, int id) {
+    //the dashboardmotor id system is shitty, should rework for auto ids
+    public DashboardMotor(DcMotor motor) {
         this.motor = motor;
-        this.id = id;
+        this.id = Dashboard.getMotors().indexOf(this);
         Dashboard.addMotor(this);
     }
 
-    public DashboardMotor(int id) {
-        this.id = id;
-        Dashboard.addMotor(this);
-    }
-
-    public DashboardMotor(DcMotor motor, int id, int limLow, int limHigh) {
+    public DashboardMotor(DcMotor motor, int limLow, int limHigh) {
 
         this.motor = motor;
-        this.id = id;
         this.limLow = limLow;
         this.limHigh = limHigh;
+        this.id = Dashboard.getMotors().indexOf(this);
         Dashboard.addMotor(this);
     }
 

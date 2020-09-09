@@ -1,8 +1,8 @@
-package org.vulcanrobotics.robotcorelib.Dashboard;
+package org.vulcanrobotics.robotcorelib.dashboard;
 
-import org.vulcanrobotics.robotcorelib.Dashboard.Hardware.DashboardMotor;
-import org.vulcanrobotics.robotcorelib.Dashboard.Hardware.DashboardServo;
-import org.vulcanrobotics.robotcorelib.Dashboard.Hardware.Sensor;
+import org.vulcanrobotics.robotcorelib.dashboard.hardware.DashboardMotor;
+import org.vulcanrobotics.robotcorelib.dashboard.hardware.DashboardServo;
+import org.vulcanrobotics.robotcorelib.dashboard.hardware.Sensor;
 import org.vulcanrobotics.robotcorelib.math.Point;
 
 import java.util.ArrayList;

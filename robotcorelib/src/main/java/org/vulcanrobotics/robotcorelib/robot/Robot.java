@@ -1,5 +1,7 @@
 package org.vulcanrobotics.robotcorelib.robot;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.config.RobotConfig;
 import org.vulcanrobotics.robotcorelib.math.Point;
 import org.vulcanrobotics.robotcorelib.motion.MotionProfile;
 import org.vulcanrobotics.robotcorelib.subsystem.Drivetrain;
@@ -13,11 +15,13 @@ import java.util.List;
  */
 public class Robot {
 
-    private static Point robotPos;
+    private static Point robotPos = new Point();
     private static double robotAngle;
     private static List<Subsystem> subsystems = new ArrayList<>();
     public static Drivetrain drivetrain;
     public static MotionProfile motionProfile;
+    public static RobotConfig config = new RobotConfig();
+    public static Telemetry telemetry;
 
     public static void addSubsystem(Subsystem sub) {
         subsystems.add(sub);
@@ -57,16 +61,29 @@ public class Robot {
     }
 
     public static void init() {
+
+        config.init();
+        subsystems = config.subsystems;
+
         for (Subsystem sub : subsystems) {
             sub.init();
             if(sub instanceof Drivetrain)
                 drivetrain = (Drivetrain) sub;
         }
 
-    }
 
-    public static void move(double fl, double fr, double bl, double br) {
 
     }
+
+    public static void setTelemetry(Telemetry telemetry) {
+        Robot.telemetry = telemetry;
+    }
+
+    public static RobotConfig getSubsystems() {
+
+        return config;
+    }
+
+
 
 }

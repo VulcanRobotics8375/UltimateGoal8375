@@ -5,8 +5,8 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.vulcanrobotics.robotcorelib.Dashboard.Hardware.DashboardMotor;
-import org.vulcanrobotics.robotcorelib.Dashboard.Hardware.Sensor;
+import org.vulcanrobotics.robotcorelib.dashboard.hardware.DashboardMotor;
+import org.vulcanrobotics.robotcorelib.robot.Robot;
 
 public class Drivetrain extends Subsystem {
 
@@ -15,10 +15,10 @@ public class Drivetrain extends Subsystem {
 
     @Override
     public void init() {
-        fl = new DashboardMotor(hardwareMap.dcMotor.get("front_left"), 0);
-        fr = new DashboardMotor(hardwareMap.dcMotor.get("front_right"), 1);
-        bl = new DashboardMotor(hardwareMap.dcMotor.get("back_left"), 2);
-        br = new DashboardMotor(hardwareMap.dcMotor.get("back_right"), 3);
+        fl = new DashboardMotor(hardwareMap.dcMotor.get("front_left"));
+        fr = new DashboardMotor(hardwareMap.dcMotor.get("front_right"));
+        bl = new DashboardMotor(hardwareMap.dcMotor.get("back_left"));
+        br = new DashboardMotor(hardwareMap.dcMotor.get("back_right"));
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.mode = BNO055IMU.SensorMode.IMU;
@@ -39,12 +39,41 @@ public class Drivetrain extends Subsystem {
         br.setPower(forward + turn);
     }
 
+    public void setPowers(double fl, double fr, double bl, double br) {
+       this.fl.setPower(fl);
+       this.fr.setPower(fr);
+       this.bl.setPower(bl);
+       this.br.setPower(br);
+    }
+
+    public void setPowers(double[] powers) {
+
+    }
+
+
+    public void fieldCentricMove(double x, double y, double turn) {
+
+        double power = Math.hypot(x, y);
+
+        double rx = Math.sin(Robot.getRobotAngleRad() - (Math.PI / 4));
+        double lx = Math.cos(Robot.getRobotAngleRad() + (Math.PI / 4));
+
+        double fl = lx + turn;
+        double fr = rx - turn;
+        double bl = rx + turn;
+        double br = lx - turn;
+
+        setPowers(fl, fr, bl, br);
+
+    }
+
     public double getZAngle() {
       return AngleUnit.DEGREES.normalize(imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
     }
 
     @Override
     public void stop() {
-
+        //set powers to zero, even though the rev hub will probs do it for you
+        move(0, 0);
     }
 }

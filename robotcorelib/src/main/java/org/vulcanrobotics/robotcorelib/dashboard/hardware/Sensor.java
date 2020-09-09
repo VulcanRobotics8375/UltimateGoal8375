@@ -1,6 +1,6 @@
-package org.vulcanrobotics.robotcorelib.Dashboard.Hardware;
+package org.vulcanrobotics.robotcorelib.dashboard.hardware;
 
-import org.vulcanrobotics.robotcorelib.Dashboard.Dashboard;
+import org.vulcanrobotics.robotcorelib.dashboard.Dashboard;
 
 public class Sensor {
     public String name;
