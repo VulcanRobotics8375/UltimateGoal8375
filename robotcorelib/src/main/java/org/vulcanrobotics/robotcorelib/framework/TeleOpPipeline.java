@@ -9,7 +9,12 @@ public class TeleOpPipeline extends OpMode {
 
     @Override
     public void init() {
-        Robot.init();
+        try {
+            Robot.setTelemetry(telemetry);
+            Robot.init();
+        } catch (RobotCoreLibException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

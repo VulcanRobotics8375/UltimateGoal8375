@@ -24,7 +24,7 @@ public class Mecanum extends MotionProfile {
 
         left = getOdometerByName("left");
         right = getOdometerByName("right");
-        horizontal = getOdometerByName("horizontal");
+        horizontal = getOdometerByName("strafe");
 
         radius = Double.parseDouble(properties.getProperty("radius"));
         wheelBase = Double.parseDouble(properties.getProperty("wheelBase"));

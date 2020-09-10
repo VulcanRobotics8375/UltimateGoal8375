@@ -29,6 +29,8 @@ public class ExOpMode extends OpMode {
 
        double adjustPower = gamepad1.right_trigger - gamepad1.left_trigger;
 
+
+
 //        Dashboard.sendToDash(data);
     }
 

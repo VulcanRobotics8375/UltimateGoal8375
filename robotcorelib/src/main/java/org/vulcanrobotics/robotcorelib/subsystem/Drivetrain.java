@@ -5,6 +5,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.vulcanrobotics.robotcorelib.dashboard.Dashboard;
 import org.vulcanrobotics.robotcorelib.dashboard.hardware.DashboardMotor;
 import org.vulcanrobotics.robotcorelib.robot.Robot;
 
@@ -69,6 +70,22 @@ public class Drivetrain extends Subsystem {
 
     public double getZAngle() {
       return AngleUnit.DEGREES.normalize(imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
+    }
+
+    public DashboardMotor getFrontLeft() {
+        return fl;
+    }
+
+    public DashboardMotor getBackLeft() {
+        return bl;
+    }
+
+    public DashboardMotor getFrontRight() {
+        return fr;
+    }
+
+    public DashboardMotor getBackRight() {
+        return br;
     }
 
     @Override
