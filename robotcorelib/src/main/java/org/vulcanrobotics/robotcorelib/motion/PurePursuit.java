@@ -7,7 +7,7 @@ import org.vulcanrobotics.robotcorelib.robot.Robot;
 
 import java.util.ArrayList;
 
-public class PurePursuit {
+public class PurePursuit extends Controller {
 
     ArrayList<ArrayList<PathPoint>> sections;
 
@@ -20,6 +20,8 @@ public class PurePursuit {
             while(Math.abs(Robot.getRobotX() - section.get(section.size() - 1).x) + Math.abs(Robot.getRobotY() - section.get(section.size() - 1).y) > 0.1) {
                 PathPoint followPoint = findFollowPoint(section);
                 moveToPoint(followPoint);
+                if(stop)
+                    break;
             }
         }
     }
@@ -63,7 +65,7 @@ public class PurePursuit {
 
         double turnSpeed = robotAngleToPoint * point.turnSpeed;
 
-        Robot.drivetrain.fieldCentricMove(Math.cos(absoluteAngleToPoint) * point.speed, Math.sin(absoluteAngleToPoint) * point.speed, turnSpeed);
+        Robot.getComponents().drivetrain.fieldCentricMove(Math.cos(absoluteAngleToPoint) * point.speed, Math.sin(absoluteAngleToPoint) * point.speed, turnSpeed);
     }
 
 }

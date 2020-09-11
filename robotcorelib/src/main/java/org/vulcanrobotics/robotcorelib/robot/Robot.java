@@ -17,6 +17,9 @@ import java.util.List;
 public class Robot {
 
     private static Point robotPos = new Point();
+    /**
+     * robot start angle in Radians
+     */
     private static double robotAngle;
     private static List<Subsystem> subsystems = new ArrayList<>();
     public static Drivetrain drivetrain;
@@ -24,23 +27,20 @@ public class Robot {
     public static RobotConfig config = new RobotConfig();
     public static Telemetry telemetry;
 
+    private static volatile boolean odometryRunning;
+
     public static Point getRobotPos() {
         return robotPos;
     }
 
     public static double getRobotAngleRad() {
-        robotAngle = Math.toRadians(drivetrain.getZAngle());
-        return robotAngle;
+        return Math.toRadians(drivetrain.getZAngle()) + robotAngle;
     }
 
     public static double getRobotAngleDeg() {
-        robotAngle = Math.toRadians(drivetrain.getZAngle());
-        return Math.toDegrees(robotAngle);
+       return drivetrain.getZAngle() + Math.toDegrees(robotAngle);
     }
 
-    /**
-     * this doesnt really work lmao
-     */
     public static void setRobotAngle(double angle) {
        robotAngle = angle;
     }
@@ -79,9 +79,25 @@ public class Robot {
         Robot.telemetry = telemetry;
     }
 
-    public static List<Subsystem> getSubsystems() {
+    public static RobotConfig getComponents() {
 
-        return subsystems;
+        return config;
+    }
+
+    public synchronized static void startOdometryThread() {
+        odometryRunning = true;
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while(odometryRunning) {
+                    motionProfile.update();
+                }
+            }
+        });
+    }
+
+    public static void stopOdometryThread() {
+        odometryRunning = false;
     }
 
 
