@@ -4,16 +4,30 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.vulcanrobotics.robotcorelib.dashboard.Dashboard;
 
+/**
+ * DashboardMotor is essentially a DcMotor, but it has the ability to interface with VulcanDashboard.
+ */
 public class DashboardMotor {
+    /**
+     * ID for the dashboard system to identify this motor.
+     * ID Number is automatically assigned on creation.
+     */
     public int id;
     public int limLow;
     public int limHigh;
 
+    /**
+     * The Motor attached to DashboardMotor so we can have a two way communication between the robot and the dashboard for each Motor.
+     * The robot updates the motor positions/power, and the dashboard pulls that data.
+     */
     private DcMotor motor;
 
     public DashboardMotor() {}
 
-    //the dashboardmotor id system is shitty, should rework for auto ids
+    /**
+     * Constructor for the DashboardMotor that includes the auto-ID system.
+     * @param motor the DcMotor linked to this dashboardMotor.
+     */
     public DashboardMotor(DcMotor motor) {
         this.motor = motor;
         this.id = Dashboard.getMotors().indexOf(this);
@@ -29,6 +43,10 @@ public class DashboardMotor {
         Dashboard.addMotor(this);
     }
 
+    /**
+     * update when the Dashboard is querying for it.
+     * this sends a list of commands that update the motors position and power on the Dashboard.
+     */
     public void update() {
         int pos = motor.getCurrentPosition();
 
@@ -53,6 +71,10 @@ public class DashboardMotor {
         this.limHigh = limHigh;
     }
 
+    /**
+     *
+     * @return the DcMotor attached to this object, so we can interact with it like a normal DcMotor.
+     */
     public DcMotor getMotor() {
         return motor;
     }
