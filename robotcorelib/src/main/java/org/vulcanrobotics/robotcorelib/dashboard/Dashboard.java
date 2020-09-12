@@ -8,6 +8,10 @@ import org.vulcanrobotics.robotcorelib.math.Point;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The main class for Dashboard.
+ * this is where we initialize and relay all the necessary data to the Client.
+ */
 public class Dashboard {
     public static String ip;
     public static int port;
@@ -90,23 +94,24 @@ public class Dashboard {
     public static void start() {
         sendToDash("/start");
         running = true;
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                while(running) {
-//                    for (DashboardMotor motor : motors) {
-//                        motor.update();
-//                    }
-//                    for (DashboardServo servo : servos) {
-//                        servo.update();
-//                    }
-//                    for (Sensor sensor : sensors) {
-//                        sensor.update();
-//                    }
-//                    sendToDash("/update Robot " + robotPos.x + " " + robotPos.y + " " + robotAngle);
-//                }
-//            }
-//        }).start();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while(running) {
+                    for (DashboardMotor motor : motors) {
+                        motor.update();
+                    }
+                    for (DashboardServo servo : servos) {
+                        servo.update();
+                    }
+                    for (Sensor sensor : sensors) {
+                        sensor.update();
+                    }
+                    sendToDash("/update Robot " + robotPos.x + " " + robotPos.y + " " + robotAngle);
+                }
+                client.killProcess();
+            }
+        }).start();
     }
 
     public List<Constant> getConstants() {

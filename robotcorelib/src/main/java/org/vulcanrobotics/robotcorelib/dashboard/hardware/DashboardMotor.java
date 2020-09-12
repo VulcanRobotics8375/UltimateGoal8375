@@ -6,6 +6,7 @@ import org.vulcanrobotics.robotcorelib.dashboard.Dashboard;
 
 /**
  * DashboardMotor is essentially a DcMotor, but it has the ability to interface with VulcanDashboard.
+ * @see DcMotor
  */
 public class DashboardMotor {
     /**

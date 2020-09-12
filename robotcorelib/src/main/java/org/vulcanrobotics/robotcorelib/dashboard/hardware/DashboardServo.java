@@ -6,6 +6,7 @@ import org.vulcanrobotics.robotcorelib.dashboard.Dashboard;
 
 /**
  * A Servo class that is used to interface servos with the dashboard.
+ * @see Servo
  */
 public class DashboardServo {
     /**

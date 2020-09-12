@@ -2,6 +2,9 @@ package org.vulcanrobotics.robotcorelib.dashboard.hardware;
 
 import org.vulcanrobotics.robotcorelib.dashboard.Dashboard;
 
+/**
+ * The Sensor is an abstract way to interface a value with the Dashboard
+ */
 public class Sensor {
     public String name;
     public double value;
