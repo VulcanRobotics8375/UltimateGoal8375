@@ -3,8 +3,7 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.vulcanrobotics.robotcorelib.framework.ConstantParser;
-import org.vulcanrobotics.robotcorelib.robot.Robot;
+import static org.vulcanrobotics.robotcorelib.framework.Constants.*;
 import org.vulcanrobotics.robotcorelib.subsystem.Subsystem;
 
 /**
@@ -16,9 +15,9 @@ public class Intake extends Subsystem {
     private Servo right;
     private Servo flip;
 
-    private DcMotor conveyor;
-
-    private boolean flipping;
+    private boolean claw;
+    private boolean flipped;
+    private int flipPos = 1;
 
     @Override
     public void init() {
@@ -27,18 +26,36 @@ public class Intake extends Subsystem {
         right = hardwareMap.servo.get("intake_right");
         flip = hardwareMap.servo.get("intake_flip");
 
-        conveyor = hardwareMap.dcMotor.get("conveyor");
-
     }
 
     public void run(boolean claw, boolean flip) {
+        double clawPosition;
 
-        if(claw) {
-            setClawPosition(ConstantParser.parseDouble("clawIn"));
+        if(claw && !this.claw) {
+            clawPosition = CLAW_IN;
+            this.claw = true;
+        } else {
+            clawPosition = CLAW_OUT;
         }
-        else {
-            setClawPosition(ConstantParser.parseDouble("clawOut"));
+        if(!claw && this.claw) {
+            this.claw = false;
         }
+
+
+        if(flip && !flipped) {
+            flipPos *= -1;
+            flipped = true;
+        }
+        if(!flip && flipped) {
+            flipped = false;
+        }
+        if(flipPos < 0) {
+            this.flip.setPosition(FLIP_IN);
+        } else {
+            this.flip.setPosition(FLIP_OUT);
+        }
+
+        setClawPosition(clawPosition);
 
     }
 
