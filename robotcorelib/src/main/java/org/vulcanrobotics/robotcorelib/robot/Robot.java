@@ -25,7 +25,7 @@ public class Robot {
     /**
      * robot start angle in Radians
      */
-    private static double robotAngle;
+    private static double robotAngle = 0;
     private static List<Subsystem> subsystems = new ArrayList<>();
     public static Drivetrain drivetrain;
     public static MotionProfile motionProfile;
@@ -39,11 +39,11 @@ public class Robot {
     }
 
     public static double getRobotAngleRad() {
-        return Math.toRadians(drivetrain.getZAngle()) + robotAngle;
+        return robotAngle;
     }
 
     public static double getRobotAngleDeg() {
-       return drivetrain.getZAngle() + Math.toDegrees(robotAngle);
+       return Math.toDegrees(robotAngle);
     }
 
     public static void setRobotAngle(double angle) {

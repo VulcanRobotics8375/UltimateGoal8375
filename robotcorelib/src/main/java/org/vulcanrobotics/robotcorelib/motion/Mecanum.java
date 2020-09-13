@@ -3,6 +3,8 @@ package org.vulcanrobotics.robotcorelib.motion;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.vulcanrobotics.robotcorelib.dashboard.hardware.Odometer;
 import org.vulcanrobotics.robotcorelib.framework.RobotCoreLibException;
+import org.vulcanrobotics.robotcorelib.math.Point;
+import org.vulcanrobotics.robotcorelib.math.Timer;
 import org.vulcanrobotics.robotcorelib.robot.Robot;
 
 import java.io.FileOutputStream;
@@ -11,7 +13,9 @@ import java.io.IOException;
 public class Mecanum extends MotionProfile {
 
     private Odometer left, right, horizontal;
-    private double radius, wheelBase, ticksPerRev, horizontalRevsPerDeg, verticalRevsPerDeg;
+    private double radius, wheelBase, ticksPerRev, horizontalRevsPerDeg, countsPerCm;
+
+    private double lastLeftPos = 0, lastRightPos = 0, lastStrafePos = 0, lastTheta = 0;
 
     public Mecanum(int odometerNum, Odometer... odometer) throws RobotCoreLibException {
         super(odometerNum, odometer);
@@ -30,18 +34,37 @@ public class Mecanum extends MotionProfile {
         wheelBase = Double.parseDouble(properties.getProperty("wheelBase"));
         ticksPerRev = Double.parseDouble(properties.getProperty("tpr"));
         horizontalRevsPerDeg = Double.parseDouble(properties.getProperty("rpd-horizontal"));
-        verticalRevsPerDeg = Double.parseDouble(properties.getProperty("rpd-vertical"));
+
 
     }
 
     public void update() {
+        Point currentPos = Robot.getRobotPos();
 
+        double vl = ((left.getPosition() - lastLeftPos) * ticksPerRev) / (radius * 2.0 * Math.PI) * Timer.getDelta();
+        double vr = ((right.getPosition() - lastRightPos) * ticksPerRev) / (radius * 2.0 * Math.PI) * Timer.getDelta();
+
+        double dTheta = (radius / wheelBase) * (vl - vr);
+        double robotAngle = Robot.getRobotAngleRad() + dTheta;
+        double vh = ((horizontal.getPosition() - lastStrafePos - (dTheta * horizontalRevsPerDeg)) * ticksPerRev) / (radius * 2.0 * Math.PI) * Timer.getDelta();
+        double vf = (radius / 2.0) * (vl + vr);
+
+        currentPos.x += (vf * Math.cos(Robot.getRobotAngleRad())) + (vh * Math.sin(Robot.getRobotAngleRad()));
+        currentPos.y += (vf * Math.sin(Robot.getRobotAngleRad())) + (vh * Math.cos(Robot.getRobotAngleRad()));
+        Robot.setRobotAngle(robotAngle);
+        Robot.setRobotPos(currentPos);
+
+        lastLeftPos = left.getPosition();
+        lastRightPos = right.getPosition();
+        lastStrafePos = horizontal.getPosition();
+        lastTheta = robotAngle;
 
     }
 
     public void calibrate(double gain) {
-        while(Robot.getRobotAngleDeg() < 90) {
+        while(Robot.drivetrain.getZAngle() < 90) {
             Robot.drivetrain.move(0, gain);
+
         }
 
         try {
@@ -50,12 +73,14 @@ public class Mecanum extends MotionProfile {
             //set up file streams for writing to the properties file
             FileOutputStream output = new FileOutputStream(path);
 
-            double angle = Robot.getRobotAngleDeg();
-            double encoderDifference = Math.abs(left.getPosition()) + Math.abs(right.getPosition());
-            double verticalTicksPerDegree = encoderDifference / angle;
+
+            double angle = Robot.drivetrain.getZAngle();
+            double offset = Math.abs(left.getPosition()) + Math.abs(right.getPosition());
+            double offsetPerDegree = offset / angle;
+            double wheelBase = (2 * 90 * offsetPerDegree) / (Math.PI*(ticksPerRev * (radius * 2.0 * Math.PI)));
             double horizontalTicksPerDegree = horizontal.getPosition() / Math.toRadians(angle);
+            properties.setProperty("wheelBase", Double.toString(wheelBase));
            properties.setProperty("rpd-horizontal", Double.toString(horizontalTicksPerDegree));
-           properties.setProperty("rpd-vertical", Double.toString(verticalTicksPerDegree));
            properties.store(output, null);
 
 
@@ -122,11 +147,4 @@ public class Mecanum extends MotionProfile {
         this.horizontalRevsPerDeg = horizontalRevsPerDeg;
     }
 
-   public double getVerticalRevsPerDeg() {
-        return verticalRevsPerDeg;
-   }
-
-   public void setVerticalRevsPerDeg(double verticalRevsPerDeg) {
-        this.verticalRevsPerDeg = verticalRevsPerDeg;
-   }
 }

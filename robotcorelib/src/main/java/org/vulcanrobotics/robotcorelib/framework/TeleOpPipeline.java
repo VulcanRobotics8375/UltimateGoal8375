@@ -2,6 +2,7 @@ package org.vulcanrobotics.robotcorelib.framework;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
+import org.firstinspires.ftc.teamcode.config.RobotConfig;
 import org.vulcanrobotics.robotcorelib.dashboard.Dashboard;
 import org.vulcanrobotics.robotcorelib.robot.Robot;
 
@@ -9,6 +10,7 @@ public abstract class TeleOpPipeline extends OpMode {
 
     protected String ip;
     protected boolean dash;
+    protected RobotConfig subsystems;
 
     public abstract void init();
 
@@ -23,6 +25,7 @@ public abstract class TeleOpPipeline extends OpMode {
             //initialize backend Robot stuff
             Robot.setTelemetry(telemetry);
             Robot.init();
+            subsystems = Robot.getComponents();
         } catch (RobotCoreLibException e) {
             e.printStackTrace();
         }

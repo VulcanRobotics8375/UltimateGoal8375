@@ -1,6 +1,7 @@
 package org.vulcanrobotics.robotcorelib.subsystem;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -31,6 +32,11 @@ public class Drivetrain extends Subsystem {
         } else {
             imu.initialize(parameters);
         }
+
+        fl.getMotor().setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        fr.getMotor().setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        bl.getMotor().setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        br.getMotor().setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     public void move(double forward, double turn) {
