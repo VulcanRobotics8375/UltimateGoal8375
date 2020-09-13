@@ -1,6 +1,7 @@
 package org.vulcanrobotics.robotcorelib.robot;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.config.RobotConfig;
 import org.vulcanrobotics.robotcorelib.framework.RobotCoreLibException;
 import org.vulcanrobotics.robotcorelib.math.Point;
@@ -8,8 +9,12 @@ import org.vulcanrobotics.robotcorelib.motion.MotionProfile;
 import org.vulcanrobotics.robotcorelib.subsystem.Drivetrain;
 import org.vulcanrobotics.robotcorelib.subsystem.Subsystem;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 /**
  * Generic Robot class -- requires a Drivetrain subsystem, but is modular beyond that point.
@@ -26,6 +31,7 @@ public class Robot {
     public static MotionProfile motionProfile;
     public static RobotConfig config = new RobotConfig();
     public static Telemetry telemetry;
+    private static Properties properties = new Properties();
 
     private static volatile boolean odometryRunning;
 
@@ -57,8 +63,15 @@ public class Robot {
         return robotPos.y;
     }
 
-    public static void init() throws RobotCoreLibException {
+    public static void init() throws RobotCoreLibException  {
 
+        try {
+            String path = AppUtil.getInstance().getSettingsFile("robotconfig.properties").getAbsolutePath();
+            FileInputStream input = new FileInputStream(path);
+            properties.load(input);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         config.init();
         subsystems = config.subsystems;
@@ -82,6 +95,10 @@ public class Robot {
     public static RobotConfig getComponents() {
 
         return config;
+    }
+
+    public static Properties getConstants() {
+        return properties;
     }
 
     public synchronized static void startOdometryThread() {
