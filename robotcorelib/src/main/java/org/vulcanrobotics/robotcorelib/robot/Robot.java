@@ -31,7 +31,6 @@ public class Robot {
     public static MotionProfile motionProfile;
     public static RobotConfig config = new RobotConfig();
     public static Telemetry telemetry;
-    private static Properties properties = new Properties();
 
     private static volatile boolean odometryRunning;
 
@@ -65,14 +64,6 @@ public class Robot {
 
     public static void init() throws RobotCoreLibException  {
 
-        try {
-            String path = AppUtil.getInstance().getSettingsFile("robotconfig.properties").getAbsolutePath();
-            FileInputStream input = new FileInputStream(path);
-            properties.load(input);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
         config.init();
         subsystems = config.subsystems;
         motionProfile = config.motionProfile;
@@ -95,10 +86,6 @@ public class Robot {
     public static RobotConfig getComponents() {
 
         return config;
-    }
-
-    public static Properties getConstants() {
-        return properties;
     }
 
     public synchronized static void startOdometryThread() {
