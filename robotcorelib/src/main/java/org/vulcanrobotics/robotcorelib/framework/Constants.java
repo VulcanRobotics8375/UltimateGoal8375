@@ -11,6 +11,8 @@ public class Constants {
     public static final double CLAW_OUT = 0;
     public static final double FLIP_IN = 0;
     public static final double FLIP_OUT = 1;
+    public static final double CLAW_RIGHT_OFFSET = 0;
+    public static final double CLAW_LEFT_OFFSET = 0;
 
 
 

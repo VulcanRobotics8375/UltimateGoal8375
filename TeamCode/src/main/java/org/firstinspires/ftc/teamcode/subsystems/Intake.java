@@ -15,8 +15,6 @@ public class Intake extends Subsystem {
     private Servo right;
     private Servo flip;
 
-    private DcMotor conveyor;
-
     private boolean claw;
     private boolean flipped;
     private int flipPos = 1;
@@ -27,8 +25,6 @@ public class Intake extends Subsystem {
         left = hardwareMap.servo.get("intake_left");
         right = hardwareMap.servo.get("intake_right");
         flip = hardwareMap.servo.get("intake_flip");
-
-        conveyor = hardwareMap.dcMotor.get("conveyor");
 
     }
 
@@ -58,7 +54,7 @@ public class Intake extends Subsystem {
         } else {
             this.flip.setPosition(FLIP_OUT);
         }
-        
+
         setClawPosition(clawPosition);
 
     }

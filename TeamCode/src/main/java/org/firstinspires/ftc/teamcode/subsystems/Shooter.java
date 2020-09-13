@@ -12,33 +12,15 @@ import org.vulcanrobotics.robotcorelib.subsystem.Subsystem;
 
 public class Shooter extends Subsystem {
 
-    public DashboardMotor shooter;
-    public DashboardServo adjust;
-    ElapsedTime adjustTimer = new ElapsedTime();
-    double lastAdjustPosition;
-    double shooterHighLimit = 800;
-    double limitRange = 200;
 
     @Override
     public void init() {
-        shooter = new DashboardMotor(hardwareMap.dcMotor.get("shooter"));
-        shooter.getMotor().setDirection(DcMotorSimple.Direction.FORWARD);
-        shooter.getMotor().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        adjust = new DashboardServo(hardwareMap.servo.get("adjust"));
-        adjustTimer.reset();
+
 
     }
 
-    public void run(double power, double adjustPower) {
+    public void run() {
 
-
-       if(adjustTimer.milliseconds() > 100) {
-          adjust.getServo().setPosition(lastAdjustPosition + (0.01 * Math.signum(adjustPower)));
-          lastAdjustPosition = adjust.getServo().getPosition();
-          adjustTimer.reset();
-       }
-
-        shooter.setPower(power);
     }
 
     @Override
