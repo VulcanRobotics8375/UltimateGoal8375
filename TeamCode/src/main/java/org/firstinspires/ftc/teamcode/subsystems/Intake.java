@@ -6,9 +6,6 @@ import com.qualcomm.robotcore.hardware.Servo;
 import static org.vulcanrobotics.robotcorelib.framework.Constants.*;
 import org.vulcanrobotics.robotcorelib.subsystem.Subsystem;
 
-/**
- * includes conveyor belt
- */
 public class Intake extends Subsystem {
 
     private Servo left;
@@ -61,7 +58,7 @@ public class Intake extends Subsystem {
 
     private void setClawPosition(double position) {
         left.setPosition(position);
-        right.setPosition(-position);
+        right.setPosition(position);
     }
 
     @Override

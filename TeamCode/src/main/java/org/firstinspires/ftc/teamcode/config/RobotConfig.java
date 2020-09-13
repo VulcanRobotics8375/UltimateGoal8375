@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.config;
 
+import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Shooter;
+import org.firstinspires.ftc.teamcode.subsystems.WobbleGrabber;
 import org.vulcanrobotics.robotcorelib.dashboard.hardware.Odometer;
 import org.vulcanrobotics.robotcorelib.framework.RobotCoreLibException;
 import org.vulcanrobotics.robotcorelib.motion.Mecanum;
@@ -17,6 +19,8 @@ public class RobotConfig {
 
     public Drivetrain drivetrain = new Drivetrain();
     public Shooter shooter = new Shooter();
+    public Intake intake = new Intake();
+    public WobbleGrabber wobbleGrabber = new WobbleGrabber();
 
     public List<Subsystem> subsystems = new ArrayList<>();
 
@@ -26,6 +30,8 @@ public class RobotConfig {
     public void init() {
         subsystems.add(drivetrain);
         subsystems.add(shooter);
+        subsystems.add(intake);
+        subsystems.add(wobbleGrabber);
 
     }
 

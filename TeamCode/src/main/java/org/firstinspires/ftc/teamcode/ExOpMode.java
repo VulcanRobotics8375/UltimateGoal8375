@@ -17,7 +17,7 @@ public class ExOpMode extends TeleOpPipeline {
     public void init() {
         //ip for dashboard and dashboard toggle
         ip = "10.0.0.43";
-        dash = true;
+        dash = false;
         teleopInit();
 
         //init code here
