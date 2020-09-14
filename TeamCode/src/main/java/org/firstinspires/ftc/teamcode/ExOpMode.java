@@ -1,12 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.subsystems.Shooter;
-import org.vulcanrobotics.robotcorelib.dashboard.Dashboard;
-import org.vulcanrobotics.robotcorelib.dashboard.hardware.DashboardMotor;
-import org.vulcanrobotics.robotcorelib.framework.RobotCoreLibException;
 import org.vulcanrobotics.robotcorelib.framework.TeleOpPipeline;
 import org.vulcanrobotics.robotcorelib.robot.Robot;
 

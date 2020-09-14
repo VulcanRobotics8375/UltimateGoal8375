@@ -6,7 +6,7 @@ import java.util.Properties;
 
 public abstract class Subsystem {
 
-    protected HardwareMap hardwareMap;
+    public HardwareMap hardwareMap;
 
     public Subsystem() {}
 

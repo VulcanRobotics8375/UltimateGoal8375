@@ -1,8 +1,10 @@
 package org.vulcanrobotics.robotcorelib.robot;
 
+import com.qualcomm.robotcore.hardware.HardwareMap;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
-import org.firstinspires.ftc.teamcode.config.RobotConfig;
+import org.vulcanrobotics.robotcorelib.framework.RobotConfig;
 import org.vulcanrobotics.robotcorelib.framework.RobotCoreLibException;
 import org.vulcanrobotics.robotcorelib.math.Point;
 import org.vulcanrobotics.robotcorelib.motion.MotionProfile;
@@ -31,6 +33,7 @@ public class Robot {
     public static MotionProfile motionProfile;
     public static RobotConfig config = new RobotConfig();
     public static Telemetry telemetry;
+    public static HardwareMap hardwareMap;
 
     private static volatile boolean odometryRunning;
 
@@ -69,12 +72,13 @@ public class Robot {
         motionProfile = config.motionProfile;
 
         for (Subsystem sub : subsystems) {
+            sub.hardwareMap = hardwareMap;
             sub.init();
             if(sub instanceof Drivetrain)
                 drivetrain = (Drivetrain) sub;
         }
 
-        config.setupMotionProfile();
+//        config.setupMotionProfile();
 
 
     }
