@@ -1,4 +1,4 @@
-package org.vulcanrobotics.robotcorelib.subsystem;
+package org.vulcanrobotics.robotcorelib.subsystems;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -7,8 +7,6 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.vulcanrobotics.robotcorelib.dashboard.Dashboard;
-import org.vulcanrobotics.robotcorelib.dashboard.hardware.DashboardMotor;
 import org.vulcanrobotics.robotcorelib.robot.Robot;
 
 public class Drivetrain extends Subsystem {

@@ -3,20 +3,15 @@ package org.vulcanrobotics.robotcorelib.robot;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.vulcanrobotics.robotcorelib.framework.RobotConfig;
 import org.vulcanrobotics.robotcorelib.framework.RobotCoreLibException;
 import org.vulcanrobotics.robotcorelib.math.Point;
 import org.vulcanrobotics.robotcorelib.motion.MotionProfile;
-import org.vulcanrobotics.robotcorelib.subsystem.Drivetrain;
-import org.vulcanrobotics.robotcorelib.subsystem.Subsystem;
+import org.vulcanrobotics.robotcorelib.subsystems.Drivetrain;
+import org.vulcanrobotics.robotcorelib.subsystems.Subsystem;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 /**
  * Generic Robot class -- requires a Drivetrain subsystem, but is modular beyond that point.
