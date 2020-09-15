@@ -33,15 +33,17 @@ public class Drivetrain extends Subsystem {
             imu.initialize(parameters);
         }
 
-        fl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        fr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        setDrivetrainMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        fl.setDirection(DcMotorSimple.Direction.REVERSE);
-        fr.setDirection(DcMotorSimple.Direction.FORWARD);
-        bl.setDirection(DcMotorSimple.Direction.REVERSE);
-        br.setDirection(DcMotorSimple.Direction.FORWARD);
+        fl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        fr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
+        fl.setDirection(DcMotorSimple.Direction.FORWARD);
+        fr.setDirection(DcMotorSimple.Direction.REVERSE);
+        bl.setDirection(DcMotorSimple.Direction.FORWARD);
+        br.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
     public void move(double forward, double turn) {
@@ -62,6 +64,36 @@ public class Drivetrain extends Subsystem {
 
     }
 
+    public void mecanumDrive(double forward, double turn, double strafe, boolean slow) {
+
+        double vd = Math.hypot(forward, strafe);
+        double theta = Math.atan2(forward, strafe) - (Math.PI / 4);
+        double multiplier = 1;
+
+        double[] v = {
+                vd * Math.sin(theta) - turn,
+                vd * Math.cos(theta) + turn,
+                vd * Math.cos(theta) - turn,
+                vd * Math.sin(theta) + turn
+        };
+        if(slow) {
+            multiplier = 0.5;
+        }
+
+        double[] motorOut = {
+                multiplier * (v[0] / 1.07) * ((0.62 * Math.pow(v[0], 2)) + 0.45),
+                multiplier * (v[1] / 1.07) * ((0.62 * Math.pow(v[1], 2)) + 0.45),
+                multiplier * (v[2] / 1.07) * ((0.62 * Math.pow(v[2], 2)) + 0.45),
+                multiplier * (v[3] / 1.07) * ((0.62 * Math.pow(v[3], 2)) + 0.45)
+        };
+
+        fr.setPower(motorOut[0]);
+        fl.setPower(motorOut[1]);
+        br.setPower(motorOut[2]);
+        bl.setPower(motorOut[3]);
+
+
+    }
 
     public void fieldCentricMove(double x, double y, double turn) {
 
@@ -99,34 +131,13 @@ public class Drivetrain extends Subsystem {
         return br;
     }
 
-    public void mecanumDrive(double forward, double turn, double strafe) {
-
-        double vd = Math.hypot(forward, strafe);
-        double theta = Math.atan2(forward, strafe) - (Math.PI / 4);
-        double turnPower = turn;
-        double multiplier = 1;
-
-        double[] v = {
-                vd * Math.sin(theta) + turnPower,
-                vd * Math.cos(theta) - turnPower,
-                vd * Math.cos(theta) + turnPower,
-                vd * Math.sin(theta) - turnPower
-        };
-
-        double[] motorOut = {
-                multiplier * (v[0] / 1.07) * ((0.62 * Math.pow(v[0], 2)) + 0.45),
-                multiplier * (v[1] / 1.07) * ((0.62 * Math.pow(v[1], 2)) + 0.45),
-                multiplier * (v[2] / 1.07) * ((0.62 * Math.pow(v[2], 2)) + 0.45),
-                multiplier * (v[3] / 1.07) * ((0.62 * Math.pow(v[3], 2)) + 0.45)
-        };
-
-        fr.setPower(motorOut[0]);
-        fl.setPower(motorOut[1]);
-        br.setPower(motorOut[2]);
-        bl.setPower(motorOut[3]);
-
-
+    private void setDrivetrainMode(DcMotor.RunMode runMode) {
+        fl.setMode(runMode);
+        fr.setMode(runMode);
+        bl.setMode(runMode);
+        br.setMode(runMode);
     }
+
 
     @Override
     public void stop() {
