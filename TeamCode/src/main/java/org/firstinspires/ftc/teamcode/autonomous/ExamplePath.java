@@ -40,6 +40,8 @@ public class ExamplePath extends AutoPipeline {
             }).start();
 
             while(opModeIsActive()) {
+                PathPoint currentPoint = controller.getCurrentPoint();
+                //subsystem code here, triggers are currentPoint and then timing
 
                 if(isStopRequested())
                     break;
