@@ -55,6 +55,8 @@ public class PurePursuit extends Controller {
             }
         }
 
+        currentPoint.setPathPoint(followPoint);
+
         return followPoint;
     }
 

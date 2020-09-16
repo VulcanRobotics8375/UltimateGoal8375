@@ -31,8 +31,19 @@ public class ExamplePath extends AutoPipeline {
 
             //interrupt handler makes sure the robot stops when the stop button is pressed.
             startInterruptHandler();
-            //controller.run is self contained, no while loop needed here
-            controller.run();
+
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    controller.run();
+                }
+            }).start();
+
+            while(opModeIsActive()) {
+
+                if(isStopRequested())
+                    break;
+            }
 
         } catch (RobotCoreLibException e) {
             e.printStackTrace();
