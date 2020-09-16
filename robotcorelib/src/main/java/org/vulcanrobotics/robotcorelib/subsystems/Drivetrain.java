@@ -8,6 +8,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.vulcanrobotics.robotcorelib.robot.Robot;
+import static org.vulcanrobotics.robotcorelib.framework.Constants.*;
 
 public class Drivetrain extends Subsystem {
 
@@ -77,7 +78,7 @@ public class Drivetrain extends Subsystem {
                 vd * Math.sin(theta) + turn
         };
         if(slow) {
-            multiplier = 0.5;
+            multiplier = DRIVETRAIN_SLOW_MODE_MULTIPLIER;
         }
 
         double[] motorOut = {

@@ -1,5 +1,6 @@
 dependencies {
     implementation project(':FtcRobotController')
+    implementation project(':robotcorelib')
     implementation 'org.firstinspires.ftc:RobotCore:5.5'
     implementation 'org.firstinspires.ftc:Hardware:5.5'
     implementation 'org.firstinspires.ftc:FtcCommon:5.5'
