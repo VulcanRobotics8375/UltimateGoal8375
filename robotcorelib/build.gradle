@@ -23,6 +23,9 @@ repositories {
 }
 apply from: 'build.release.gradle'
 dependencies {
+    // Required for local unit tests (JUnit 4 framework)
+    testImplementation 'junit:junit:4.12'
+
 }
 
 
