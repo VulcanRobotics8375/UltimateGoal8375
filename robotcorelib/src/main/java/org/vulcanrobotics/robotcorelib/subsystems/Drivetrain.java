@@ -16,6 +16,8 @@ public class Drivetrain extends Subsystem {
     private DcMotor fl, fr, bl, br;
     private BNO055IMU imu;
 
+    private boolean doingAutonomousTask;
+
     @Override
     public void init() {
         fl = hardwareMap.dcMotor.get("front_left");
@@ -149,10 +151,15 @@ public class Drivetrain extends Subsystem {
        new Thread(new Runnable() {
            @Override
            public void run() {
-               move(0, (absoluteAngleToTarget / 180) * gain);
+               doingAutonomousTask = true;
+               double error = absoluteAngleToTarget - Math.toRadians(getZAngle());
+               while(error > 1 && doingAutonomousTask) {
+                   move(0, (absoluteAngleToTarget / Math.PI) * gain);
+                   error = absoluteAngleToTarget - Math.toRadians(getZAngle());
+               }
+               doingAutonomousTask = false;
            }
        }).start();
-
 
     }
 
@@ -165,6 +172,9 @@ public class Drivetrain extends Subsystem {
         return 0;
     }
 
+    public boolean isDoingAutonomousTask() {
+        return doingAutonomousTask;
+    }
 
     @Override
     public void stop() {
