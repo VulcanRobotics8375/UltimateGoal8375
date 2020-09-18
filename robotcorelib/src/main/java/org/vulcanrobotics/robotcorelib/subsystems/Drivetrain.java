@@ -77,9 +77,6 @@ public class Drivetrain extends Subsystem {
 
         if(shoot) {
             final double absoluteAngleToTarget = Math.atan2(FIELD_SIZE_CM - Robot.getRobotY(), 1.5*TILE_SIZE_CM - Robot.getRobotX());
-            double distanceToTarget = Math.hypot(1.5*TILE_SIZE_CM - Robot.getRobotX(), FIELD_SIZE_CM * Robot.getRobotY());
-
-            double shooterPower = calcShooterPower(distanceToTarget);
 
             doingAutonomousTask = true;
             double error = absoluteAngleToTarget - Math.toRadians(getZAngle());
@@ -155,11 +152,7 @@ public class Drivetrain extends Subsystem {
         br.setMode(runMode);
     }
 
-    /**
-     * this is going to be after all of our spreadsheet data, might use a spreadsheet parser
-     * @param distance
-     * @return
-     */
+
     public double calcShooterPower(double distance) {
         return 0;
     }

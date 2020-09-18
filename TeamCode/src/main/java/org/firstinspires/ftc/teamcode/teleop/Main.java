@@ -16,8 +16,9 @@ public class Main extends TeleOpPipeline {
 
     @Override
     public void loop() {
+        boolean shoot = gamepad2.a;
 
-        subsystems.drivetrain.mecanumDrive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x, gamepad1.left_bumper);
+        subsystems.drivetrain.mecanumDrive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x, gamepad1.left_bumper, shoot);
 
 
         telemetry.update();
