@@ -68,17 +68,30 @@ public class Drivetrain extends Subsystem {
 
     }
 
-    public void mecanumDrive(double forward, double turn, double strafe, boolean slow) {
+    public void mecanumDrive(double forward, double turn, double strafe, boolean slow, boolean shoot) {
 
         double vd = Math.hypot(forward, strafe);
         double theta = Math.atan2(forward, strafe) - (Math.PI / 4);
         double multiplier = 1;
+        double turnPower = turn;
+
+        if(shoot) {
+            final double absoluteAngleToTarget = Math.atan2(FIELD_SIZE_CM - Robot.getRobotY(), 1.5*TILE_SIZE_CM - Robot.getRobotX());
+            double distanceToTarget = Math.hypot(1.5*TILE_SIZE_CM - Robot.getRobotX(), FIELD_SIZE_CM * Robot.getRobotY());
+
+            double shooterPower = calcShooterPower(distanceToTarget);
+
+            doingAutonomousTask = true;
+            double error = absoluteAngleToTarget - Math.toRadians(getZAngle());
+            turnPower = error * SHOOTER_AUTO_ALIGN_GAIN;
+
+        }
 
         double[] v = {
-                vd * Math.sin(theta) - turn,
-                vd * Math.cos(theta) + turn,
-                vd * Math.cos(theta) - turn,
-                vd * Math.sin(theta) + turn
+                vd * Math.sin(theta) - turnPower,
+                vd * Math.cos(theta) + turnPower,
+                vd * Math.cos(theta) - turnPower,
+                vd * Math.sin(theta) + turnPower
         };
         if(slow) {
             multiplier = DRIVETRAIN_SLOW_MODE_MULTIPLIER;
@@ -140,27 +153,6 @@ public class Drivetrain extends Subsystem {
         fr.setMode(runMode);
         bl.setMode(runMode);
         br.setMode(runMode);
-    }
-
-    public void lineUpShot(final double gain) {
-       final double absoluteAngleToTarget = Math.atan2(FIELD_SIZE_CM - Robot.getRobotY(), 1.5*TILE_SIZE_CM - Robot.getRobotX());
-       double distanceToTarget = Math.hypot(1.5*TILE_SIZE_CM - Robot.getRobotX(), FIELD_SIZE_CM * Robot.getRobotY());
-
-       double shooterPower = calcShooterPower(distanceToTarget);
-
-       new Thread(new Runnable() {
-           @Override
-           public void run() {
-               doingAutonomousTask = true;
-               double error = absoluteAngleToTarget - Math.toRadians(getZAngle());
-               while(error > 1 && doingAutonomousTask) {
-                   move(0, (absoluteAngleToTarget / Math.PI) * gain);
-                   error = absoluteAngleToTarget - Math.toRadians(getZAngle());
-               }
-               doingAutonomousTask = false;
-           }
-       }).start();
-
     }
 
     /**

@@ -10,6 +10,7 @@ public class Constants {
     public static final double DRIVETRAIN_SLOW_MODE_MULTIPLIER = 0.5;
     public static final double FIELD_SIZE_CM = 365.76;
     public static final double TILE_SIZE_CM = 60.96;
+    public static final double SHOOTER_AUTO_ALIGN_GAIN = 1;
 
 
 }
