@@ -153,10 +153,6 @@ public class Drivetrain extends Subsystem {
     }
 
 
-    public double calcShooterPower(double distance) {
-        return 0;
-    }
-
     public boolean isDoingAutonomousTask() {
         return doingAutonomousTask;
     }

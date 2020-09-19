@@ -16,14 +16,18 @@ public class Shooter extends Subsystem {
     @Override
     public void init() {
 
+
+
     }
 
     /**
      * this is going to be after all of our spreadsheet data, might use a spreadsheet parser
      * @return returns shooter power in range (0.0, 1.0]
      */
-    private void calcShooterPower() {
+    private double calcShooterPower() {
         double distanceToTarget = Math.hypot(1.5*TILE_SIZE_CM - Robot.getRobotX(), FIELD_SIZE_CM * Robot.getRobotY());
+
+        return 0;
 
     }
 
