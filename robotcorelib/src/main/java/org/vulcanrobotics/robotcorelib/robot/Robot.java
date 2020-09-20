@@ -6,6 +6,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.vulcanrobotics.robotcorelib.framework.RobotConfig;
 import org.vulcanrobotics.robotcorelib.framework.RobotCoreLibException;
 import org.vulcanrobotics.robotcorelib.math.Point;
+import org.vulcanrobotics.robotcorelib.math.Timer;
 import org.vulcanrobotics.robotcorelib.motion.MotionProfile;
 import org.vulcanrobotics.robotcorelib.subsystems.Drivetrain;
 import org.vulcanrobotics.robotcorelib.subsystems.Subsystem;

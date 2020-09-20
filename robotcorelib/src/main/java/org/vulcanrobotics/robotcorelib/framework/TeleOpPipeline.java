@@ -38,7 +38,9 @@ public abstract class TeleOpPipeline extends OpMode {
 //        Robot.startOdometryThread();
     }
 
-    public void teleopLoop() {}
+    public void teleopLoop() {
+
+    }
 
     public void teleopStop() {
         Dashboard.running = false;

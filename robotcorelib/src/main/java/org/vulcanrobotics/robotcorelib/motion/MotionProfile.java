@@ -3,6 +3,7 @@ package org.vulcanrobotics.robotcorelib.motion;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.vulcanrobotics.robotcorelib.dashboard.hardware.Odometer;
 import org.vulcanrobotics.robotcorelib.framework.RobotCoreLibException;
+import org.vulcanrobotics.robotcorelib.math.Timer;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -16,6 +17,7 @@ public abstract class MotionProfile {
      List<Odometer> odometers = new ArrayList<>();
     int odometerNum;
     Properties properties = new Properties();
+    protected Timer timer;
 
     public MotionProfile(int odometerNum, Odometer... odometer) throws RobotCoreLibException {
         this.odometerNum = odometerNum;

@@ -6,9 +6,10 @@ public class PID {
     private final double Ki;
     private final double Kd;
 
+    private Timer timer = new Timer();
+
     private double lastError = 0;
     private double integral = 0;
-    private long lastTime;
 
     private double output;
 
@@ -20,8 +21,7 @@ public class PID {
     }
 
     public void run(double target, double value) {
-        double timeElapsed = System.nanoTime() - lastTime;
-        lastTime = System.nanoTime();
+       double timeElapsed = timer.getDelta();
 
         double error = target - value;
         integral += ((error + lastError) / 2) * timeElapsed;

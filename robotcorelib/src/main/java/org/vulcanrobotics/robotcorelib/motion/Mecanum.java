@@ -40,13 +40,14 @@ public class Mecanum extends MotionProfile {
 
     public void update() {
         Point currentPos = Robot.getRobotPos();
+        double deltaTime = timer.getDelta();
 
-        double vl = ((left.getPosition() - lastLeftPos) * ticksPerRev) / (radius * 2.0 * Math.PI) * Timer.getDelta();
-        double vr = ((right.getPosition() - lastRightPos) * ticksPerRev) / (radius * 2.0 * Math.PI) * Timer.getDelta();
+        double vl = ((left.getPosition() - lastLeftPos) * ticksPerRev) / (radius * 2.0 * Math.PI) * deltaTime;
+        double vr = ((right.getPosition() - lastRightPos) * ticksPerRev) / (radius * 2.0 * Math.PI) * deltaTime;
 
         double dTheta = (radius / wheelBase) * (vl - vr);
         double robotAngle = Robot.getRobotAngleRad() + dTheta;
-        double vh = ((horizontal.getPosition() - lastStrafePos - (dTheta * horizontalRevsPerDeg)) * ticksPerRev) / (radius * 2.0 * Math.PI) * Timer.getDelta();
+        double vh = ((horizontal.getPosition() - lastStrafePos - (dTheta * horizontalRevsPerDeg)) * ticksPerRev) / (radius * 2.0 * Math.PI) * deltaTime;
         double vf = (radius / 2.0) * (vl + vr);
 
         currentPos.x += (vf * Math.cos(Robot.getRobotAngleRad())) + (vh * Math.sin(Robot.getRobotAngleRad()));
