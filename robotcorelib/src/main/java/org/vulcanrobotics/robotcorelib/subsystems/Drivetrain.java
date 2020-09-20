@@ -76,12 +76,15 @@ public class Drivetrain extends Subsystem {
         double turnPower = turn;
 
         if(shoot) {
-            final double absoluteAngleToTarget = Math.atan2(FIELD_SIZE_CM - Robot.getRobotY(), 1.5*TILE_SIZE_CM - Robot.getRobotX());
+            double absoluteAngleToTarget = Math.atan2(FIELD_SIZE_CM - Robot.getRobotY(), 1.5*TILE_SIZE_CM - Robot.getRobotX());
 
             doingAutonomousTask = true;
             double error = absoluteAngleToTarget - Math.toRadians(getZAngle());
             turnPower = error * SHOOTER_AUTO_ALIGN_GAIN;
 
+        }
+        else {
+            doingAutonomousTask = false;
         }
 
         double[] v = {
