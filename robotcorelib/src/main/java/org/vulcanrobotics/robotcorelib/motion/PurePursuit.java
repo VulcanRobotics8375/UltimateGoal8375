@@ -1,6 +1,7 @@
 package org.vulcanrobotics.robotcorelib.motion;
 
 import org.vulcanrobotics.robotcorelib.math.Functions;
+import org.vulcanrobotics.robotcorelib.math.PID;
 import org.vulcanrobotics.robotcorelib.math.PathPoint;
 import org.vulcanrobotics.robotcorelib.math.Point;
 import org.vulcanrobotics.robotcorelib.robot.Robot;
@@ -10,6 +11,8 @@ import java.util.ArrayList;
 public class PurePursuit extends Controller {
 
     ArrayList<ArrayList<PathPoint>> sections;
+
+    private PID turnPID = new PID(1, 1, 1);
 
     public PurePursuit(ArrayList<ArrayList<PathPoint>> sections) {
         this.sections = sections;
@@ -65,7 +68,9 @@ public class PurePursuit extends Controller {
 
         double robotAngleToPoint = point.angle - Robot.getRobotAngleRad();
 
-        double turnSpeed = robotAngleToPoint * point.turnSpeed;
+        turnPID.run(point.angle, robotAngleToPoint);
+
+        double turnSpeed = turnPID.getOutput();
 
         Robot.getComponents().drivetrain.fieldCentricMove(Math.cos(absoluteAngleToPoint) * point.speed, Math.sin(absoluteAngleToPoint) * point.speed, turnSpeed);
     }
