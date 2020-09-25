@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.vulcanrobotics.robotcorelib.math.Point;
 import org.vulcanrobotics.robotcorelib.robot.Robot;
 import static org.vulcanrobotics.robotcorelib.framework.Constants.*;
 
@@ -14,6 +15,8 @@ public class Drivetrain extends Subsystem {
 
     private DcMotor fl, fr, bl, br;
     private BNO055IMU imu;
+
+    private boolean doingAutonomousTask;
 
     @Override
     public void init() {
@@ -139,6 +142,39 @@ public class Drivetrain extends Subsystem {
         br.setMode(runMode);
     }
 
+    public void lineUpShot(final double gain) {
+       final double absoluteAngleToTarget = Math.atan2(FIELD_SIZE_CM - Robot.getRobotY(), 1.5*TILE_SIZE_CM - Robot.getRobotX());
+       double distanceToTarget = Math.hypot(1.5*TILE_SIZE_CM - Robot.getRobotX(), FIELD_SIZE_CM * Robot.getRobotY());
+
+       double shooterPower = calcShooterPower(distanceToTarget);
+
+       new Thread(new Runnable() {
+           @Override
+           public void run() {
+               doingAutonomousTask = true;
+               double error = absoluteAngleToTarget - Math.toRadians(getZAngle());
+               while(error > 1 && doingAutonomousTask) {
+                   move(0, (absoluteAngleToTarget / Math.PI) * gain);
+                   error = absoluteAngleToTarget - Math.toRadians(getZAngle());
+               }
+               doingAutonomousTask = false;
+           }
+       }).start();
+
+    }
+
+    /**
+     * this is going to be after all of our spreadsheet data, might use a spreadsheet parser
+     * @param distance
+     * @return
+     */
+    public double calcShooterPower(double distance) {
+        return 0;
+    }
+
+    public boolean isDoingAutonomousTask() {
+        return doingAutonomousTask;
+    }
 
     @Override
     public void stop() {
