@@ -68,19 +68,27 @@ public class Drivetrain extends Subsystem {
 
     }
 
-    public void mecanumDrive(double forward, double turn, double strafe, boolean slow, boolean shoot) {
+    public void mecanumDrive(double forward, double turn, double strafe, boolean slow, boolean highGoal, boolean powerShot) {
 
         double vd = Math.hypot(forward, strafe);
         double theta = Math.atan2(forward, strafe) - (Math.PI / 4);
-        double multiplier = 1;
+        double multiplier = claculateMecanumGain(theta);
         double turnPower = turn;
 
-        if(shoot) {
-            double absoluteAngleToTarget = Math.atan2(FIELD_SIZE_CM - Robot.getRobotY(), 1.5*TILE_SIZE_CM - Robot.getRobotX());
+        if(highGoal) {
+            double absoluteAngleToTarget = Math.atan2(FIELD_SIZE_CM - Robot.getRobotY(), (FIELD_SIZE_CM - (1.5*TILE_SIZE_CM)) - Robot.getRobotX());
 
             doingAutonomousTask = true;
             double error = absoluteAngleToTarget - Math.toRadians(getZAngle());
+            //TODO PID this
             turnPower = error * SHOOTER_AUTO_ALIGN_GAIN;
+
+        } else if(powerShot) {
+            doingAutonomousTask = true;
+           double absoluteAngleToTarget = Math.atan2(FIELD_SIZE_CM - Robot.getRobotY(), (FIELD_SIZE_CM - (2*TILE_SIZE_CM)) - Robot.getRobotX());
+
+           double error = absoluteAngleToTarget - Math.toRadians(getZAngle());
+           turnPower = error * SHOOTER_AUTO_ALIGN_GAIN;
 
         }
         else {
@@ -110,6 +118,32 @@ public class Drivetrain extends Subsystem {
         bl.setPower(motorOut[3]);
 
 
+    }
+
+    private double claculateMecanumGain(double angle) {
+        int quadrant = 0;
+        if(angle <= Math.PI / 2 && angle >= 0) {
+            quadrant = 1;
+        }
+        else if(angle <= Math.PI && angle > Math.PI / 2) {
+            quadrant = 3;
+        }
+        else if(angle >= -Math.PI && angle < Math.PI / 2) {
+            quadrant = 5;
+        }
+        else if(angle >= -Math.PI / 2 && angle < 0) {
+            quadrant = 7;
+        }
+        double relativeAngle;
+        if(angle >= 0) {
+            relativeAngle = Math.abs(angle - (quadrant * Math.PI / 4));
+        }
+        else {
+            relativeAngle = Math.abs(Math.abs(angle - (quadrant * Math.PI / 4)) - 2.0 * Math.PI);
+        }
+
+        double m = ((2 / Math.sqrt(2)) - 1) / (Math.PI / 4);
+        return (m * relativeAngle) + 1;
     }
 
     public void fieldCentricMove(double x, double y, double turn) {

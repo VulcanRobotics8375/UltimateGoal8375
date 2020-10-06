@@ -15,6 +15,7 @@ public class Constants {
     public static final double INTAKE_FLIP_IN = 0;
     public static final double INTAKE_UP_POWER = 1;
     public static final double INTAKE_DOWN_POWER = 1;
+    public static final double SHOOTER_ANGLE_OFFSET_PER_IN = 0;
 
 
 }
