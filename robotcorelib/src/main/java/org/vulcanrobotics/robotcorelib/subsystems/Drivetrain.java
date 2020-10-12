@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.vulcanrobotics.robotcorelib.math.Point;
 import org.vulcanrobotics.robotcorelib.robot.Robot;
 import static org.vulcanrobotics.robotcorelib.framework.Constants.*;
 
@@ -44,10 +43,10 @@ public class Drivetrain extends Subsystem {
         bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
-        fl.setDirection(DcMotorSimple.Direction.FORWARD);
-        fr.setDirection(DcMotorSimple.Direction.REVERSE);
-        bl.setDirection(DcMotorSimple.Direction.FORWARD);
-        br.setDirection(DcMotorSimple.Direction.REVERSE);
+        fl.setDirection(DcMotorSimple.Direction.REVERSE);
+        fr.setDirection(DcMotorSimple.Direction.FORWARD);
+        bl.setDirection(DcMotorSimple.Direction.REVERSE);
+        br.setDirection(DcMotorSimple.Direction.FORWARD);
     }
 
     public void move(double forward, double turn) {
@@ -72,7 +71,7 @@ public class Drivetrain extends Subsystem {
 
         double vd = Math.hypot(forward, strafe);
         double theta = Math.atan2(forward, strafe) - (Math.PI / 4);
-        double multiplier = claculateMecanumGain(theta);
+        double multiplier = 1;
         double turnPower = turn;
 
         if(highGoal) {
@@ -120,7 +119,7 @@ public class Drivetrain extends Subsystem {
 
     }
 
-    private double claculateMecanumGain(double angle) {
+    private double calculateMecanumGain(double angle) {
         int quadrant = 0;
         if(angle <= Math.PI / 2 && angle >= 0) {
             quadrant = 1;
@@ -128,7 +127,7 @@ public class Drivetrain extends Subsystem {
         else if(angle <= Math.PI && angle > Math.PI / 2) {
             quadrant = 3;
         }
-        else if(angle >= -Math.PI && angle < Math.PI / 2) {
+        else if(angle >= -Math.PI && angle < -Math.PI / 2) {
             quadrant = 5;
         }
         else if(angle >= -Math.PI / 2 && angle < 0) {

@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.vulcanrobotics.robotcorelib.dashboard.Dashboard;
+import org.vulcanrobotics.robotcorelib.math.Point;
 import org.vulcanrobotics.robotcorelib.robot.Robot;
 
 public abstract class TeleOpPipeline extends LinearOpMode {
@@ -37,8 +38,9 @@ public abstract class TeleOpPipeline extends LinearOpMode {
 //        Robot.startOdometryThread();
     }
 
-    public void teleopLoop() {
-
+    public void setStart(Point position, double angle) {
+        Robot.setRobotPos(position);
+        Robot.setRobotAngle(angle);
     }
 
     public void teleopStop() {

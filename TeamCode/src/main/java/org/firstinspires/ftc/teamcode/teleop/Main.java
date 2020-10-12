@@ -25,6 +25,7 @@ public class Main extends TeleOpPipeline {
             boolean powerShot = gamepad1.b;
 
             subsystems.drivetrain.mecanumDrive(gamepad1.left_stick_y, -gamepad1.right_stick_x, -gamepad1.left_stick_x, gamepad1.left_bumper, shoot, powerShot);
+            subsystems.intake.run(gamepad2.a, gamepad2.b, gamepad2.x, gamepad2.y);
 
 
             telemetry.update();
