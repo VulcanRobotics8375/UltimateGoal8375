@@ -69,8 +69,9 @@ public class Drivetrain extends Subsystem {
 
     public void mecanumDrive(double forward, double turn, double strafe, boolean slow, boolean highGoal, boolean powerShot) {
 
-        double vd = Math.hypot(forward, strafe);
         double theta = Math.atan2(forward, strafe) - (Math.PI / 4);
+        double forwardRatio = Math.abs(forward) * Math.sin(theta);
+        double strafeRatio = Math.abs(strafe) * Math.cos(theta);
         double multiplier = 1;
         double turnPower = turn;
 
@@ -95,10 +96,10 @@ public class Drivetrain extends Subsystem {
         }
 
         double[] v = {
-                vd * Math.sin(theta) - turnPower,
-                vd * Math.cos(theta) + turnPower,
-                vd * Math.cos(theta) - turnPower,
-                vd * Math.sin(theta) + turnPower
+                forwardRatio + strafeRatio - turnPower,
+                forwardRatio - strafeRatio + turnPower,
+                forwardRatio - strafeRatio - turnPower,
+                forwardRatio + strafeRatio + turnPower
         };
         if(slow) {
             multiplier = DRIVETRAIN_SLOW_MODE_MULTIPLIER;
