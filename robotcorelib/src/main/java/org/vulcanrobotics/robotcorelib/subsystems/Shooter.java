@@ -16,8 +16,6 @@ public class Shooter extends Subsystem {
     @Override
     public void init() {
 
-
-
     }
 
     /**

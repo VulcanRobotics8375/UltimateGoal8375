@@ -3,11 +3,13 @@ package org.vulcanrobotics.robotcorelib.vision;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
+import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
+import org.vulcanrobotics.robotcorelib.vision.analysis.AverageBrightnessAnalysis;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,11 +22,15 @@ public class StackDetectorCV extends OpenCvPipeline {
     private double stackContourHeight;
     private int stackHeight;
 
+    AverageBrightnessAnalysis brightnessAnalysis = new AverageBrightnessAnalysis();
+
     @Override
     public Mat processFrame(Mat input) {
         Mat output = input.clone();
         Imgproc.blur(input, workingMat, new Size(5, 5));
         Imgproc.cvtColor(workingMat, workingMat, Imgproc.COLOR_BGR2HSV);
+
+        brightnessAnalysis.run(input);
 
         Imgproc.GaussianBlur(workingMat, workingMat, new Size(5,5), 0);
 
@@ -34,16 +40,21 @@ public class StackDetectorCV extends OpenCvPipeline {
 
         Imgproc.findContours(ringColorFilter, ringContours, heirarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
 
-        Imgproc.drawContours(output, ringContours, -1, new Scalar(255,0,0), 2);
+//        Imgproc.drawContours(output, ringContours, -1, new Scalar(255,0,0), 2);
 
         double biggestContour = Double.MIN_VALUE;
+        Rect boundingRect = new Rect();
 
         for (MatOfPoint contour :
                 ringContours) {
             if(contour.size().height > biggestContour) {
                 biggestContour = contour.size().height;
+                boundingRect = Imgproc.boundingRect(contour);
             }
         }
+
+        Imgproc.rectangle(output, boundingRect, new Scalar(255, 0, 0));
+        Imgproc.putText(output, "detectedStack", new Point(boundingRect.x, boundingRect.y), Imgproc.FONT_HERSHEY_PLAIN, 1, new Scalar(255, 0, 0));
 
         stackContourHeight = biggestContour;
 
