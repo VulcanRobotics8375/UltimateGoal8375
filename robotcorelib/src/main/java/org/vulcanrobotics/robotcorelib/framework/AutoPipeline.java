@@ -19,6 +19,7 @@ public abstract class AutoPipeline extends LinearOpMode {
 
     public void autoInit() throws RobotCoreLibException {
         Robot.setTelemetry(telemetry);
+        Robot.hardwareMap = hardwareMap;
         Robot.init();
     }
 

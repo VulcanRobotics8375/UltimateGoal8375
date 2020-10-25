@@ -1,5 +1,6 @@
 package org.vulcanrobotics.robotcorelib.subsystems;
 
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -12,9 +13,29 @@ import static org.vulcanrobotics.robotcorelib.framework.Constants.TILE_SIZE_CM;
 
 
 public class Shooter extends Subsystem {
+    private DcMotor flywheel;
+    private CRServo conveyor;
 
     @Override
     public void init() {
+        flywheel = hardwareMap.dcMotor.get("flywheel");
+        conveyor = hardwareMap.crservo.get("conveyor");
+    }
+
+    public void run(boolean flywheelOn, boolean conveyorOn) {
+
+        if(flywheelOn) {
+            flywheel.setPower(1.0);
+        } else {
+            flywheel.setPower(0.0);
+        }
+
+        if(conveyorOn) {
+            conveyor.setPower(1.0);
+        }
+        else {
+            conveyor.setPower(-0.05);
+        }
 
     }
 

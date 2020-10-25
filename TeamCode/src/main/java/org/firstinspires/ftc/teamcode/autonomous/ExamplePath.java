@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+
 import org.vulcanrobotics.robotcorelib.framework.AutoPipeline;
 import org.vulcanrobotics.robotcorelib.framework.RobotCoreLibException;
 import org.vulcanrobotics.robotcorelib.math.PathPoint;
@@ -9,6 +12,8 @@ import org.vulcanrobotics.robotcorelib.robot.Robot;
 
 import java.util.ArrayList;
 
+@Disabled
+@Autonomous(name = "example path", group = "example")
 public class ExamplePath extends AutoPipeline {
 
     @Override

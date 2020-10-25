@@ -17,7 +17,7 @@ public abstract class MotionProfile {
      List<Odometer> odometers = new ArrayList<>();
     int odometerNum;
     Properties properties = new Properties();
-    protected Timer timer;
+    protected Timer timer = new Timer();
 
     public MotionProfile(int odometerNum, Odometer... odometer) throws RobotCoreLibException {
         this.odometerNum = odometerNum;
@@ -28,16 +28,20 @@ public abstract class MotionProfile {
     }
 
     public  void init() throws RobotCoreLibException {
-        try {
-            String path = AppUtil.getInstance().getSettingsFile("robotconfig.properties").getAbsolutePath();
-            
-            //set up file streams for reading and writing to the properties file
-            FileInputStream input = new FileInputStream(path);
-            properties.load(input);
-        }
-        catch(IOException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            String path = AppUtil.getInstance().getSettingsFile("robotconfig.properties").getAbsolutePath();
+//
+//            //set up file streams for reading and writing to the properties file
+//            FileInputStream input = new FileInputStream(path);
+//            properties.load(input);
+//        }
+//        catch(IOException e) {
+//            e.printStackTrace();
+//        }
+    }
+
+    public void start() {
+        timer.init();
     }
 
     public abstract void update();

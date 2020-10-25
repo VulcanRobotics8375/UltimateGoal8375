@@ -30,10 +30,10 @@ public class Mecanum extends MotionProfile {
         right = getOdometerByName("right");
         horizontal = getOdometerByName("strafe");
 
-        radius = Double.parseDouble(properties.getProperty("radius"));
-        wheelBase = Double.parseDouble(properties.getProperty("wheelBase"));
-        ticksPerRev = Double.parseDouble(properties.getProperty("tpr"));
-        horizontalRevsPerDeg = Double.parseDouble(properties.getProperty("rpd-horizontal"));
+        radius = 3.8;
+        wheelBase = 45.72;
+        ticksPerRev = ;
+        horizontalRevsPerDeg = 120;
 
 
     }
