@@ -4,9 +4,11 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+import org.firstinspires.ftc.robotcore.external.Function;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.vulcanrobotics.robotcorelib.math.Functions;
 import org.vulcanrobotics.robotcorelib.math.PID;
 import org.vulcanrobotics.robotcorelib.robot.Robot;
 import static org.vulcanrobotics.robotcorelib.framework.Constants.*;
@@ -28,6 +30,9 @@ public class Drivetrain extends Subsystem {
         br = hardwareMap.dcMotor.get("back_right");
         imu = hardwareMap.get(BNO055IMU.class, "imu");
 
+        setDrivetrainMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        setDrivetrainMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.mode = BNO055IMU.SensorMode.IMU;
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
@@ -38,8 +43,6 @@ public class Drivetrain extends Subsystem {
         } else {
             imu.initialize(parameters);
         }
-
-        setDrivetrainMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         fl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         fr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -71,25 +74,26 @@ public class Drivetrain extends Subsystem {
     }
 
     public void mecanumDrive(double forward, double turn, double strafe, boolean slow, boolean highGoal, boolean powerShot) {
-
+        forward = curveLinearJoystick(forward);
+        strafe = curveLinearJoystick(strafe);
+        turn = curveLinearJoystick(turn);
+        double vd = Math.hypot(forward, strafe);
         double theta = Math.atan2(forward, strafe) - (Math.PI / 4);
-        double forwardRatio = Math.abs(forward) * Math.sin(theta);
-        double strafeRatio = Math.abs(strafe) * Math.cos(theta);
-        double multiplier = 1;
+        double multiplier = 1.212;
         double turnPower = turn;
 
         if(highGoal) {
             double absoluteAngleToTarget = Math.atan2(FIELD_SIZE_CM - Robot.getRobotY(), (FIELD_SIZE_CM - (1.5*TILE_SIZE_CM)) - Robot.getRobotX());
 
             doingAutonomousTask = true;
-            turnPid.run(absoluteAngleToTarget, Math.toRadians(getZAngle()));
-            turnPower = turnPid.getOutput();
+            double error = absoluteAngleToTarget - Functions.angleWrap(Math.toRadians(getZAngle() + SHOOTING_DEGREE_OFFSET));
+            turnPower = error * SHOOTER_AUTO_ALIGN_GAIN;
 
         } else if(powerShot) {
             doingAutonomousTask = true;
            double absoluteAngleToTarget = Math.atan2(FIELD_SIZE_CM - Robot.getRobotY(), (FIELD_SIZE_CM - (2*TILE_SIZE_CM)) - Robot.getRobotX());
 
-           double error = absoluteAngleToTarget - Math.toRadians(getZAngle());
+           double error = absoluteAngleToTarget - Math.toRadians(getZAngle() + SHOOTING_DEGREE_OFFSET);
            turnPower = error * SHOOTER_AUTO_ALIGN_GAIN;
 
         }
@@ -98,20 +102,20 @@ public class Drivetrain extends Subsystem {
         }
 
         double[] v = {
-                forwardRatio + strafeRatio - turnPower,
-                forwardRatio - strafeRatio + turnPower,
-                forwardRatio - strafeRatio - turnPower,
-                forwardRatio + strafeRatio + turnPower
+                vd * Math.sin(theta) - turnPower,
+                vd * Math.cos(theta) + turnPower,
+                vd * Math.cos(theta) - turnPower,
+                vd * Math.sin(theta) + turnPower
         };
         if(slow) {
             multiplier = DRIVETRAIN_SLOW_MODE_MULTIPLIER;
         }
 
         double[] motorOut = {
-                multiplier * (v[0] / 1.07) * ((0.62 * Math.pow(v[0], 2)) + 0.45),
-                multiplier * (v[1] / 1.07) * ((0.62 * Math.pow(v[1], 2)) + 0.45),
-                multiplier * (v[2] / 1.07) * ((0.62 * Math.pow(v[2], 2)) + 0.45),
-                multiplier * (v[3] / 1.07) * ((0.62 * Math.pow(v[3], 2)) + 0.45)
+                multiplier * v[0],
+                multiplier * v[1],
+                multiplier * v[2],
+                multiplier * v[3]
         };
 
         fr.setPower(motorOut[0]);

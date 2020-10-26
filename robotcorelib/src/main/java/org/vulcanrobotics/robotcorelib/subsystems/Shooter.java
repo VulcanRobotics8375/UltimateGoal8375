@@ -14,27 +14,27 @@ import static org.vulcanrobotics.robotcorelib.framework.Constants.TILE_SIZE_CM;
 
 public class Shooter extends Subsystem {
     private DcMotor flywheel;
-    private CRServo conveyor;
+    private Servo conveyor;
 
     @Override
     public void init() {
         flywheel = hardwareMap.dcMotor.get("flywheel");
-        conveyor = hardwareMap.crservo.get("conveyor");
+        conveyor = hardwareMap.servo.get("conveyor");
     }
 
     public void run(boolean flywheelOn, boolean conveyorOn) {
 
         if(flywheelOn) {
-            flywheel.setPower(1.0);
+            flywheel.setPower(-0.8);
         } else {
             flywheel.setPower(0.0);
         }
 
         if(conveyorOn) {
-            conveyor.setPower(1.0);
+            conveyor.setPosition(0.3);
         }
         else {
-            conveyor.setPower(-0.05);
+            conveyor.setPosition(0.0);
         }
 
     }

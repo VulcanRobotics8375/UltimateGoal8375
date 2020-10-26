@@ -27,17 +27,8 @@ public abstract class MotionProfile {
         odometers.addAll(Arrays.asList(odometer));
     }
 
-    public  void init() throws RobotCoreLibException {
-//        try {
-//            String path = AppUtil.getInstance().getSettingsFile("robotconfig.properties").getAbsolutePath();
+    public void init() throws RobotCoreLibException {
 //
-//            //set up file streams for reading and writing to the properties file
-//            FileInputStream input = new FileInputStream(path);
-//            properties.load(input);
-//        }
-//        catch(IOException e) {
-//            e.printStackTrace();
-//        }
     }
 
     public void start() {

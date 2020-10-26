@@ -9,11 +9,11 @@ public class Timer {
     private  long lastTime = 0;
 
     public void init() {
-        lastTime = System.nanoTime();
+        lastTime = System.currentTimeMillis();
     }
 
     public  long getDelta() {
-        long time = System.nanoTime();
+        long time = System.currentTimeMillis();
         long delta = time - lastTime;
         lastTime = time;
         return delta;
