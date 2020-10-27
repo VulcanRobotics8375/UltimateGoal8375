@@ -73,7 +73,7 @@ public class Drivetrain extends Subsystem {
 
     }
 
-    public void mecanumDrive(double forward, double turn, double strafe, boolean slow, boolean highGoal, boolean powerShot) {
+    public void mecanumDrive(double forward, double turn, double strafe, boolean slow, boolean highGoal, boolean powerShotLeft, boolean powerShotCenter, boolean powerShotRight) {
         forward = curveLinearJoystick(forward);
         strafe = curveLinearJoystick(strafe);
         turn = curveLinearJoystick(turn);
@@ -89,9 +89,18 @@ public class Drivetrain extends Subsystem {
             double error = absoluteAngleToTarget - Functions.angleWrap(Math.toRadians(getZAngle() + SHOOTING_DEGREE_OFFSET));
             turnPower = error * SHOOTER_AUTO_ALIGN_GAIN;
 
-        } else if(powerShot) {
+        } else if(powerShotCenter || powerShotLeft || powerShotRight) {
             doingAutonomousTask = true;
-           double absoluteAngleToTarget = Math.atan2(FIELD_SIZE_CM - Robot.getRobotY(), (FIELD_SIZE_CM - (2*TILE_SIZE_CM)) - Robot.getRobotX());
+            double absoluteAngleToTarget;
+            if(powerShotLeft) {
+                absoluteAngleToTarget = Math.atan2(FIELD_SIZE_CM - Robot.getRobotY(), (FIELD_SIZE_CM - (2.75 * TILE_SIZE_CM)) - Robot.getRobotX());
+            }
+            else if(powerShotCenter) {
+                absoluteAngleToTarget = Math.atan2(FIELD_SIZE_CM - Robot.getRobotY(), (FIELD_SIZE_CM - (2.5 * TILE_SIZE_CM)) - Robot.getRobotX());
+            }
+            else {
+                absoluteAngleToTarget = Math.atan2(FIELD_SIZE_CM - Robot.getRobotY(), (FIELD_SIZE_CM - (2.25 * TILE_SIZE_CM)) - Robot.getRobotX());
+            }
 
            double error = absoluteAngleToTarget - Math.toRadians(getZAngle() + SHOOTING_DEGREE_OFFSET);
            turnPower = error * SHOOTER_AUTO_ALIGN_GAIN;
