@@ -36,24 +36,24 @@ public class Mecanum extends MotionProfile {
 
     public void update() {
         Point currentPos = Robot.getRobotPos();
+
         double leftPosition = left.getPosition();
         double rightPosition = right.getPosition();
         double horizontalPosition = horizontal.getPosition();
 
-        double leftChange = leftPosition - lastLeftPos;
-        double rightChange = rightPosition - lastRightPos;
-        double thetaChange = ((leftChange - rightChange) * (radius / wheelBase));
-        double robotAngle = Robot.getRobotAngleRad() + thetaChange;
+        double deltaLeft = ((leftPosition - lastLeftPos) / ticksPerRev) * 2.0 * Math.PI * radius;
+        double deltaRight = ((rightPosition - lastRightPos) / ticksPerRev) * 2.0 * Math.PI * radius;
+        double deltaHorizontalRaw = ((horizontalPosition - lastStrafePos) / ticksPerRev) * 2.0 * Math.PI * radius;
+        double robotAngle = Robot.getRobotAngleRad() + (deltaLeft - deltaRight) / wheelBase;
+        double deltaAngle = robotAngle - lastTheta;
 
-        double horizontalChangeRaw = horizontalPosition - lastStrafePos;
-        double horizontalChange = horizontalChangeRaw - (thetaChange * horizontalTicksPerDeg);
-        double verticalChange = (leftChange + rightChange) / 2;
+        double deltaHorizontal = deltaHorizontalRaw - (Math.toDegrees(deltaAngle) * horizontalTicksPerDeg);
 
-        currentPos.x += ((verticalChange*Math.sin(robotAngle)) + (horizontalChange*Math.cos(robotAngle))) / 378.9;
-        currentPos.y += ((verticalChange*Math.cos(robotAngle)) + (horizontalChange*Math.sin(robotAngle))) / 378.9;
+        currentPos.x += (((deltaLeft + deltaRight) / 2.0) * Math.sin(robotAngle)) + (deltaHorizontal * Math.cos(robotAngle));
+        currentPos.y += (((deltaLeft + deltaRight) / 2.0) * Math.cos(robotAngle)) + (deltaHorizontal * Math.sin(robotAngle));
 
-        Robot.setRobotAngle(robotAngle);
         Robot.setRobotPos(currentPos);
+        Robot.setRobotAngle(robotAngle);
 
         lastLeftPos = leftPosition;
         lastRightPos = rightPosition;

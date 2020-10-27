@@ -22,11 +22,11 @@ public class Robot {
     /**
      * Robot Position
      */
-    private static Point robotPos = new Point();
+    private static volatile Point robotPos = new Point();
     /**
      * robot angle in Radians
      */
-    private static double robotAngle = 0;
+    private static volatile double robotAngle = 0;
     /**
      * Drivetrain subsystem, automatically assigned during init()
      */
