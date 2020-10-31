@@ -16,6 +16,8 @@ import java.util.ArrayList;
 @Autonomous(name = "example path", group = "example")
 public class ExamplePath extends AutoPipeline {
 
+    volatile boolean doneShooting = false;
+
     @Override
     public void runOpMode() {
         try {
@@ -40,11 +42,15 @@ public class ExamplePath extends AutoPipeline {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
+                    while(!doneShooting) {
+
+                    }
                     controller.run();
                 }
             }).start();
 
             while(opModeIsActive()) {
+
                 PathPoint currentPoint = controller.getCurrentPoint();
                 //subsystem code here, triggers are currentPoint and then timing
 

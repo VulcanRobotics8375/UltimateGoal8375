@@ -45,7 +45,7 @@ public abstract class TeleOpPipeline extends LinearOpMode {
 
     public void teleopStop() {
         Dashboard.running = false;
-//        Robot.stopOdometryThread();
+        Robot.stopOdometryThread();
     }
 
 }

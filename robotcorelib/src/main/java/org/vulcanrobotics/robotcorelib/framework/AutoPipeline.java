@@ -14,6 +14,7 @@ import org.vulcanrobotics.robotcorelib.robot.Robot;
 public abstract class AutoPipeline extends LinearOpMode {
 
     protected Controller controller;
+    protected RobotConfig subsytems;
 
     public abstract void runOpMode();
 
@@ -21,6 +22,7 @@ public abstract class AutoPipeline extends LinearOpMode {
         Robot.setTelemetry(telemetry);
         Robot.hardwareMap = hardwareMap;
         Robot.init();
+        subsytems = Robot.getComponents();
     }
 
     public void setStart(Point position, double angle) {

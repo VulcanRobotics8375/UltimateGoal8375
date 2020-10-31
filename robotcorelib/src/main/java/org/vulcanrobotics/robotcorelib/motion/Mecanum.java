@@ -67,6 +67,9 @@ public class Mecanum extends MotionProfile {
             Robot.drivetrain.move(0, gain);
 
         }
+        long lastTime = System.currentTimeMillis();
+        while(System.currentTimeMillis() - lastTime < 1000) {}
+
         double angle = Robot.drivetrain.getZAngle();
         double offset = Math.abs(left.getPosition()) + Math.abs(right.getPosition());
         double offsetPerDegree = offset / angle;
@@ -75,7 +78,11 @@ public class Mecanum extends MotionProfile {
 
         Robot.telemetry.addData("wheelBase", wheelBase);
         Robot.telemetry.addData("horizontal per deg", horizontalTicksPerDegree);
+        Robot.telemetry.addData("left encoder", left.getPosition());
+        Robot.telemetry.addData("right encoder", right.getPosition());
+        Robot.telemetry.addData("angle", angle);
 
+        Robot.telemetry.update();
     }
 
     public Odometer getLeft() {
