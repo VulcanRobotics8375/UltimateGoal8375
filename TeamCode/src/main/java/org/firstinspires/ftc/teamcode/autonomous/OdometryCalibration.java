@@ -16,11 +16,14 @@ public class OdometryCalibration extends AutoPipeline {
             e.printStackTrace();
         }
 
+        telemetry.addLine("ready");
+        telemetry.update();
+
         waitForStart();
 
-        while(opModeIsActive()) {}
+//        while(opModeIsActive()) {}
 
-        subsytems.motionProfile.calibrate(0.5);
+        subsytems.motionProfile.calibrate(0.2);
 
         while(opModeIsActive()) {}
 

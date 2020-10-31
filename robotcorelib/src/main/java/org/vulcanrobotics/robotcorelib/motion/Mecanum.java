@@ -1,5 +1,6 @@
 package org.vulcanrobotics.robotcorelib.motion;
 
+import org.vulcanrobotics.robotcorelib.dashboard.Constant;
 import org.vulcanrobotics.robotcorelib.dashboard.hardware.Odometer;
 import org.vulcanrobotics.robotcorelib.framework.Constants;
 import org.vulcanrobotics.robotcorelib.framework.RobotCoreLibException;
@@ -26,8 +27,8 @@ public class Mecanum extends MotionProfile {
         right = getOdometerByName("right");
         horizontal = getOdometerByName("strafe");
 
-        radius = Constants.ODOMETRY_RADIUS * Constants.ODOMETRY_COUNTS_PER_CM;
-        wheelBase = Constants.ODOMETRY_WHEELBASE * Constants.ODOMETRY_COUNTS_PER_CM;
+        radius = Constants.ODOMETRY_RADIUS;
+        wheelBase = Constants.ODOMETRY_WHEELBASE;
         ticksPerRev = Constants.ODOMETRY_TICKS_PER_REV;
         horizontalTicksPerDeg = Constants.ODOMETRY_HORIZONTAL_TICKS_PER_REV;
 
@@ -41,25 +42,25 @@ public class Mecanum extends MotionProfile {
         double rightPosition = right.getPosition();
         double horizontalPosition = horizontal.getPosition();
 
-        double deltaLeft = ((leftPosition - lastLeftPos) / ticksPerRev) * 2.0 * Math.PI * radius;
-        double deltaRight = ((rightPosition - lastRightPos) / ticksPerRev) * 2.0 * Math.PI * radius;
-        double deltaHorizontalRaw = ((horizontalPosition - lastStrafePos) / ticksPerRev) * 2.0 * Math.PI * radius;
-        double robotAngle = Robot.getRobotAngleRad() + (deltaLeft - deltaRight) / wheelBase;
-        double deltaAngle = robotAngle - lastTheta;
+        double leftChange = (leftPosition - lastLeftPos);
+        double rightChange = (rightPosition - lastRightPos);
+        double rawHorizontalChange = (horizontalPosition - lastStrafePos);
+        double thetaChange = (leftChange - rightChange) / (wheelBase * (1440 / (3.8 * Math.PI)));
 
-        double deltaHorizontal = deltaHorizontalRaw - (Math.toDegrees(deltaAngle) * horizontalTicksPerDeg);
+        double horizontalChange = (rawHorizontalChange - (thetaChange * horizontalTicksPerDeg));
+        double robotAngle = Robot.getRobotAngleRad() + thetaChange;
 
-        currentPos.x += (((deltaLeft + deltaRight) / 2.0) * Math.sin(robotAngle)) + (deltaHorizontal * Math.cos(robotAngle));
-        currentPos.y += (((deltaLeft + deltaRight) / 2.0) * Math.cos(robotAngle)) + (deltaHorizontal * Math.sin(robotAngle));
+        double verticalChange = (leftChange + rightChange) / 2;
 
-        Robot.setRobotPos(currentPos);
-        Robot.setRobotAngle(robotAngle);
+        currentPos.x += ((verticalChange * Math.sin(robotAngle)) + (horizontalChange * Math.cos(robotAngle))) * ((radius*Math.PI) / 1440.0);
+        currentPos.y += ((verticalChange * Math.cos(robotAngle)) - (horizontalChange * Math.sin(robotAngle))) * ((radius*Math.PI) / 1440.0);
 
         lastLeftPos = leftPosition;
         lastRightPos = rightPosition;
         lastStrafePos = horizontalPosition;
         lastTheta = robotAngle;
-
+        Robot.setRobotPos(currentPos);
+        Robot.setRobotAngle(robotAngle);
     }
 
     public void calibrate(double gain) {
@@ -67,6 +68,7 @@ public class Mecanum extends MotionProfile {
             Robot.drivetrain.move(0, gain);
 
         }
+        Robot.drivetrain.move(0, 0);
         long lastTime = System.currentTimeMillis();
         while(System.currentTimeMillis() - lastTime < 1000) {}
 
@@ -74,12 +76,13 @@ public class Mecanum extends MotionProfile {
         double offset = Math.abs(left.getPosition()) + Math.abs(right.getPosition());
         double offsetPerDegree = offset / angle;
         double wheelBase = (2 * 90 * offsetPerDegree) / (Math.PI*(ticksPerRev));
-        double horizontalTicksPerDegree = horizontal.getPosition() / Math.toRadians(angle);
+        double horizontalTicksPerDegree = horizontal.getPosition() / angle;
 
         Robot.telemetry.addData("wheelBase", wheelBase);
         Robot.telemetry.addData("horizontal per deg", horizontalTicksPerDegree);
         Robot.telemetry.addData("left encoder", left.getPosition());
         Robot.telemetry.addData("right encoder", right.getPosition());
+        Robot.telemetry.addData("horizontal encoder", horizontal.getPosition());
         Robot.telemetry.addData("angle", angle);
 
         Robot.telemetry.update();
