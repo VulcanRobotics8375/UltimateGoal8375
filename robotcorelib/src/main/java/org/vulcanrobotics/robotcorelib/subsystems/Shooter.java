@@ -1,5 +1,6 @@
 package org.vulcanrobotics.robotcorelib.subsystems;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.vulcanrobotics.robotcorelib.robot.Robot;
@@ -29,7 +30,7 @@ public class Shooter extends Subsystem {
         shooter = hardwareMap.dcMotor.get("shooter");
         hopper = hardwareMap.servo.get("hopper");
         shooter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        shooter.setDirection((DcMotor.Direction.FORWARD));
+        shooter.setDirection((DcMotor.Direction.REVERSE));
         shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
     }
     public void run(boolean shooterButton, boolean hopperButton, boolean shooterMode) {
