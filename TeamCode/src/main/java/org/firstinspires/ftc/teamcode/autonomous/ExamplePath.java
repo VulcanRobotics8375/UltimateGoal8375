@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+
 import org.vulcanrobotics.robotcorelib.framework.AutoPipeline;
 import org.vulcanrobotics.robotcorelib.framework.RobotCoreLibException;
 import org.vulcanrobotics.robotcorelib.math.PathPoint;
@@ -9,7 +12,11 @@ import org.vulcanrobotics.robotcorelib.robot.Robot;
 
 import java.util.ArrayList;
 
+@Disabled
+@Autonomous(name = "example path", group = "example")
 public class ExamplePath extends AutoPipeline {
+
+    volatile boolean doneShooting = false;
 
     @Override
     public void runOpMode() {
@@ -35,11 +42,15 @@ public class ExamplePath extends AutoPipeline {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
+                    while(!doneShooting) {
+
+                    }
                     controller.run();
                 }
             }).start();
 
             while(opModeIsActive()) {
+
                 PathPoint currentPoint = controller.getCurrentPoint();
                 //subsystem code here, triggers are currentPoint and then timing
 

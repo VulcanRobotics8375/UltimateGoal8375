@@ -30,7 +30,7 @@ public class StackDetectorCV extends OpenCvPipeline {
         Imgproc.blur(input, workingMat, new Size(5, 5));
         Imgproc.cvtColor(workingMat, workingMat, Imgproc.COLOR_BGR2HSV);
 
-        brightnessAnalysis.run(input);
+//        brightnessAnalysis.run(input);
 
         Imgproc.GaussianBlur(workingMat, workingMat, new Size(5,5), 0);
 

@@ -1,19 +1,16 @@
 package org.vulcanrobotics.robotcorelib.motion;
 
-import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
+import org.vulcanrobotics.robotcorelib.dashboard.Constant;
 import org.vulcanrobotics.robotcorelib.dashboard.hardware.Odometer;
+import org.vulcanrobotics.robotcorelib.framework.Constants;
 import org.vulcanrobotics.robotcorelib.framework.RobotCoreLibException;
 import org.vulcanrobotics.robotcorelib.math.Point;
-import org.vulcanrobotics.robotcorelib.math.Timer;
 import org.vulcanrobotics.robotcorelib.robot.Robot;
-
-import java.io.FileOutputStream;
-import java.io.IOException;
 
 public class Mecanum extends MotionProfile {
 
     private Odometer left, right, horizontal;
-    private double radius, wheelBase, ticksPerRev, horizontalRevsPerDeg, countsPerCm;
+    private double radius, wheelBase, ticksPerRev, horizontalTicksPerDeg, countsPerCm;
 
     private double lastLeftPos = 0, lastRightPos = 0, lastStrafePos = 0, lastTheta = 0;
 
@@ -30,36 +27,40 @@ public class Mecanum extends MotionProfile {
         right = getOdometerByName("right");
         horizontal = getOdometerByName("strafe");
 
-        radius = Double.parseDouble(properties.getProperty("radius"));
-        wheelBase = Double.parseDouble(properties.getProperty("wheelBase"));
-        ticksPerRev = Double.parseDouble(properties.getProperty("tpr"));
-        horizontalRevsPerDeg = Double.parseDouble(properties.getProperty("rpd-horizontal"));
+        radius = Constants.ODOMETRY_RADIUS;
+        wheelBase = Constants.ODOMETRY_WHEELBASE;
+        ticksPerRev = Constants.ODOMETRY_TICKS_PER_REV;
+        horizontalTicksPerDeg = Constants.ODOMETRY_HORIZONTAL_TICKS_PER_REV;
 
 
     }
 
     public void update() {
         Point currentPos = Robot.getRobotPos();
-        double deltaTime = timer.getDelta();
 
-        double vl = ((left.getPosition() - lastLeftPos) * ticksPerRev) / (radius * 2.0 * Math.PI) * deltaTime;
-        double vr = ((right.getPosition() - lastRightPos) * ticksPerRev) / (radius * 2.0 * Math.PI) * deltaTime;
+        double leftPosition = left.getPosition();
+        double rightPosition = right.getPosition();
+        double horizontalPosition = horizontal.getPosition();
 
-        double dTheta = (radius / wheelBase) * (vl - vr);
-        double robotAngle = Robot.getRobotAngleRad() + dTheta;
-        double vh = ((horizontal.getPosition() - lastStrafePos - (dTheta * horizontalRevsPerDeg)) * ticksPerRev) / (radius * 2.0 * Math.PI) * deltaTime;
-        double vf = (radius / 2.0) * (vl + vr);
+        double leftChange = (leftPosition - lastLeftPos);
+        double rightChange = (rightPosition - lastRightPos);
+        double rawHorizontalChange = (horizontalPosition - lastStrafePos);
+        double thetaChange = (leftChange - rightChange) / (wheelBase * (1440 / (3.8 * Math.PI)));
 
-        currentPos.x += (vf * Math.cos(Robot.getRobotAngleRad())) + (vh * Math.sin(Robot.getRobotAngleRad()));
-        currentPos.y += (vf * Math.sin(Robot.getRobotAngleRad())) + (vh * Math.cos(Robot.getRobotAngleRad()));
-        Robot.setRobotAngle(robotAngle);
-        Robot.setRobotPos(currentPos);
+        double horizontalChange = (rawHorizontalChange - (thetaChange * horizontalTicksPerDeg));
+        double robotAngle = Robot.getRobotAngleRad() + thetaChange;
 
-        lastLeftPos = left.getPosition();
-        lastRightPos = right.getPosition();
-        lastStrafePos = horizontal.getPosition();
+        double verticalChange = (leftChange + rightChange) / 2;
+
+        currentPos.x += ((verticalChange * Math.sin(robotAngle)) + (horizontalChange * Math.cos(robotAngle))) * ((radius*Math.PI) / 1440.0);
+        currentPos.y += ((verticalChange * Math.cos(robotAngle)) - (horizontalChange * Math.sin(robotAngle))) * ((radius*Math.PI) / 1440.0);
+
+        lastLeftPos = leftPosition;
+        lastRightPos = rightPosition;
+        lastStrafePos = horizontalPosition;
         lastTheta = robotAngle;
-
+        Robot.setRobotPos(currentPos);
+        Robot.setRobotAngle(robotAngle);
     }
 
     public void calibrate(double gain) {
@@ -67,29 +68,24 @@ public class Mecanum extends MotionProfile {
             Robot.drivetrain.move(0, gain);
 
         }
+        Robot.drivetrain.move(0, 0);
+        long lastTime = System.currentTimeMillis();
+        while(System.currentTimeMillis() - lastTime < 1000) {}
 
-        try {
-            String path = AppUtil.getInstance().getSettingsFile("robotconfig.properties").getAbsolutePath();
+        double angle = Robot.drivetrain.getZAngle();
+        double offset = Math.abs(left.getPosition()) + Math.abs(right.getPosition());
+        double offsetPerDegree = offset / angle;
+        double wheelBase = (2 * 90 * offsetPerDegree) / (Math.PI*(ticksPerRev));
+        double horizontalTicksPerDegree = horizontal.getPosition() / angle;
 
-            //set up file streams for writing to the properties file
-            FileOutputStream output = new FileOutputStream(path);
+        Robot.telemetry.addData("wheelBase", wheelBase);
+        Robot.telemetry.addData("horizontal per deg", horizontalTicksPerDegree);
+        Robot.telemetry.addData("left encoder", left.getPosition());
+        Robot.telemetry.addData("right encoder", right.getPosition());
+        Robot.telemetry.addData("horizontal encoder", horizontal.getPosition());
+        Robot.telemetry.addData("angle", angle);
 
-
-            double angle = Robot.drivetrain.getZAngle();
-            double offset = Math.abs(left.getPosition()) + Math.abs(right.getPosition());
-            double offsetPerDegree = offset / angle;
-            double wheelBase = (2 * 90 * offsetPerDegree) / (Math.PI*(ticksPerRev * (radius * 2.0 * Math.PI)));
-            double horizontalTicksPerDegree = horizontal.getPosition() / Math.toRadians(angle);
-            properties.setProperty("wheelBase", Double.toString(wheelBase));
-           properties.setProperty("rpd-horizontal", Double.toString(horizontalTicksPerDegree));
-           properties.store(output, null);
-
-
-            output.close();
-        }
-        catch(IOException e) {
-            e.printStackTrace();
-        }
+        Robot.telemetry.update();
     }
 
     public Odometer getLeft() {
@@ -141,11 +137,11 @@ public class Mecanum extends MotionProfile {
     }
 
     public double getHorizontalRevsPerDeg() {
-        return horizontalRevsPerDeg;
+        return horizontalTicksPerDeg;
     }
 
     public void setHorizontalRevsPerDeg(double horizontalRevsPerDeg) {
-        this.horizontalRevsPerDeg = horizontalRevsPerDeg;
+        this.horizontalTicksPerDeg = horizontalRevsPerDeg;
     }
 
 }

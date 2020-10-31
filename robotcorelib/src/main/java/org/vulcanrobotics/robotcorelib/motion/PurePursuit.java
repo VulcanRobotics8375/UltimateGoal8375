@@ -63,7 +63,7 @@ public class PurePursuit extends Controller {
         return followPoint;
     }
 
-    private void moveToPoint(PathPoint point) {
+    public void moveToPoint(PathPoint point) {
         double absoluteAngleToPoint = Math.atan2(point.y - Robot.getRobotY(), point.x - Robot.getRobotX());
 
         double robotAngleToPoint = point.angle - Robot.getRobotAngleRad();

@@ -16,7 +16,7 @@ public abstract class TeleOpPipeline extends LinearOpMode {
     public void teleopInit() {
         try {
             Robot.hardwareMap = hardwareMap;
-            //comment out these 2 lines in the competition version of the code
+            //comment out these lines in the competition version of the code
 //            if(dash) {
 //                Dashboard.connect(ip, 8375);
 //                while (!Dashboard.running) {}
@@ -45,7 +45,7 @@ public abstract class TeleOpPipeline extends LinearOpMode {
 
     public void teleopStop() {
         Dashboard.running = false;
-//        Robot.stopOdometryThread();
+        Robot.stopOdometryThread();
     }
 
 }

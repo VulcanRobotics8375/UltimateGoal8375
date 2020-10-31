@@ -22,11 +22,11 @@ public class Robot {
     /**
      * Robot Position
      */
-    private static Point robotPos = new Point();
+    private static volatile Point robotPos = new Point();
     /**
      * robot angle in Radians
      */
-    private static double robotAngle = 0;
+    private static volatile double robotAngle = 0;
     /**
      * Drivetrain subsystem, automatically assigned during init()
      */
@@ -126,17 +126,18 @@ public class Robot {
 
         config.init();
         List<Subsystem> subsystems = config.subsystems;
-        motionProfile = config.motionProfile;
 
         for (Subsystem sub : subsystems) {
+            telemetry.addData("initializing subsystem:", sub.toString());
+            telemetry.update();
             sub.hardwareMap = hardwareMap;
             sub.init();
             if(sub instanceof Drivetrain)
                 drivetrain = (Drivetrain) sub;
         }
 
-//        config.setupMotionProfile();
-
+        config.setupMotionProfile();
+        motionProfile = config.motionProfile;
 
     }
 
@@ -160,6 +161,7 @@ public class Robot {
         new Thread(new Runnable() {
             @Override
             public void run() {
+                motionProfile.start();
                 while(odometryRunning) {
                     motionProfile.update();
                 }
