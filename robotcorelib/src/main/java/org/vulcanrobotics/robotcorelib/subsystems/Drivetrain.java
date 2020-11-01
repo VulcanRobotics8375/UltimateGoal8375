@@ -79,11 +79,11 @@ public class Drivetrain extends Subsystem {
         turn = curveLinearJoystick(turn);
         double vd = Math.hypot(forward, strafe);
         double theta = Math.atan2(forward, strafe) - (Math.PI / 4);
-        double multiplier = 1.212;
+        double multiplier = 1.0;
         double turnPower = turn;
 
         if(highGoal) {
-            double absoluteAngleToTarget = Math.atan2(FIELD_SIZE_CM - Robot.getRobotY(), (FIELD_SIZE_CM - (1.5*TILE_SIZE_CM)) - Robot.getRobotX());
+            double absoluteAngleToTarget = Math.atan2(FIELD_SIZE_CM_Y - Robot.getRobotY(), (FIELD_SIZE_CM_X - (1.5*TILE_SIZE_CM)) - Robot.getRobotX());
 
             doingAutonomousTask = true;
             double error = absoluteAngleToTarget - Functions.angleWrap(Math.toRadians(getZAngle() + SHOOTING_DEGREE_OFFSET));
@@ -93,13 +93,13 @@ public class Drivetrain extends Subsystem {
             doingAutonomousTask = true;
             double absoluteAngleToTarget;
             if(powerShotLeft) {
-                absoluteAngleToTarget = Math.atan2(FIELD_SIZE_CM - Robot.getRobotY(), (FIELD_SIZE_CM - (2.75 * TILE_SIZE_CM)) - Robot.getRobotX());
+                absoluteAngleToTarget = Math.atan2(FIELD_SIZE_CM_Y - Robot.getRobotY(), (FIELD_SIZE_CM_X - (2.75 * TILE_SIZE_CM)) - Robot.getRobotX());
             }
             else if(powerShotCenter) {
-                absoluteAngleToTarget = Math.atan2(FIELD_SIZE_CM - Robot.getRobotY(), (FIELD_SIZE_CM - (2.5 * TILE_SIZE_CM)) - Robot.getRobotX());
+                absoluteAngleToTarget = Math.atan2(FIELD_SIZE_CM_Y - Robot.getRobotY(), (FIELD_SIZE_CM_X - (2.5 * TILE_SIZE_CM)) - Robot.getRobotX());
             }
             else {
-                absoluteAngleToTarget = Math.atan2(FIELD_SIZE_CM - Robot.getRobotY(), (FIELD_SIZE_CM - (2.25 * TILE_SIZE_CM)) - Robot.getRobotX());
+                absoluteAngleToTarget = Math.atan2(FIELD_SIZE_CM_Y - Robot.getRobotY(), (FIELD_SIZE_CM_X - (2.25 * TILE_SIZE_CM)) - Robot.getRobotX());
             }
 
            double error = absoluteAngleToTarget - Math.toRadians(getZAngle() + SHOOTING_DEGREE_OFFSET);
