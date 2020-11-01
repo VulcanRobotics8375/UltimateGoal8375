@@ -35,7 +35,7 @@ public class Mecanum extends MotionProfile {
 
     }
 
-    public void update() {
+    public synchronized void update() {
         Point currentPos = Robot.getRobotPos();
 
         double leftPosition = left.getPosition();
