@@ -30,7 +30,7 @@ public class Shooter extends Subsystem {
     public void init() {
         shooter = (DcMotorEx) hardwareMap.dcMotor.get("shooter");
         hopper = hardwareMap.servo.get("hopper");
-        shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        shooter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         shooter.setDirection((DcMotor.Direction.REVERSE));
         shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
     }
@@ -48,7 +48,7 @@ public class Shooter extends Subsystem {
             }
 
             shooterPowerLeft = ((-402.6 + Math.sqrt((Math.pow(402.6, 2)) + (-4.0) * (-192.0) * (-110.3 - shooterModeNum))) / (2.0 * (-192.0)));
-            shooterPowerRight = ((0.175) / 204.6) * ((Math.hypot((Constants.FIELD_SIZE_CM_X - (2.5*Constants.TILE_SIZE_CM))-Robot.getRobotX(), (Constants.FIELD_SIZE_CM_Y)-Robot.getRobotY())) - 152.4);
+            shooterPowerRight = ((0.15) / 204.6) * ((Math.hypot((Constants.FIELD_SIZE_CM_X - (2.5*Constants.TILE_SIZE_CM))-Robot.getRobotX(), (Constants.FIELD_SIZE_CM_Y)-Robot.getRobotY())) - 152.4);
 
             //Replace later to setVelocity
             //*((1620.0 / 60.0) * 103.6)
