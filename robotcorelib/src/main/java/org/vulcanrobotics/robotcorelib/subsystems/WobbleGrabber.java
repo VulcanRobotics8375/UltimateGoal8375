@@ -9,29 +9,47 @@ import org.vulcanrobotics.robotcorelib.robot.Robot;
 
 public class WobbleGrabber extends Subsystem {
     public Servo wobbleTurn;
-    private boolean wobbleButton;
-    private double wobbleOn = 1.0;
+    public Servo wobbleGrab;
+    private boolean wobbleTurnButton;
+    public boolean wobbleGrabButton;
+    private double wobbleTurnOn = -1.0;
+    private double wobbleGrabOn = 1.0;
+
     @Override
     public void init() {
 
     }
-    public void run(boolean wobbleButton) {
-        if(wobbleButton && !this.wobbleButton){
-            wobbleOn *= -1;
-            this.wobbleButton = true;
-        }
-        if(!wobbleButton && this.wobbleButton){
-            wobbleButton = false;
-        }
-        if(wobbleOn > 0){
-            wobbleTurn.setPosition(1);
-        }
-        else if(wobbleOn < 0){
-        }
-    }
 
-    @Override
-    public void stop() {
+    public void run(boolean wobbleTurnButton, boolean wobbleGrabButton) {
+        if (wobbleTurnButton && !this.wobbleTurnButton) {
+            wobbleTurnOn *= -1;
+            if (wobbleTurnOn > 0) {
+                wobbleTurn.setPosition(1);
+            }
+            if (wobbleTurnOn < 0) {
+                wobbleTurn.setPosition(0);
+            }
+            this.wobbleTurnButton = true;
+        }
+        if (!wobbleTurnButton && this.wobbleTurnButton) {
+            wobbleTurnButton = false;
+        }
+
+        if (wobbleGrabButton && !this.wobbleGrabButton) {
+            wobbleGrabOn *= -1;
+            if (wobbleGrabOn > 0) {
+                wobbleGrab.setPosition(1);
+            }
+            if (wobbleGrabOn < 0) {
+                wobbleGrab.setPosition(0);
+            }
+            this.wobbleTurnButton = true;
+        }
+        if (!wobbleGrabButton && this.wobbleGrabButton) {
+            wobbleGrabButton = false;
+        }
 
     }
+        @Override
+        public void stop() {}
 }

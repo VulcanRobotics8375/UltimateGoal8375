@@ -7,7 +7,6 @@ import static org.vulcanrobotics.robotcorelib.framework.Constants.*;
 public class Intake extends Subsystem {
     private DcMotor transfer, intake;
     private boolean intakeButton;
-    private double intakePower = 1.0;
 
     @Override
     public void init() {
@@ -20,12 +19,14 @@ public class Intake extends Subsystem {
         if (intakeButton) {
             transfer.setPower(-1);
             intake.setPower(1);
-        } else if (reverse) {
+        }
 
+        else if (reverse) {
             transfer.setPower(1);
             intake.setPower(-1);
+        }
 
-        } else {
+        else {
             transfer.setPower(0);
             intake.setPower(0);
         }
