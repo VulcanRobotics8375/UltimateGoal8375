@@ -51,7 +51,8 @@ public class Shooter extends Subsystem {
             shooterPowerRight = ((0.15) / 204.6) * ((Math.hypot((Constants.FIELD_SIZE_CM_X - (2.5*Constants.TILE_SIZE_CM))-Robot.getRobotX(), (Constants.FIELD_SIZE_CM_Y)-Robot.getRobotY())) - 152.4);
 
             //Replace later to setVelocity
-            shooterPower = (shooterPowerLeft + shooterPowerRight)*((1620.0 / 60.0) * 103.6);;
+            //*((1620.0 / 60.0) * 103.6)
+            shooterPower = (shooterPowerLeft + shooterPowerRight);;
             shooter.setVelocity(shooterPower);
 
 
@@ -70,7 +71,7 @@ public class Shooter extends Subsystem {
                 hopperBeforeTime = System.currentTimeMillis();
             }
             if(hopperOut) {
-                hopper.setPosition(.5);
+                hopper.setPosition(.4);
             }
             if (!hopperOut){
                 hopper.setPosition(0);
