@@ -3,7 +3,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
-
 import org.vulcanrobotics.robotcorelib.framework.Constants;
 import org.vulcanrobotics.robotcorelib.robot.Robot;
 
@@ -11,7 +10,8 @@ public class Shooter extends Subsystem {
     public DcMotorEx shooter;
     public Servo hopper;
     private boolean hopperButton;
-    private int hopperOn = 1;
+    private double a = 402.6;
+    private double b = 192.0;
     private double hopperBeforeTime;
     private boolean hopperOut;
     private boolean shooterButton;
@@ -26,6 +26,7 @@ public class Shooter extends Subsystem {
 
     public Shooter() {
     }
+
     @Override
     public void init() {
         shooter = (DcMotorEx) hardwareMap.dcMotor.get("shooter");
@@ -35,53 +36,65 @@ public class Shooter extends Subsystem {
         shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
     }
     public void run(boolean shooterButton, boolean hopperButton, boolean shooterMode) {
+
         if (shooterButton && !this.shooterButton) {
             shooterOn *= -1;
             this.shooterButton = true;
         }
+
         if (!shooterButton && this.shooterButton) {
             this.shooterButton = false;
         }
+
         if (shooterOn > 0) {
+
             if (!shooterMode) {
                 shooterModeNum = 73.6;
             }
 
-            shooterPowerLeft = ((-402.6 + Math.sqrt((Math.pow(402.6, 2)) + (-4.0) * (-192.0) * (-110.3 - shooterModeNum))) / (2.0 * (-192.0)));
+            shooterPowerLeft = ((-a + Math.sqrt((Math.pow(a, 2)) + (-4.0) * (-b) * (-110.3 - shooterModeNum))) / (2.0 * (-b)));
             shooterPowerRight = ((0.15) / 204.6) * ((Math.hypot((Constants.FIELD_SIZE_CM_X - (2.5*Constants.TILE_SIZE_CM))-Robot.getRobotX(), (Constants.FIELD_SIZE_CM_Y)-Robot.getRobotY())) - 152.4);
 
-            //Replace later to setVelocity
+            //Replace setVelocity equation
             //*((1620.0 / 60.0) * 103.6)
             shooterPower = (shooterPowerLeft + shooterPowerRight);;
             shooter.setPower(shooterPower);
-
             shooterModeNum = 88.9;
-        } else if (shooterOn < 0) {
+        }
+
+        else if (shooterOn < 0) {
             shooter.setPower(0);
         }
 
         if (hopperButton) {
+
             if(!this.hopperButton){
                 this.hopperButton = true;
                 hopperBeforeTime = System.currentTimeMillis();
             }
+
             if ((System.currentTimeMillis() - hopperBeforeTime) >= 350) {
                 hopperOut = !hopperOut;
                 hopperBeforeTime = System.currentTimeMillis();
             }
+
             if(hopperOut) {
                 hopper.setPosition(.4);
             }
+
             if (!hopperOut){
                 hopper.setPosition(0);
             }
         }
+
         else {
             hopper.setPosition(0);
         }
+
         if(!hopperButton && this.hopperButton){
             this.hopperButton = false;
         }
+
     }
     public void shoot(){
 

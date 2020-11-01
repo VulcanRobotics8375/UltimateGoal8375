@@ -8,7 +8,7 @@ import org.vulcanrobotics.robotcorelib.framework.Constants;
 import org.vulcanrobotics.robotcorelib.robot.Robot;
 
 public class WobbleGrabber extends Subsystem {
-    public CRServo wobbleGrabber;
+    public Servo wobbleTurn;
     private boolean wobbleButton;
     private double wobbleOn = 1.0;
     @Override
@@ -24,6 +24,7 @@ public class WobbleGrabber extends Subsystem {
             wobbleButton = false;
         }
         if(wobbleOn > 0){
+            wobbleTurn.setPosition(1);
         }
         else if(wobbleOn < 0){
         }
