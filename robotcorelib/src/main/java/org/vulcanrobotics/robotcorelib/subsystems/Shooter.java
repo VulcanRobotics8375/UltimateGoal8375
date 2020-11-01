@@ -21,7 +21,7 @@ public class Shooter extends Subsystem {
     private double shooterModeNum = 88.9;
     private double shooterPowerLeft;
     private double shooterPowerRight;
-    private int shooterOn = 1;
+    private int shooterOn = -1;
 
     public Shooter() {
     }
