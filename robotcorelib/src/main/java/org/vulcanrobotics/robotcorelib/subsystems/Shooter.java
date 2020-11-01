@@ -79,11 +79,11 @@ public class Shooter extends Subsystem {
             }
 
             if(hopperOut) {
-                hopper.setPosition(.4);
+                hopper.setPosition(1);
             }
 
             if (!hopperOut){
-                hopper.setPosition(0);
+                hopper.setPosition(.6);
             }
         }
 
