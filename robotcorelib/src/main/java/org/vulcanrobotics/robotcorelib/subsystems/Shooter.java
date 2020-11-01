@@ -3,6 +3,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.vulcanrobotics.robotcorelib.framework.Constants;
 import org.vulcanrobotics.robotcorelib.robot.Robot;
 
 public class Shooter extends Subsystem {
@@ -11,8 +12,7 @@ public class Shooter extends Subsystem {
     private boolean hopperButton;
     private int hopperOn = 1;
     private double hopperBeforeTime;
-    private double hopperAfterTime;
-    private double hopperTime;
+    private boolean hopperOut;
     private boolean shooterButton;
     //lowest shooter power when closest is 0.8, highest shooter power when furthest is
     public double shooterPower;
@@ -45,8 +45,9 @@ public class Shooter extends Subsystem {
             if (!shooterMode) {
                 shooterModeNum = 73.6;
             }
+
             shooterPowerLeft = ((-402.6 + Math.sqrt((Math.pow(402.6, 2)) + (-4.0) * (-192.0) * (-110.3 - shooterModeNum))) / (2.0 * (-192.0)));
-            shooterPowerRight = ((0.2) / 204.6) * ((Math.hypot(Robot.getRobotX(), Robot.getRobotY())) - 152.4);
+            shooterPowerRight = ((0.2) / 204.6) * ((Math.hypot((Constants.FIELD_SIZE_CM_X - (-2.5*Constants.TILE_SIZE_CM))-Robot.getRobotX(), (Constants.FIELD_SIZE_CM_Y - (-2.5*Constants.TILE_SIZE_CM))-Robot.getRobotY())) - 152.4);
             shooterPower = shooterPowerLeft + shooterPowerRight;
             shooter.setPower(shooterPower);
 
@@ -59,21 +60,29 @@ public class Shooter extends Subsystem {
         } else if (shooterOn < 0) {
             shooter.setPower(0);
         }
+
+
         if (hopperButton && !this.hopperButton) {
             hopperOn *= -1;
+            hopperBeforeTime = System.currentTimeMillis();
             this.hopperButton = true;
         }
         if (!hopperButton && this.hopperButton) {
             this.hopperButton = false;
         }
         if (hopperOn > 0) {
-            hopperBeforeTime = System.currentTimeMillis();
-            hopper.setPosition(1.0);
-            if (System.currentTimeMillis() - hopperBeforeTime >= 350) {
-                hopper.setPosition(0.0);
-                hopperTime = 0;
+            if(hopperOut) {
+                hopper.setPosition(1.0);
             }
-        } else if (hopperOn < 0) {
+            if ((System.currentTimeMillis() - hopperBeforeTime) >= 350) {
+                hopperOut = !hopperOut;
+            }
+            if (!hopperOut){
+                hopper.setPosition(0);
+                hopperBeforeTime = System.currentTimeMillis();
+            }
+        }
+        else if (hopperOn < 0) {
             hopper.setPosition(0);
         }
     }
