@@ -23,31 +23,34 @@ public class WobbleGrabber extends Subsystem {
     public void run(boolean wobbleTurnButton, boolean wobbleGrabButton) {
         if (wobbleTurnButton && !this.wobbleTurnButton) {
             wobbleTurnOn *= -1;
-            if (wobbleTurnOn > 0) {
-                wobbleTurn.setPosition(1);
-            }
-            if (wobbleTurnOn < 0) {
-                wobbleTurn.setPosition(0);
-            }
             this.wobbleTurnButton = true;
         }
         if (!wobbleTurnButton && this.wobbleTurnButton) {
             wobbleTurnButton = false;
         }
+        if (wobbleTurnOn > 0) {
+            wobbleTurn.setPosition(1);
+        }
+        else if (wobbleTurnOn < 0) {
+            wobbleTurn.setPosition(0);
+        }
+
 
         if (wobbleGrabButton && !this.wobbleGrabButton) {
             wobbleGrabOn *= -1;
-            if (wobbleGrabOn > 0) {
-                wobbleGrab.setPosition(1);
-            }
-            if (wobbleGrabOn < 0) {
-                wobbleGrab.setPosition(0);
-            }
             this.wobbleTurnButton = true;
         }
         if (!wobbleGrabButton && this.wobbleGrabButton) {
             wobbleGrabButton = false;
         }
+        if (wobbleGrabOn > 0) {
+            wobbleGrab.setPosition(1);
+        }
+       else if (wobbleGrabOn < 0) {
+            wobbleGrab.setPosition(0);
+        }
+
+
 
     }
         @Override

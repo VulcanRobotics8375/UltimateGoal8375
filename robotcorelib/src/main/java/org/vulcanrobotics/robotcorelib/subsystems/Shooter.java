@@ -66,7 +66,7 @@ public class Shooter extends Subsystem {
         }
 
         if (hopperButton) {
-            hopper.setPower(-1);
+            hopper.setPower(1);
         }
         if (!hopperButton) {
             hopper.setPower(0);
