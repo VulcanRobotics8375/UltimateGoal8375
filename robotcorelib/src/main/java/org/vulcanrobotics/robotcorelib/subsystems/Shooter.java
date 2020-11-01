@@ -66,12 +66,12 @@ public class Shooter extends Subsystem {
                 this.hopperButton = true;
                 hopperBeforeTime = System.currentTimeMillis();
             }
-            if ((System.currentTimeMillis() - hopperBeforeTime) >= 300) {
+            if ((System.currentTimeMillis() - hopperBeforeTime) >= 350) {
                 hopperOut = !hopperOut;
                 hopperBeforeTime = System.currentTimeMillis();
             }
             if(hopperOut) {
-                hopper.setPosition(.3);
+                hopper.setPosition(.5);
             }
             if (!hopperOut){
                 hopper.setPosition(0);
