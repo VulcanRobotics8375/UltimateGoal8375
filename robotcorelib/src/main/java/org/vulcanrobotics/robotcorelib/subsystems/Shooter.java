@@ -1,5 +1,6 @@
 package org.vulcanrobotics.robotcorelib.subsystems;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -7,7 +8,7 @@ import org.vulcanrobotics.robotcorelib.framework.Constants;
 import org.vulcanrobotics.robotcorelib.robot.Robot;
 
 public class Shooter extends Subsystem {
-    public DcMotor shooter;
+    public DcMotorEx shooter;
     public Servo hopper;
     private boolean hopperButton;
     private int hopperOn = 1;
@@ -27,7 +28,7 @@ public class Shooter extends Subsystem {
     }
     @Override
     public void init() {
-        shooter = hardwareMap.dcMotor.get("shooter");
+        shooter = (DcMotorEx) hardwareMap.dcMotor.get("shooter");
         hopper = hardwareMap.servo.get("hopper");
         shooter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         shooter.setDirection((DcMotor.Direction.REVERSE));
@@ -48,13 +49,11 @@ public class Shooter extends Subsystem {
 
             shooterPowerLeft = ((-402.6 + Math.sqrt((Math.pow(402.6, 2)) + (-4.0) * (-192.0) * (-110.3 - shooterModeNum))) / (2.0 * (-192.0)));
             shooterPowerRight = ((0.15) / 204.6) * ((Math.hypot((Constants.FIELD_SIZE_CM_X - (2.5*Constants.TILE_SIZE_CM))-Robot.getRobotX(), (Constants.FIELD_SIZE_CM_Y)-Robot.getRobotY())) - 152.4);
-            shooterPower = shooterPowerLeft + shooterPowerRight;
-            shooter.setPower(shooterPower);
 
             //Replace later to setVelocity
-           /* shooterPower = (shooterPowerLeft + shooterPowerRight)*((1620.0 / 60.0) * 103.6);;
+            shooterPower = (shooterPowerLeft + shooterPowerRight)*((1620.0 / 60.0) * 103.6);;
             shooter.setVelocity(shooterPower);
-            */
+
 
             shooterModeNum = 88.9;
         } else if (shooterOn < 0) {
