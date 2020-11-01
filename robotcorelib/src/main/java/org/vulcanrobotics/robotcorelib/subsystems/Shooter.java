@@ -61,29 +61,27 @@ public class Shooter extends Subsystem {
             shooter.setPower(0);
         }
 
-
-        if (hopperButton && !this.hopperButton) {
-            hopperOn *= -1;
-            hopperBeforeTime = System.currentTimeMillis();
-            this.hopperButton = true;
-        }
-        if (!hopperButton && this.hopperButton) {
-            this.hopperButton = false;
-        }
-        if (hopperOn > 0) {
+        if (hopperButton) {
+            if(!this.hopperButton){
+                this.hopperButton = true;
+                hopperBeforeTime = System.currentTimeMillis();
+            }
+            if ((System.currentTimeMillis() - hopperBeforeTime) >= 200) {
+                hopperOut = !hopperOut;
+                hopperBeforeTime = System.currentTimeMillis();
+            }
             if(hopperOut) {
                 hopper.setPosition(1.0);
             }
-            if ((System.currentTimeMillis() - hopperBeforeTime) >= 350) {
-                hopperOut = !hopperOut;
-            }
             if (!hopperOut){
                 hopper.setPosition(0);
-                hopperBeforeTime = System.currentTimeMillis();
             }
         }
-        else if (hopperOn < 0) {
+        else {
             hopper.setPosition(0);
+        }
+        if(!hopperButton && this.hopperButton){
+            this.hopperButton = false;
         }
     }
     public void shoot(){
