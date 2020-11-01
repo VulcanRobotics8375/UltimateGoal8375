@@ -46,7 +46,7 @@ public class Shooter extends Subsystem {
                 shooterModeNum = 73.6;
             }
             shooterPowerLeft = ((-402.6 + Math.sqrt((Math.pow(402.6, 2)) + (-4.0) * (-192.0) * (-110.3 - shooterModeNum))) / (2.0 * (-192.0)));
-            shooterPowerRight = ((357.4 - 152.4) / 204.6) * ((Math.hypot(Robot.getRobotX(), Robot.getRobotY())) - 152.4);
+            shooterPowerRight = ((0.2) / 204.6) * ((Math.hypot(Robot.getRobotX(), Robot.getRobotY())) - 152.4);
             shooterPower = shooterPowerLeft + shooterPowerRight;
             shooter.setPower(shooterPower);
 
