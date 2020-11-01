@@ -53,23 +53,22 @@ public class Shooter extends Subsystem {
             }
 
             shooterPowerLeft = ((-a + Math.sqrt((Math.pow(a, 2)) + (-4.0) * (-b) * (-110.3 - shooterModeNum))) / (2.0 * (-b)));
-            shooterPowerRight = ((0.15) / 204.6) * ((Math.hypot((Constants.FIELD_SIZE_CM_X - (2.5*Constants.TILE_SIZE_CM))-Robot.getRobotX(), (Constants.FIELD_SIZE_CM_Y)-Robot.getRobotY())) - 152.4);
+            shooterPowerRight = ((0.15) / 204.6) * ((Math.hypot((Constants.FIELD_SIZE_CM_X - (2.5 * Constants.TILE_SIZE_CM)) - Robot.getRobotX(), (Constants.FIELD_SIZE_CM_Y) - Robot.getRobotY())) - 152.4);
 
             //Replace setVelocity equation
             //*((1620.0 / 60.0) * 103.6)
-            shooterPower = (shooterPowerLeft + shooterPowerRight);;
+            shooterPower = (shooterPowerLeft + shooterPowerRight);
+            ;
             shooter.setPower(shooterPower);
             shooterModeNum = 88.9;
-        }
-
-        else if (shooterOn < 0) {
+        } else if (shooterOn < 0) {
             shooter.setPower(0);
         }
 
-        if(hopperButton){
+        if (hopperButton) {
             hopper.setPower(-1);
         }
-        if(!hopperButton){
+        if (!hopperButton) {
             hopper.setPower(0);
         }
 /*
@@ -105,6 +104,7 @@ public class Shooter extends Subsystem {
     }
 
  */
+    }
     public void shoot(){
 
     }
