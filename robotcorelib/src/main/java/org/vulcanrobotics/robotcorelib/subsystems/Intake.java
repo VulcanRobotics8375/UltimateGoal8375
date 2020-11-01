@@ -18,11 +18,11 @@ public class Intake extends Subsystem {
     public void run(boolean intakeButton, boolean reverse) {
         //yeet. Im not throwin away my shot
         if (intakeButton) {
-            transfer.setPower(1);
+            transfer.setPower(-1);
             intake.setPower(1);
         } else if (reverse) {
 
-            transfer.setPower(-1);
+            transfer.setPower(1);
             intake.setPower(-1);
 
         } else {
