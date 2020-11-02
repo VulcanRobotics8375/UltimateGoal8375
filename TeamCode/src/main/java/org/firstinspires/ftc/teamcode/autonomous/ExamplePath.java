@@ -12,7 +12,7 @@ import org.vulcanrobotics.robotcorelib.robot.Robot;
 
 import java.util.ArrayList;
 
-@Disabled
+//@Disabled
 @Autonomous(name = "example path", group = "example")
 public class ExamplePath extends AutoPipeline {
 
@@ -28,6 +28,8 @@ public class ExamplePath extends AutoPipeline {
             //defining the data structure for path points
             ArrayList<ArrayList<PathPoint>> sections = new ArrayList<>();
             ArrayList<PathPoint> section1 = new ArrayList<>();
+            section1.add(new PathPoint(10, 10, 1, 1, 1, 0));
+            sections.add(section1);
 
             //path points here
 
@@ -42,9 +44,9 @@ public class ExamplePath extends AutoPipeline {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    while(!doneShooting) {
-
-                    }
+//                    while(!doneShooting) {
+//
+//                    }
                     controller.run();
                 }
             }).start();
@@ -54,10 +56,11 @@ public class ExamplePath extends AutoPipeline {
                 PathPoint currentPoint = controller.getCurrentPoint();
                 //subsystem code here, triggers are currentPoint and then timing
 
-
                 if(isStopRequested())
                     break;
             }
+
+            controller.stop = true;
 
         } catch (RobotCoreLibException e) {
             e.printStackTrace();

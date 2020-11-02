@@ -19,7 +19,7 @@ public class Constants {
     public static final double ODOMETRY_WHEELBASE = 36.42;
     public static final double ODOMETRY_RADIUS = 3.8;
     public static final double ODOMETRY_HORIZONTAL_TICKS_PER_REV = 18.3; //TODO update this
-    public static final double SHOOTING_DEGREE_OFFSET = 103;
+    public static final double SHOOTING_DEGREE_OFFSET = 90+10;
     public static final double ODOMETRY_COUNTS_PER_CM = 1440 / 3.8;
 
 

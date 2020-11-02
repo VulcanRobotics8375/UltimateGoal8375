@@ -72,7 +72,7 @@ public class PurePursuit extends Controller {
 
         double turnSpeed = turnPID.getOutput();
 
-        Robot.getComponents().drivetrain.fieldCentricMove(Math.cos(absoluteAngleToPoint) * point.speed, Math.sin(absoluteAngleToPoint) * point.speed, turnSpeed);
+        Robot.drivetrain.fieldCentricMove(Math.cos(absoluteAngleToPoint) * point.speed, Math.sin(absoluteAngleToPoint) * point.speed, turnSpeed);
     }
 
 }
