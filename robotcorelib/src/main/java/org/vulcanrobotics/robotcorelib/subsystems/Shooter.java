@@ -63,6 +63,7 @@ public class Shooter extends Subsystem {
             shooterModeNum = 88.9;
         } else if (shooterOn < 0) {
             shooter.setPower(0);
+            pidRunning = false;
         }
 
 
@@ -79,7 +80,7 @@ public class Shooter extends Subsystem {
             }
 
             if(hopperOut) {
-                hopper.setPosition(.35;
+                hopper.setPosition(.35);
             }
 
             if (!hopperOut){
@@ -97,6 +98,41 @@ public class Shooter extends Subsystem {
 
     }
 
+    private long lastPidTime;
+    private boolean pidRunning;
+    private double lastError, integral = 0, lastPosition;
+
+    public void setShooterVelocity(double power) {
+        if(!pidRunning) {
+            lastPidTime = System.currentTimeMillis();
+            integral = 0;
+            lastError = 0;
+            pidRunning = true;
+        }
+        //input from 0 to 1
+
+        long time = System.currentTimeMillis() - lastPidTime;
+
+        double conversion = ((1620.0 / 60.0) * 103.6);
+
+        double targetSpeed = power * conversion;
+        double currentSpeed = (shooter.getCurrentPosition() - lastPosition) / (time / 1000.0);
+        double error = (targetSpeed - currentSpeed) / (conversion);
+        integral += ((error + lastError) / 2) / (time / 1000.0);
+        double derivative = (error - lastError) / (time / 1000.0);
+
+        double kp = 1;
+        double ki = 1;
+        double kd = 1;
+        double output = (kp * error) + (ki * integral) + (kd * derivative);
+        
+        shooter.setPower(output);
+
+        lastError = error;
+        lastPosition = shooter.getCurrentPosition();
+
+
+    }
 
 
     public void shoot(){
