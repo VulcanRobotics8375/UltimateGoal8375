@@ -131,6 +131,7 @@ public class Robot {
             telemetry.addData("initializing subsystem:", sub.toString());
             telemetry.update();
             sub.hardwareMap = hardwareMap;
+            sub.setTelemetry(telemetry);
             sub.init();
             if(sub instanceof Drivetrain)
                 drivetrain = (Drivetrain) sub;
@@ -139,6 +140,12 @@ public class Robot {
         config.setupMotionProfile();
         motionProfile = config.motionProfile;
 
+    }
+
+    public static void init(HardwareMap hardwareMap, Telemetry telemetry) throws RobotCoreLibException {
+        Robot.hardwareMap = hardwareMap;
+        Robot.setTelemetry(telemetry);
+        Robot.init();
     }
 
 

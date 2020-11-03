@@ -16,9 +16,9 @@ public class Constants {
     public static final double INTAKE_LEFT_POWER = 1;
     public static final double INTAKE_RIGHT_POWER = 1;
     public static final double ODOMETRY_TICKS_PER_REV = 1440;
-    public static final double ODOMETRY_WHEELBASE = 36.42;
+    public static final double ODOMETRY_WHEELBASE = 31.42; // experimental constant, theoretical constant is 36.42
     public static final double ODOMETRY_RADIUS = 3.8;
-    public static final double ODOMETRY_HORIZONTAL_TICKS_PER_REV = 18.3; //TODO update this
+    public static final double ODOMETRY_HORIZONTAL_TICKS_PER_REV = 18.3;
     public static final double SHOOTING_DEGREE_OFFSET = 90+10;
     public static final double ODOMETRY_COUNTS_PER_CM = 1440 / 3.8;
 

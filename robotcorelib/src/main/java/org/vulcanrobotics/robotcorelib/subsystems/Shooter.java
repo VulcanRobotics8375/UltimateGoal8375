@@ -36,6 +36,8 @@ public class Shooter extends Subsystem {
         shooter.setDirection((DcMotor.Direction.REVERSE));
         shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
     }
+
+    //TODO put the shooter power calculation in a separate method to clean up some stuff
     public void run(boolean shooterButton, boolean hopperButton, boolean shooterMode) {
 
         if (shooterButton && !this.shooterButton) {

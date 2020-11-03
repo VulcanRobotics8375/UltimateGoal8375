@@ -17,5 +17,8 @@ public abstract class Subsystem {
 
     public abstract void stop();
 
+    public void setTelemetry(Telemetry telemetry) {
+        this.telemetry = telemetry;
+    }
 
 }
