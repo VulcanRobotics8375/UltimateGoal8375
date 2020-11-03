@@ -31,6 +31,7 @@ public class Mecanum extends MotionProfile {
         wheelBase = Constants.ODOMETRY_WHEELBASE;
         ticksPerRev = Constants.ODOMETRY_TICKS_PER_REV;
         horizontalTicksPerDeg = Constants.ODOMETRY_HORIZONTAL_TICKS_PER_REV;
+        countsPerCm = Constants.ODOMETRY_COUNTS_PER_CM;
 
 
     }
@@ -45,15 +46,15 @@ public class Mecanum extends MotionProfile {
         double leftChange = (leftPosition - lastLeftPos);
         double rightChange = (rightPosition - lastRightPos);
         double rawHorizontalChange = (horizontalPosition - lastStrafePos);
-        double thetaChange = (leftChange - rightChange) / (wheelBase * (1440 / (3.8 * Math.PI)));
+        double thetaChange = (leftChange - rightChange) / (wheelBase * countsPerCm);
 
         double horizontalChange = (rawHorizontalChange - (Math.toDegrees(thetaChange) * horizontalTicksPerDeg));
         double robotAngle = Robot.getRobotAngleRad() + thetaChange;
 
         double verticalChange = (leftChange + rightChange) / 2;
 
-        currentPos.x += ((verticalChange * Math.sin(robotAngle)) + (horizontalChange * Math.cos(robotAngle))) * ((radius*Math.PI) / 1440.0);
-        currentPos.y += ((verticalChange * Math.cos(robotAngle)) - (horizontalChange * Math.sin(robotAngle))) * ((radius*Math.PI) / 1440.0);
+        currentPos.x += ((verticalChange * Math.sin(robotAngle)) + (horizontalChange * Math.cos(robotAngle))) * (1 / countsPerCm);
+        currentPos.y += ((verticalChange * Math.cos(robotAngle)) - (horizontalChange * Math.sin(robotAngle))) * (1 / countsPerCm);
 
         lastLeftPos = leftPosition;
         lastRightPos = rightPosition;
@@ -75,7 +76,7 @@ public class Mecanum extends MotionProfile {
         double angle = Robot.drivetrain.getZAngle();
         double offset = Math.abs(left.getPosition()) + Math.abs(right.getPosition());
         double offsetPerDegree = offset / angle;
-        double wheelBase = (2 * 90 * offsetPerDegree) / (Math.PI*(ticksPerRev));
+        double wheelBase = (2.0 * 90 * offsetPerDegree) / (Math.PI*(countsPerCm));
         double horizontalTicksPerDegree = horizontal.getPosition() / angle;
 
         Robot.telemetry.addData("wheelBase", wheelBase);
