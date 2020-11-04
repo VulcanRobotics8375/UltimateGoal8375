@@ -75,7 +75,7 @@ public class Drivetrain extends Subsystem {
     public void mecanumDrive(double forward, double turn, double strafe, boolean slow, boolean highGoal, boolean powerShotLeft, boolean powerShotCenter, boolean powerShotRight) {
         forward = curveLinearJoystick(forward);
         strafe = curveLinearJoystick(strafe);
-        turn = curveLinearJoystick(turn);
+//        turn = curveLinearJoystick(turn);
         double vd = Math.hypot(forward, strafe);
         double theta = Math.atan2(forward, strafe) - (Math.PI / 4);
         double multiplier = 1.0;
@@ -88,28 +88,42 @@ public class Drivetrain extends Subsystem {
             double offset = ((((SHOOTING_OFFSET_MIN - SHOOTING_OFFSET_MAX) / 204.6) * (distanceToTarget - 152.4)) + SHOOTING_OFFSET_MAX) + SHOOTING_DEGREE_BIAS;
 
             doingAutonomousTask = true;
-            double error = absoluteAngleToTarget - Functions.angleWrap(Math.toRadians(getZAngle() + offset));
-            turnPower = error * SHOOTER_AUTO_ALIGN_GAIN;
+            double error = Functions.angleWrap(Math.toRadians(getZAngle() + offset));
+            turnPid.run(absoluteAngleToTarget, error);
+            turnPower = turnPid.getOutput();
 
         } else if(powerShotCenter || powerShotLeft || powerShotRight) {
             doingAutonomousTask = true;
             double absoluteAngleToTarget;
+            double distanceToTarget;
+            double offset;
             if(powerShotLeft) {
                 absoluteAngleToTarget = Math.atan2(FIELD_SIZE_CM_Y - Robot.getRobotY(), (FIELD_SIZE_CM_X - (2.75 * TILE_SIZE_CM)) - Robot.getRobotX());
+                distanceToTarget = Math.hypot((FIELD_SIZE_CM_X - (2.75*TILE_SIZE_CM)) - Robot.getRobotX(), (FIELD_SIZE_CM_Y - Robot.getRobotY()));
+
+                offset = ((((SHOOTING_OFFSET_MIN - SHOOTING_OFFSET_MAX) / 204.6) * (distanceToTarget - 152.4)) + SHOOTING_OFFSET_MAX) + SHOOTING_DEGREE_BIAS;
             }
             else if(powerShotCenter) {
                 absoluteAngleToTarget = Math.atan2(FIELD_SIZE_CM_Y - Robot.getRobotY(), (FIELD_SIZE_CM_X - (2.5 * TILE_SIZE_CM)) - Robot.getRobotX());
+                distanceToTarget = Math.hypot((FIELD_SIZE_CM_X - (2.5*TILE_SIZE_CM)) - Robot.getRobotX(), (FIELD_SIZE_CM_Y - Robot.getRobotY()));
+
+                offset = ((((SHOOTING_OFFSET_MIN - SHOOTING_OFFSET_MAX) / 204.6) * (distanceToTarget - 152.4)) + SHOOTING_OFFSET_MAX) + SHOOTING_DEGREE_BIAS;
             }
             else {
                 absoluteAngleToTarget = Math.atan2(FIELD_SIZE_CM_Y - Robot.getRobotY(), (FIELD_SIZE_CM_X - (2.25 * TILE_SIZE_CM)) - Robot.getRobotX());
+                distanceToTarget = Math.hypot((FIELD_SIZE_CM_X - (2.25*TILE_SIZE_CM)) - Robot.getRobotX(), (FIELD_SIZE_CM_Y - Robot.getRobotY()));
+
+                offset = ((((SHOOTING_OFFSET_MIN - SHOOTING_OFFSET_MAX) / 204.6) * (distanceToTarget - 152.4)) + SHOOTING_OFFSET_MAX) + SHOOTING_DEGREE_BIAS;
             }
 
-           double error = absoluteAngleToTarget - Math.toRadians(getZAngle() + SHOOTING_DEGREE_BIAS);
-           turnPower = error * SHOOTER_AUTO_ALIGN_GAIN;
+            double error = Math.toRadians(getZAngle() + offset);
+            turnPid.run(absoluteAngleToTarget, error);
+            turnPower = turnPid.getOutput();
 
         }
         else {
             doingAutonomousTask = false;
+            turnPid.reset();
         }
 
         double[] v = {

@@ -24,12 +24,18 @@ public class PID {
        double timeElapsed = timer.getDelta();
 
         double error = target - value;
-        integral += ((error + lastError) / 2) * timeElapsed;
-        double derivative = (error - lastError) * timeElapsed;
+        integral += ((error + lastError) / 2);
+        double derivative = (error - lastError);
 
         output = Kp * error + Ki * integral + Kd * derivative;
 
         lastError = error;
+    }
+
+    public void reset() {
+        lastError = 0;
+        integral = 0;
+        output = 0;
     }
 
     public double getOutput() {
