@@ -4,7 +4,6 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-import org.firstinspires.ftc.robotcore.external.Function;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
@@ -84,9 +83,12 @@ public class Drivetrain extends Subsystem {
 
         if(highGoal) {
             double absoluteAngleToTarget = Math.atan2(FIELD_SIZE_CM_Y - Robot.getRobotY(), (FIELD_SIZE_CM_X - (1.5*TILE_SIZE_CM)) - Robot.getRobotX());
+            double distanceToTarget = Math.hypot((FIELD_SIZE_CM_X - (1.5*TILE_SIZE_CM)) - Robot.getRobotX(), (FIELD_SIZE_CM_Y - Robot.getRobotY()));
+
+            double offset = ((((SHOOTING_OFFSET_MIN - SHOOTING_OFFSET_MAX) / 204.6) * (distanceToTarget - 152.4)) + SHOOTING_OFFSET_MAX) + SHOOTING_DEGREE_BIAS;
 
             doingAutonomousTask = true;
-            double error = absoluteAngleToTarget - Functions.angleWrap(Math.toRadians(getZAngle() + SHOOTING_DEGREE_OFFSET));
+            double error = absoluteAngleToTarget - Functions.angleWrap(Math.toRadians(getZAngle() + offset));
             turnPower = error * SHOOTER_AUTO_ALIGN_GAIN;
 
         } else if(powerShotCenter || powerShotLeft || powerShotRight) {
@@ -102,7 +104,7 @@ public class Drivetrain extends Subsystem {
                 absoluteAngleToTarget = Math.atan2(FIELD_SIZE_CM_Y - Robot.getRobotY(), (FIELD_SIZE_CM_X - (2.25 * TILE_SIZE_CM)) - Robot.getRobotX());
             }
 
-           double error = absoluteAngleToTarget - Math.toRadians(getZAngle() + SHOOTING_DEGREE_OFFSET);
+           double error = absoluteAngleToTarget - Math.toRadians(getZAngle() + SHOOTING_DEGREE_BIAS);
            turnPower = error * SHOOTER_AUTO_ALIGN_GAIN;
 
         }
