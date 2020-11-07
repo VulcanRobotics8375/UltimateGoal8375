@@ -14,6 +14,7 @@ public class Intake extends Subsystem {
         intake = hardwareMap.dcMotor.get("roller_intake");
     }
 
+    //TODO add sensor code/ring counter for intake stage 1
     public void run(boolean intakeButton, boolean reverse) {
         //yeet. Im not throwin away my shot
         if (intakeButton) {

@@ -36,10 +36,12 @@ public class ExamplePath extends AutoPipeline {
             //initialize the Pipeline Controller with whatever controller we are using
             controller = new PurePursuit(sections);
 
+            PurePursuit internalController = (PurePursuit) controller;
+
             waitForStart();
 
             //interrupt handler makes sure the robot stops when the stop button is pressed.
-            startInterruptHandler();
+//            startInterruptHandler();
 
             new Thread(new Runnable() {
                 @Override
@@ -53,8 +55,10 @@ public class ExamplePath extends AutoPipeline {
 
             while(opModeIsActive()) {
 
-                PathPoint currentPoint = controller.getCurrentPoint();
+                PathPoint currentPoint = internalController.getCurrentPoint();
                 //subsystem code here, triggers are currentPoint and then timing
+
+                internalController.startNextSection();
 
                 if(isStopRequested())
                     break;

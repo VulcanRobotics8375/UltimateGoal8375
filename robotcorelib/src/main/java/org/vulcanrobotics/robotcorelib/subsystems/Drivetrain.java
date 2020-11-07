@@ -17,7 +17,7 @@ public class Drivetrain extends Subsystem {
     private DcMotor fl, fr, bl, br;
     private BNO055IMU imu;
 
-    private PID turnPid = new PID(1, 1, 1);
+    private PID turnPid = new PID(1, 0, 0);
 
     private boolean doingAutonomousTask;
 
@@ -69,13 +69,13 @@ public class Drivetrain extends Subsystem {
     }
 
     public void setPowers(double[] powers) {
-
+        setPowers(powers[0], powers[1], powers[2], powers[3]);
     }
 
     public void mecanumDrive(double forward, double turn, double strafe, boolean slow, boolean highGoal, boolean powerShotLeft, boolean powerShotCenter, boolean powerShotRight) {
         forward = curveLinearJoystick(forward);
         strafe = curveLinearJoystick(strafe);
-//        turn = curveLinearJoystick(turn);
+        turn = curveLinearJoystick(turn * 0.8);
         double vd = Math.hypot(forward, strafe);
         double theta = Math.atan2(forward, strafe) - (Math.PI / 4);
         double multiplier = 1.0;

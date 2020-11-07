@@ -13,19 +13,27 @@ public class PurePursuit extends Controller {
     ArrayList<ArrayList<PathPoint>> sections;
 
     private PID turnPID = new PID(1, 1, 1);
+    private volatile int currentSection = 0;
+    private volatile boolean start = false;
 
     public PurePursuit(ArrayList<ArrayList<PathPoint>> sections) {
         this.sections = sections;
     }
 
     public void run() {
+        int currentSection = 0;
         for (ArrayList<PathPoint> section : sections) {
+            start = false;
             while(Math.abs(Robot.getRobotX() - section.get(section.size() - 1).x) + Math.abs(Robot.getRobotY() - section.get(section.size() - 1).y) > 0.1) {
                 PathPoint followPoint = findFollowPoint(section);
                 moveToPoint(followPoint);
                 if(stop)
                     break;
             }
+            currentSection++;
+            this.currentSection = currentSection;
+            waitForStart();
+
         }
     }
 
@@ -73,6 +81,18 @@ public class PurePursuit extends Controller {
         double turnSpeed = turnPID.getOutput();
 
         Robot.drivetrain.fieldCentricMove(Math.cos(absoluteAngleToPoint) * point.speed, Math.sin(absoluteAngleToPoint) * point.speed, turnSpeed);
+    }
+
+    public int getCurrentSection(){
+        return currentSection;
+    }
+
+    private void waitForStart() {
+        while(!start) {}
+    }
+
+    public void startNextSection() {
+        start = true;
     }
 
 }
