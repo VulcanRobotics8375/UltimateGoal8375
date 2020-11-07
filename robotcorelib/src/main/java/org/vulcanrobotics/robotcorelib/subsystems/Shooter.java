@@ -31,7 +31,7 @@ public class Shooter extends Subsystem {
     public void init() {
         shooter = (DcMotorEx) hardwareMap.dcMotor.get("shooter");
         hopper = hardwareMap.servo.get("hopper");
-        shooter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         shooter.setDirection((DcMotor.Direction.REVERSE));
         shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
     }
@@ -79,11 +79,11 @@ public class Shooter extends Subsystem {
             }
 
             if(hopperOut) {
-                hopper.setPosition(.35;
+                hopper.setPosition(0.6);
             }
 
             if (!hopperOut){
-                hopper.setPosition(.2);
+                hopper.setPosition(0);
             }
         }
 
