@@ -13,14 +13,14 @@ public class WobbleGrabber extends Subsystem {
     public DcMotor wobbleLift;
     public double limitRange = 200;
     public double limitMin = 0;
-    public double limitMax = 2000;
+    public double limitMax;
     private boolean wobbleTurnButton;
     private boolean wobbleGrabButton;
-    private double wobblePower = 1;
+    private double liftPower = 1;
     private double wobbleLiftJoystick = -1.0;
 
     private double wobbleTurnOn = -1.0;
-    private double wobbleGrabOn = 1.0;
+    private double wobbleGrabOn = -1.0;
 
     @Override
     public void init() {
@@ -29,12 +29,8 @@ public class WobbleGrabber extends Subsystem {
 
     public void run(boolean wobbleTurnButton, boolean wobbleGrabButton) {
 
-        if (wobbleTurnButton && !this.wobbleTurnButton) {
+        if (wobbleTurnButton) {
             wobbleTurnOn *= -1;
-            this.wobbleTurnButton = true;
-        }
-        if (!wobbleTurnButton && this.wobbleTurnButton) {
-            wobbleTurnButton = false;
         }
         if (wobbleTurnOn > 0) {
             wobbleTurn.setPosition(1);
@@ -44,12 +40,8 @@ public class WobbleGrabber extends Subsystem {
         }
 
 
-        if (wobbleGrabButton && !this.wobbleGrabButton) {
+        if (wobbleGrabButton) {
             wobbleGrabOn *= -1;
-            this.wobbleTurnButton = true;
-        }
-        if (!wobbleGrabButton && this.wobbleGrabButton) {
-            wobbleGrabButton = false;
         }
         if (wobbleGrabOn > 0) {
             wobbleGrab.setPosition(1);
@@ -61,12 +53,16 @@ public class WobbleGrabber extends Subsystem {
 
        telemetry.addData("wobble_height", wobbleLift.getCurrentPosition());
        if(wobbleLiftJoystick < 0){
-           if(wobbleLift.getCurrentPosition() >= limitMax) {
+           if(wobbleLift.getCurrentPosition() >= limitMax - limitRange) {
+               liftPower = (limitMax - wobbleLift.getCurrentPosition())/limitRange;
            }
-           wobbleLift.setPower(wobblePower);
+           wobbleLift.setPower(liftPower);
        }
        if(wobbleLiftJoystick > 0){
-           wobbleLift.setPower(-wobblePower);
+           if(wobbleLift.getCurrentPosition() <= limitMin + limitRange) {
+               liftPower = (wobbleLift.getCurrentPosition() - limitMin)/limitRange;
+           }
+           wobbleLift.setPower(-liftPower);
        }
        else{
            wobbleLift.setPower(0);
