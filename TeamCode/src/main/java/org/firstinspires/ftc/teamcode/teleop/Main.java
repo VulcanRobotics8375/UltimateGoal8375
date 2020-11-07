@@ -21,7 +21,7 @@ public class Main extends TeleOpPipeline {
         telemetry.addLine("ready");
         telemetry.update();
 
-        setStart(new Point(23, 243.84), 0);
+        setStart(new Point(138.34, 21.6), 0);
 
         waitForStart();
         telemetry.addLine("starting");
@@ -33,12 +33,18 @@ public class Main extends TeleOpPipeline {
 
         while (opModeIsActive()) {
 
-            boolean shoot = gamepad1.a;
-            boolean powerShot = gamepad1.b || gamepad1.x || gamepad1.y;
+            boolean shoot;
+            if(gamepad1.a) {
+                shoot = true;
+            } else if(gamepad1.b || gamepad1.y || gamepad1.x) {
+                shoot = false;
+            } else {
+                shoot = true;
+            }
 
-            subsystems.drivetrain.mecanumDrive(gamepad1.left_stick_y, -gamepad1.right_stick_x, -gamepad1.left_stick_x, gamepad1.left_bumper, shoot, gamepad1.b, gamepad1.y, gamepad1.x);
-            subsystems.intake.run(gamepad2.a, gamepad2.b, gamepad2.x, gamepad2.y);
-            subsystems.shooter.run(gamepad2.right_bumper, gamepad2.left_bumper, shoot, powerShot);
+            subsystems.drivetrain.mecanumDrive(gamepad1.left_stick_y, -gamepad1.right_stick_x, -gamepad1.left_stick_x, gamepad1.left_bumper, gamepad1.a, gamepad1.b, gamepad1.y, gamepad1.x);
+            subsystems.intake.run(gamepad2.a, gamepad2.b);
+            subsystems.shooter.run(gamepad2.right_bumper, gamepad2.left_bumper, shoot);
 
             //TODO disable debug for competition code
             if(debug) {

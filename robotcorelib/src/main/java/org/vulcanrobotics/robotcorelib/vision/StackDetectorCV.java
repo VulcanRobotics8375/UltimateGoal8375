@@ -24,6 +24,10 @@ public class StackDetectorCV extends OpenCvPipeline {
 
     AverageBrightnessAnalysis brightnessAnalysis = new AverageBrightnessAnalysis();
 
+    //TODO Add brightness adjustments
+    //TODO add multi-frame scoring
+    //TODO update HSV and contourHeight constants
+
     @Override
     public Mat processFrame(Mat input) {
         Mat output = input.clone();

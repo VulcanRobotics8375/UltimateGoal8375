@@ -4,7 +4,6 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-import org.firstinspires.ftc.robotcore.external.Function;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
@@ -18,7 +17,7 @@ public class Drivetrain extends Subsystem {
     private DcMotor fl, fr, bl, br;
     private BNO055IMU imu;
 
-    private PID turnPid = new PID(1, 1, 1);
+    private PID turnPid = new PID(1, 0, 0);
 
     private boolean doingAutonomousTask;
 
@@ -70,13 +69,13 @@ public class Drivetrain extends Subsystem {
     }
 
     public void setPowers(double[] powers) {
-
+        setPowers(powers[0], powers[1], powers[2], powers[3]);
     }
 
     public void mecanumDrive(double forward, double turn, double strafe, boolean slow, boolean highGoal, boolean powerShotLeft, boolean powerShotCenter, boolean powerShotRight) {
         forward = curveLinearJoystick(forward);
         strafe = curveLinearJoystick(strafe);
-        turn = curveLinearJoystick(turn);
+        turn = curveLinearJoystick(turn * 0.8);
         double vd = Math.hypot(forward, strafe);
         double theta = Math.atan2(forward, strafe) - (Math.PI / 4);
         double multiplier = 1.0;
@@ -84,30 +83,47 @@ public class Drivetrain extends Subsystem {
 
         if(highGoal) {
             double absoluteAngleToTarget = Math.atan2(FIELD_SIZE_CM_Y - Robot.getRobotY(), (FIELD_SIZE_CM_X - (1.5*TILE_SIZE_CM)) - Robot.getRobotX());
+            double distanceToTarget = Math.hypot((FIELD_SIZE_CM_X - (1.5*TILE_SIZE_CM)) - Robot.getRobotX(), (FIELD_SIZE_CM_Y - Robot.getRobotY()));
+
+            double offset = ((((SHOOTING_OFFSET_MIN - SHOOTING_OFFSET_MAX) / 204.6) * (distanceToTarget - 152.4)) + SHOOTING_OFFSET_MAX) + SHOOTING_DEGREE_BIAS;
 
             doingAutonomousTask = true;
-            double error = absoluteAngleToTarget - Functions.angleWrap(Math.toRadians(getZAngle() + SHOOTING_DEGREE_OFFSET));
-            turnPower = error * SHOOTER_AUTO_ALIGN_GAIN;
+            double error = Functions.angleWrap(Math.toRadians(getZAngle() + offset));
+            turnPid.run(absoluteAngleToTarget, error);
+            turnPower = turnPid.getOutput();
 
         } else if(powerShotCenter || powerShotLeft || powerShotRight) {
             doingAutonomousTask = true;
             double absoluteAngleToTarget;
+            double distanceToTarget;
+            double offset;
             if(powerShotLeft) {
                 absoluteAngleToTarget = Math.atan2(FIELD_SIZE_CM_Y - Robot.getRobotY(), (FIELD_SIZE_CM_X - (2.75 * TILE_SIZE_CM)) - Robot.getRobotX());
+                distanceToTarget = Math.hypot((FIELD_SIZE_CM_X - (2.75*TILE_SIZE_CM)) - Robot.getRobotX(), (FIELD_SIZE_CM_Y - Robot.getRobotY()));
+
+                offset = ((((SHOOTING_OFFSET_MIN - SHOOTING_OFFSET_MAX) / 204.6) * (distanceToTarget - 152.4)) + SHOOTING_OFFSET_MAX) + SHOOTING_DEGREE_BIAS;
             }
             else if(powerShotCenter) {
                 absoluteAngleToTarget = Math.atan2(FIELD_SIZE_CM_Y - Robot.getRobotY(), (FIELD_SIZE_CM_X - (2.5 * TILE_SIZE_CM)) - Robot.getRobotX());
+                distanceToTarget = Math.hypot((FIELD_SIZE_CM_X - (2.5*TILE_SIZE_CM)) - Robot.getRobotX(), (FIELD_SIZE_CM_Y - Robot.getRobotY()));
+
+                offset = ((((SHOOTING_OFFSET_MIN - SHOOTING_OFFSET_MAX) / 204.6) * (distanceToTarget - 152.4)) + SHOOTING_OFFSET_MAX) + SHOOTING_DEGREE_BIAS;
             }
             else {
                 absoluteAngleToTarget = Math.atan2(FIELD_SIZE_CM_Y - Robot.getRobotY(), (FIELD_SIZE_CM_X - (2.25 * TILE_SIZE_CM)) - Robot.getRobotX());
+                distanceToTarget = Math.hypot((FIELD_SIZE_CM_X - (2.25*TILE_SIZE_CM)) - Robot.getRobotX(), (FIELD_SIZE_CM_Y - Robot.getRobotY()));
+
+                offset = ((((SHOOTING_OFFSET_MIN - SHOOTING_OFFSET_MAX) / 204.6) * (distanceToTarget - 152.4)) + SHOOTING_OFFSET_MAX) + SHOOTING_DEGREE_BIAS;
             }
 
-           double error = absoluteAngleToTarget - Math.toRadians(getZAngle() + SHOOTING_DEGREE_OFFSET);
-           turnPower = error * SHOOTER_AUTO_ALIGN_GAIN;
+            double error = Math.toRadians(getZAngle() + offset);
+            turnPid.run(absoluteAngleToTarget, error);
+            turnPower = turnPid.getOutput();
 
         }
         else {
             doingAutonomousTask = false;
+            turnPid.reset();
         }
 
         double[] v = {

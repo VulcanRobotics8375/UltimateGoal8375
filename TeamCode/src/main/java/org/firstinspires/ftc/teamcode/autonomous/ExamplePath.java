@@ -12,7 +12,7 @@ import org.vulcanrobotics.robotcorelib.robot.Robot;
 
 import java.util.ArrayList;
 
-@Disabled
+//@Disabled
 @Autonomous(name = "example path", group = "example")
 public class ExamplePath extends AutoPipeline {
 
@@ -28,36 +28,43 @@ public class ExamplePath extends AutoPipeline {
             //defining the data structure for path points
             ArrayList<ArrayList<PathPoint>> sections = new ArrayList<>();
             ArrayList<PathPoint> section1 = new ArrayList<>();
+            section1.add(new PathPoint(10, 10, 1, 1, 1, 0));
+            sections.add(section1);
 
             //path points here
 
             //initialize the Pipeline Controller with whatever controller we are using
             controller = new PurePursuit(sections);
 
+            PurePursuit internalController = (PurePursuit) controller;
+
             waitForStart();
 
             //interrupt handler makes sure the robot stops when the stop button is pressed.
-            startInterruptHandler();
+//            startInterruptHandler();
 
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    while(!doneShooting) {
-
-                    }
+//                    while(!doneShooting) {
+//
+//                    }
                     controller.run();
                 }
             }).start();
 
             while(opModeIsActive()) {
 
-                PathPoint currentPoint = controller.getCurrentPoint();
+                PathPoint currentPoint = internalController.getCurrentPoint();
                 //subsystem code here, triggers are currentPoint and then timing
 
+                internalController.startNextSection();
 
                 if(isStopRequested())
                     break;
             }
+
+            controller.stop = true;
 
         } catch (RobotCoreLibException e) {
             e.printStackTrace();

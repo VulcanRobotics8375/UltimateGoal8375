@@ -32,9 +32,12 @@ public class Shooter extends Subsystem {
         shooter = (DcMotorEx) hardwareMap.dcMotor.get("shooter");
         hopper = hardwareMap.servo.get("hopper");
         shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        shooter.setVelocityPIDFCoefficients(1.2, 0.12, 0, 11.7);
         shooter.setDirection((DcMotor.Direction.REVERSE));
         shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
     }
+
+    //TODO put the shooter power calculation in a separate method to clean up some stuff
     public void run(boolean shooterButton, boolean hopperButton, boolean shooterMode) {
 
         if (shooterButton && !this.shooterButton) {
@@ -56,13 +59,14 @@ public class Shooter extends Subsystem {
             shooterPowerRight = ((0.12) / 204.6) * ((Math.hypot((Constants.FIELD_SIZE_CM_X - (2.5 * Constants.TILE_SIZE_CM)) - Robot.getRobotX(), (Constants.FIELD_SIZE_CM_Y) - Robot.getRobotY())) - 152.4);
 
             //Replace setVelocity equation
-            //*((1620.0 / 60.0) * 103.6)
-            shooterPower = (shooterPowerLeft + shooterPowerRight);
+            //
+            shooterPower = (shooterPowerLeft + shooterPowerRight)*((1620.0 / 60.0) * 103.6);
             ;
-            shooter.setPower(shooterPower);
+            shooter.setVelocity(shooterPower);
             shooterModeNum = 88.9;
         } else if (shooterOn < 0) {
             shooter.setPower(0);
+            pidRunning = false;
         }
 
 
@@ -79,7 +83,7 @@ public class Shooter extends Subsystem {
             }
 
             if(hopperOut) {
-                hopper.setPosition(0.4);
+                hopper.setPosition(.35);
             }
 
             if (!hopperOut){
@@ -97,6 +101,41 @@ public class Shooter extends Subsystem {
 
     }
 
+    private long lastPidTime;
+    private boolean pidRunning;
+    private double lastError, integral = 0, lastPosition;
+
+    public void setShooterVelocity(double power) {
+        if(!pidRunning) {
+            lastPidTime = System.currentTimeMillis();
+            integral = 0;
+            lastError = 0;
+            pidRunning = true;
+        }
+        //input from 0 to 1
+
+        long time = System.currentTimeMillis() - lastPidTime;
+
+        double conversion = ((1620.0 / 60.0) * 103.6);
+
+        double targetSpeed = power * conversion;
+        double currentSpeed = (shooter.getCurrentPosition() - lastPosition) / (time / 1000.0);
+        double error = (targetSpeed - currentSpeed) / (conversion);
+        integral += ((error + lastError) / 2) / (time / 1000.0);
+        double derivative = (error - lastError) / (time / 1000.0);
+
+        double kp = 1;
+        double ki = 1;
+        double kd = 1;
+        double output = (kp * error) + (ki * integral) + (kd * derivative);
+
+        shooter.setPower(output);
+
+        lastError = error;
+        lastPosition = shooter.getCurrentPosition();
+
+
+    }
 
 
     public void shoot(){

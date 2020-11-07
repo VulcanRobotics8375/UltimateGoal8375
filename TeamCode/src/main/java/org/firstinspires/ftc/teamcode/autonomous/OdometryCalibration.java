@@ -21,8 +21,6 @@ public class OdometryCalibration extends AutoPipeline {
 
         waitForStart();
 
-//        while(opModeIsActive()) {}
-
         subsytems.motionProfile.calibrate(0.2);
 
         while(opModeIsActive()) {}
