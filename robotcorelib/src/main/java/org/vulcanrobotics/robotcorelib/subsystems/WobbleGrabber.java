@@ -13,7 +13,7 @@ public class WobbleGrabber extends Subsystem {
     public DcMotor wobbleLift;
     public double limitRange = 200;
     public double limitMin = 0;
-    public double limitMax;
+    public double limitMax = 1750;
     private boolean wobbleTurnButton;
     private boolean wobbleGrabButton;
     private double liftPower = 1;
@@ -31,13 +31,13 @@ public class WobbleGrabber extends Subsystem {
 
     }
 
-    public void run(boolean wobbleTurnButton, boolean wobbleGrabButton) {
+    public void run(boolean wobbleTurnButton, boolean wobbleGrabButton, double wobbleLiftJoystick) {
 
         if (wobbleTurnButton) {
             wobbleTurnOn *= -1;
         }
         if (wobbleTurnOn > 0) {
-            wobbleTurn.setPosition(1);
+            wobbleTurn.setPosition(.85);
         }
         else  {
             wobbleTurn.setPosition(0);
@@ -45,9 +45,6 @@ public class WobbleGrabber extends Subsystem {
 
 
         if (wobbleGrabButton) {
-            wobbleGrabOn *= -1;
-        }
-        if (wobbleGrabOn > 0) {
             wobbleGrab.setPosition(1);
         }
        else {
