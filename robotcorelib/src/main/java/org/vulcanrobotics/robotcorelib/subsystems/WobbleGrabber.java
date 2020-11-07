@@ -25,6 +25,10 @@ public class WobbleGrabber extends Subsystem {
     @Override
     public void init() {
 
+        wobbleTurn = hardwareMap.servo.get("wobble_turn");
+        wobbleGrab = hardwareMap.servo.get("wobble_grab");
+        wobbleLift = hardwareMap.dcMotor.get("wobble_lift");
+
     }
 
     public void run(boolean wobbleTurnButton, boolean wobbleGrabButton) {

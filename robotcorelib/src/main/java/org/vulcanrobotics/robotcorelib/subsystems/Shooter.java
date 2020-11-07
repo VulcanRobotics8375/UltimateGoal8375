@@ -60,9 +60,8 @@ public class Shooter extends Subsystem {
 
             //Replace setVelocity equation
             //
-            shooterPower = (shooterPowerLeft + shooterPowerRight)*((1620.0 / 60.0) * 103.6);
-            ;
-            shooter.setVelocity(shooterPower);
+            shooterPower = (shooterPowerLeft + shooterPowerRight);
+            shooter.setPower(shooterPower);
             shooterModeNum = 88.9;
         } else if (shooterOn < 0) {
             shooter.setPower(0);
