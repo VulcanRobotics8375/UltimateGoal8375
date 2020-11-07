@@ -45,7 +45,7 @@ public class Main extends TeleOpPipeline {
             subsystems.drivetrain.mecanumDrive(gamepad1.left_stick_y, -gamepad1.right_stick_x, -gamepad1.left_stick_x, gamepad1.left_bumper, gamepad1.a, gamepad1.b, gamepad1.y, gamepad1.x);
             subsystems.intake.run(gamepad2.a, gamepad2.b);
             subsystems.shooter.run(gamepad2.right_bumper, gamepad2.left_bumper, shoot);
-            subsystems.wobbleGrabber.run(gamepad2.x,gamepad2.y, gamepad2.left_stick_y);
+            subsystems.wobbleGrabber.run(gamepad2.x,gamepad2.y, -gamepad2.left_stick_y);
 
             //TODO disable debug for competition code
             if(debug) {

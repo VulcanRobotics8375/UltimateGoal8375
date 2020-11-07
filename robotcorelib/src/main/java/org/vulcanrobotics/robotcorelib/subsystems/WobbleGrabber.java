@@ -53,22 +53,20 @@ public class WobbleGrabber extends Subsystem {
 
 
        telemetry.addData("wobble_height", wobbleLift.getCurrentPosition());
-       if(wobbleLiftJoystick < 0){
+       if(wobbleLiftJoystick > 0){
            if(wobbleLift.getCurrentPosition() >= limitMax - limitRange) {
                liftPower = (limitMax - wobbleLift.getCurrentPosition())/limitRange;
            }
-           wobbleLift.setPower(liftPower);
        }
-       if(wobbleLiftJoystick > 0){
+       if(wobbleLiftJoystick < 0){
            if(wobbleLift.getCurrentPosition() <= limitMin + limitRange) {
                liftPower = (wobbleLift.getCurrentPosition() - limitMin)/limitRange;
            }
-           wobbleLift.setPower(-liftPower);
        }
        else{
-           wobbleLift.setPower(0);
+            liftPower = wobbleLiftJoystick;
        }
-
+        wobbleLift.setPower(liftPower);
     }
         @Override
         public void stop() {}
