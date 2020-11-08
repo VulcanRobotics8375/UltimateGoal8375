@@ -60,7 +60,7 @@ public class WobbleGrabber extends Subsystem {
        }
        if(wobbleLiftJoystick < 0){
            if(wobbleLift.getCurrentPosition() <= limitMin + limitRange) {
-               liftPower = (wobbleLift.getCurrentPosition() - limitMin)/limitRange;
+               liftPower = -((wobbleLift.getCurrentPosition() - limitMin)/limitRange);
            }
        }
        else{
