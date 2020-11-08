@@ -48,7 +48,7 @@ public class Mecanum extends MotionProfile {
         double rawHorizontalChange = (horizontalPosition - lastStrafePos);
         double thetaChange = (leftChange - rightChange) / (wheelBase * countsPerCm);
 
-        double horizontalChange = (rawHorizontalChange - (Math.toDegrees(thetaChange) * horizontalTicksPerDeg));
+        double horizontalChange = (rawHorizontalChange - (thetaChange * horizontalTicksPerDeg));
         double robotAngle = Robot.getRobotAngleRad() + thetaChange;
 
         double verticalChange = (leftChange + rightChange) / 2;

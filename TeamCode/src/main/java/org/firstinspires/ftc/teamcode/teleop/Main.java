@@ -27,7 +27,7 @@ public class Main extends TeleOpPipeline {
         telemetry.addLine("starting");
         telemetry.update();
 
-//        Robot.startOdometryThread();
+        Robot.startOdometryThread();
 
         Mecanum motionProfile = (Mecanum) Robot.motionProfile;
 
@@ -47,12 +47,16 @@ public class Main extends TeleOpPipeline {
             subsystems.shooter.run(gamepad2.right_bumper, gamepad2.left_bumper, shoot);
             subsystems.wobbleGrabber.run(gamepad2.x,gamepad2.y, -gamepad2.left_stick_y);
 
-            motionProfile.update();
+//            motionProfile.update();
 
             //TODO disable debug for competition code
             if(debug) {
                 debug();
             }
+
+//            telemetry.addData("left", motionProfile.getLeft().getPosition());
+//            telemetry.addData("right", motionProfile.getRight().getPosition());
+//            telemetry.addData("horizontal", motionProfile.getHorizontal().getPosition());
 
             telemetry.update();
         }
@@ -63,9 +67,7 @@ public class Main extends TeleOpPipeline {
         telemetry.addData("robot x", Robot.getRobotX());
         telemetry.addData("robot y", Robot.getRobotY());
         telemetry.addData("robot angle", Robot.getRobotAngleDeg());
-//            telemetry.addData("left", motionProfile.getLeft().getPosition());
-//            telemetry.addData("right", motionProfile.getRight().getPosition());
-        telemetry.addData("zAngle", subsystems.drivetrain.getZAngle());
+//        telemetry.addData("zAngle", subsystems.drivetrain.getZAngle());
     }
 
 }

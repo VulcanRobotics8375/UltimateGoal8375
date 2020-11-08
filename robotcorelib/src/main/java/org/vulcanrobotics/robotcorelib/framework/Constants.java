@@ -19,10 +19,10 @@ public class Constants {
     public static final double ODOMETRY_WHEELBASE = 37.85; // needs recalibration, theoretical value is 36.42
     public static final double ODOMETRY_RADIUS = 1.9;
     public static final double ODOMETRY_COUNTS_PER_CM = 1440.0 / (2.0 * Math.PI * ODOMETRY_RADIUS);
-    public static final double ODOMETRY_HORIZONTAL_TICKS_PER_REV = -19.3;
+    public static final double ODOMETRY_HORIZONTAL_TICKS_PER_REV = 19.3;
     public static final double SHOOTING_DEGREE_BIAS = 90;
     public static final double SHOOTING_OFFSET_MAX = 13;
-    public static final double SHOOTING_OFFSET_MIN = 9;
+    public static final double SHOOTING_OFFSET_MIN = 10;
 
 
 
