@@ -27,7 +27,7 @@ public class Main extends TeleOpPipeline {
         telemetry.addLine("starting");
         telemetry.update();
 
-        Robot.startOdometryThread();
+//        Robot.startOdometryThread();
 
         Mecanum motionProfile = (Mecanum) Robot.motionProfile;
 
@@ -46,6 +46,8 @@ public class Main extends TeleOpPipeline {
             subsystems.intake.run(gamepad2.a, gamepad2.b);
             subsystems.shooter.run(gamepad2.right_bumper, gamepad2.left_bumper, shoot);
             subsystems.wobbleGrabber.run(gamepad2.x,gamepad2.y, -gamepad2.left_stick_y);
+
+            motionProfile.update();
 
             //TODO disable debug for competition code
             if(debug) {
