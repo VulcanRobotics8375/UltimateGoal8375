@@ -52,7 +52,7 @@ public class WobbleGrabber extends Subsystem {
             wobbleGrabOn *= -1;
             this.wobbleTurnButton = true;
         }
-        if (!wobbleTurnButton && this.wobbleTurnButton) {
+        if (!wobbleGrabButton && this.wobbleGrabButton) {
             this.wobbleTurnButton = false;
         }
         if (wobbleGrabOn > 0) {
@@ -61,6 +61,8 @@ public class WobbleGrabber extends Subsystem {
         else  {
             wobbleGrab.setPosition(0);
         }
+
+
 
 
        telemetry.addData("wobble_height", wobbleLift.getCurrentPosition());
