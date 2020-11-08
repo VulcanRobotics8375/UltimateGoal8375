@@ -62,6 +62,8 @@ public class Shooter extends Subsystem {
             //
             shooterPower = (shooterPowerLeft + shooterPowerRight);
             shooter.setPower(shooterPower);
+            shooter.getPower();
+
             shooterModeNum = 88.9;
         } else if (shooterOn < 0) {
             shooter.setPower(0);
