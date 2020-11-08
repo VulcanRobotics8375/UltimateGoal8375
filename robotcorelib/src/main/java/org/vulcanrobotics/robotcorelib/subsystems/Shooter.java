@@ -11,8 +11,13 @@ public class Shooter extends Subsystem {
     public DcMotorEx shooter;
     public Servo hopper;
     private boolean hopperButton;
+<<<<<<< Updated upstream
     private double a = 402.6;
     private double b = 192.0;
+=======
+    private double a = -417;
+    private double b = 831;
+>>>>>>> Stashed changes
     private double hopperBeforeTime;
     private boolean hopperOut;
     private boolean shooterButton;
@@ -65,8 +70,13 @@ public class Shooter extends Subsystem {
                 shooterModeNum = 88.9;
             }
 
+<<<<<<< Updated upstream
             shooterPowerLeft = ((-a + Math.sqrt((Math.pow(a, 2)) + ((-4.0) * (-b) * (-110.3 - shooterModeNum)))) / (2.0 * (-b)));
             shooterPowerRight = ((0.14) / 204.6) * ((Math.hypot((Constants.FIELD_SIZE_CM_X - (1.5 * Constants.TILE_SIZE_CM)) - Robot.getRobotX(), (Constants.FIELD_SIZE_CM_Y) - Robot.getRobotY())) - 152.4);
+=======
+            shooterPowerLeft = ((-b + Math.sqrt((Math.pow(b, 2)) + (-4.0) * (a) * (-313.7 - shooterModeNum))) / (2.0 * (a)));
+            shooterPowerRight = ((0.14) / 204.6) * ((Math.hypot((Constants.FIELD_SIZE_CM_X - (2.5 * Constants.TILE_SIZE_CM)) - Robot.getRobotX(), (Constants.FIELD_SIZE_CM_Y) - Robot.getRobotY())) - 152.4);
+>>>>>>> Stashed changes
 
             //Replace setVelocity equation
             //
