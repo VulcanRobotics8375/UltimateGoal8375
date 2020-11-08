@@ -33,13 +33,13 @@ public class Main extends TeleOpPipeline {
 
         while (opModeIsActive()) {
 
-            boolean shoot;
+            int shoot;
             if(gamepad1.a) {
-                shoot = true;
+                shoot = 1;
             } else if(gamepad1.b || gamepad1.y || gamepad1.x) {
-                shoot = false;
+                shoot = 2;
             } else {
-                shoot = true;
+                shoot = 0;
             }
 
             subsystems.drivetrain.mecanumDrive(gamepad1.left_stick_y, -gamepad1.right_stick_x, -gamepad1.left_stick_x, gamepad1.left_bumper, gamepad1.a, gamepad1.b, gamepad1.y, gamepad1.x);
