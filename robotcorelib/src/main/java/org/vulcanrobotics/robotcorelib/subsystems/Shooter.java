@@ -11,13 +11,8 @@ public class Shooter extends Subsystem {
     public DcMotorEx shooter;
     public Servo hopper;
     private boolean hopperButton;
-<<<<<<< Updated upstream
-    private double a = 402.6;
-    private double b = 192.0;
-=======
-    private double a = -417;
-    private double b = 831;
->>>>>>> Stashed changes
+    private double a = -417.9;
+    private double b = 832;
     private double hopperBeforeTime;
     private boolean hopperOut;
     private boolean shooterButton;
