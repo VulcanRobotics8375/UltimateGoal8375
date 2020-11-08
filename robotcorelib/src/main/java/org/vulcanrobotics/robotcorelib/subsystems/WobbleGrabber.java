@@ -35,9 +35,10 @@ public class WobbleGrabber extends Subsystem {
 
         if (wobbleTurnButton) {
             wobbleTurnOn *= -1;
+            wobbleTurnButton = !wobbleTurnButton;
         }
         if (wobbleTurnOn > 0) {
-            wobbleTurn.setPosition(.85);
+            wobbleTurn.setPosition(.80);
         }
         else  {
             wobbleTurn.setPosition(0);
