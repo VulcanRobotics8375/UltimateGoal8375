@@ -31,7 +31,7 @@ public class Shooter extends Subsystem {
     public void init() {
         shooter = (DcMotorEx) hardwareMap.dcMotor.get("shooter");
         hopper = hardwareMap.servo.get("hopper");
-        shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        shooter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         shooter.setVelocityPIDFCoefficients(1.2, 0.12, 0, 11.7);
         shooter.setDirection((DcMotor.Direction.REVERSE));
         shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
