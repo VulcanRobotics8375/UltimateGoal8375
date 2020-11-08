@@ -48,7 +48,7 @@ public class WobbleGrabber extends Subsystem {
             wobbleGrab.setPosition(1);
         }
        else {
-            wobbleGrab.setPosition(0);
+            wobbleGrab.setPosition(.05);
         }
 
 
