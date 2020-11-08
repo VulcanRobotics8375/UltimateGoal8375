@@ -65,6 +65,9 @@ public class Shooter extends Subsystem {
             //Replace setVelocity equation
             //
             shooterPower = (shooterPowerLeft + shooterPowerRight);
+            if(shooterPower < 0.8){
+                shooterPower = 0.8;
+            }
             shooter.setPower(shooterPower);
             telemetry.addData("shooter power", shooter.getPower());
 
