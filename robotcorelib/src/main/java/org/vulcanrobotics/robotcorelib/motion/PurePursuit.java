@@ -12,7 +12,7 @@ public class PurePursuit extends Controller {
 
     ArrayList<ArrayList<PathPoint>> sections;
 
-    private PID turnPID = new PID(1, 1, 1);
+    private PID turnPID = new PID(1, 0, 0);
     private volatile int currentSection = 0;
     private volatile boolean start = false;
 

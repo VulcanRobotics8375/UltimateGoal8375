@@ -184,9 +184,10 @@ public class Drivetrain extends Subsystem {
     public void fieldCentricMove(double x, double y, double turn) {
 
         double power = Math.hypot(x, y);
+        double theta = Math.atan2(y, x) + Robot.getRobotAngleRad();
 
-        double rx = Math.sin(Robot.getRobotAngleRad() - (Math.PI / 4));
-        double lx = Math.cos(Robot.getRobotAngleRad() + (Math.PI / 4));
+        double rx = (Math.sin(theta + (Math.PI / 4))) * power;
+        double lx = (Math.sin(theta - (Math.PI / 4))) * power;
 
         double fl = lx + turn;
         double fr = rx - turn;
