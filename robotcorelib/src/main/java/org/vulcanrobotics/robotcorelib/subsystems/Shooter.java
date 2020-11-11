@@ -23,7 +23,7 @@ public class Shooter extends Subsystem {
     private double shooterModeNum = 88.9;
     private double shooterPowerLeft;
     private double shooterPowerRight;
-    private double shooterHighPower = .92;
+    private double shooterHighPower = .935;
     private double shooterLowPower = .83;
     private float shooterHighButton;
     private float shooterLowButton;
@@ -51,7 +51,7 @@ public class Shooter extends Subsystem {
                 shooterModeNum = 88.9;
             }
             shooterPowerLeft = ((-b + Math.sqrt((Math.pow(b, 2)) + (-4.0) * (a) * (-313.7 - shooterModeNum))) / (2.0 * (a)));
-            shooterPowerRight = ((0.12) / 204.6) * ((Math.hypot((Constants.FIELD_SIZE_CM_X - (2.5 * Constants.TILE_SIZE_CM)) - Robot.getRobotX(), (Constants.FIELD_SIZE_CM_Y) - Robot.getRobotY())) - 152.4);
+            shooterPowerRight = ((0.13) / 204.6) * ((Math.hypot((Constants.FIELD_SIZE_CM_X - (2.5 * Constants.TILE_SIZE_CM)) - Robot.getRobotX(), (Constants.FIELD_SIZE_CM_Y) - Robot.getRobotY())) - 152.4);
 
             //Replace setVelocity equation
             //
