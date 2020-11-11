@@ -147,14 +147,14 @@ public class Shooter extends Subsystem {
         if(shooterHighButton > 0){
             shooter.setPower(shooterHighPower);
         }
-        else{
+        else if(shooterHighButton == 0){
             shooter.setPower(0);
         }
 
         if(this.shooterLowButton > 0){
             shooter.setPower(shooterLowPower);
         }
-        else{
+        else if (shooterLowButton == 0){
             shooter.setPower(0);
         }
 
