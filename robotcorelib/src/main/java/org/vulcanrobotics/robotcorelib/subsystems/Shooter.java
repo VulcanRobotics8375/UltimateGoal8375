@@ -23,7 +23,7 @@ public class Shooter extends Subsystem {
     private double shooterModeNum = 88.9;
     private double shooterPowerLeft;
     private double shooterPowerRight;
-    private double shooterHighPower = .95;
+    private double shooterHighPower = .92;
     private double shooterLowPower = .83;
     private float shooterHighButton;
     private float shooterLowButton;
@@ -42,7 +42,7 @@ public class Shooter extends Subsystem {
     }
 
     //TODO put the shooter power calculation in a separate method to clean up some stuff
-    public void run(boolean shooterButton,boolean hopperButton, int shooterMode, float shooterHighButton, float shooterLowButton) {
+    public void run(boolean shooterButton, boolean hopperButton, int shooterMode, float shooterHighButton, float shooterLowButton) {
         if (shooterButton) {
             if(!this.shooterMode) {
                 shooterModeNum = 73.6;
@@ -51,7 +51,7 @@ public class Shooter extends Subsystem {
                 shooterModeNum = 88.9;
             }
             shooterPowerLeft = ((-b + Math.sqrt((Math.pow(b, 2)) + (-4.0) * (a) * (-313.7 - shooterModeNum))) / (2.0 * (a)));
-            shooterPowerRight = ((0.14) / 204.6) * ((Math.hypot((Constants.FIELD_SIZE_CM_X - (2.5 * Constants.TILE_SIZE_CM)) - Robot.getRobotX(), (Constants.FIELD_SIZE_CM_Y) - Robot.getRobotY())) - 152.4);
+            shooterPowerRight = ((0.12) / 204.6) * ((Math.hypot((Constants.FIELD_SIZE_CM_X - (2.5 * Constants.TILE_SIZE_CM)) - Robot.getRobotX(), (Constants.FIELD_SIZE_CM_Y) - Robot.getRobotY())) - 152.4);
 
             //Replace setVelocity equation
             //
@@ -65,8 +65,8 @@ public class Shooter extends Subsystem {
         if(shooterHighButton > 0){
             shooter.setPower(shooterHighPower);
         }
-        
-        if(this.shooterLowButton > 0){
+
+        if(shooterLowButton > 0){
             shooter.setPower(shooterLowPower);
         }
 
