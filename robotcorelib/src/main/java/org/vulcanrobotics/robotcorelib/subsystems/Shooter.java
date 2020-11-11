@@ -39,7 +39,31 @@ public class Shooter extends Subsystem {
 
     //TODO put the shooter power calculation in a separate method to clean up some stuff
     public void run(boolean shooterButton, boolean hopperButton, int shooterMode) {
+        if (shooterButton) {
+            if(!this.shooterMode) {
+                shooterModeNum = 73.6;
+            }
+            else {
+                shooterModeNum = 88.9;
+            }
+            shooterPowerLeft = ((-b + Math.sqrt((Math.pow(b, 2)) + (-4.0) * (a) * (-313.7 - shooterModeNum))) / (2.0 * (a)));
+            shooterPowerRight = ((0.14) / 204.6) * ((Math.hypot((Constants.FIELD_SIZE_CM_X - (2.5 * Constants.TILE_SIZE_CM)) - Robot.getRobotX(), (Constants.FIELD_SIZE_CM_Y) - Robot.getRobotY())) - 152.4);
 
+            //Replace setVelocity equation
+            //
+            shooterPower = (shooterPowerLeft + shooterPowerRight);
+            if(shooterPower < 0.83){
+                shooterPower = 0.83;
+            }
+            shooter.setPower(shooterPower);
+            telemetry.addData("shooter power", shooter.getPower());
+        }
+
+        if (!shooterButton) {
+            shooter.setPower(0);
+            pidRunning = false;
+        }
+/*
         if (shooterButton && !this.shooterButton) {
             shooterOn *= -1;
             this.shooterButton = true;
@@ -81,6 +105,8 @@ public class Shooter extends Subsystem {
             shooter.setPower(0);
             pidRunning = false;
         }
+
+ */
 
 
         if (hopperButton) {
