@@ -116,7 +116,7 @@ public class Drivetrain extends Subsystem {
                 offset = ((((SHOOTING_OFFSET_MIN - SHOOTING_OFFSET_MAX) / 204.6) * (distanceToTarget - 152.4)) + SHOOTING_OFFSET_MAX) + SHOOTING_DEGREE_BIAS;
             }
 
-            double error = Math.toRadians(getZAngle() + offset);
+            double error = Math.toRadians(Robot.getRobotAngleDeg() + offset);
             turnPid.run(absoluteAngleToTarget, error);
             turnPower = turnPid.getOutput();
 
@@ -184,9 +184,10 @@ public class Drivetrain extends Subsystem {
     public void fieldCentricMove(double x, double y, double turn) {
 
         double power = Math.hypot(x, y);
+        double theta = Math.atan2(y, x) + Robot.getRobotAngleRad();
 
-        double rx = Math.sin(Robot.getRobotAngleRad() - (Math.PI / 4));
-        double lx = Math.cos(Robot.getRobotAngleRad() + (Math.PI / 4));
+        double rx = (Math.sin(theta + (Math.PI / 4))) * power;
+        double lx = (Math.sin(theta - (Math.PI / 4))) * power;
 
         double fl = lx + turn;
         double fr = rx - turn;

@@ -28,7 +28,7 @@ public class ExamplePath extends AutoPipeline {
             //defining the data structure for path points
             ArrayList<ArrayList<PathPoint>> sections = new ArrayList<>();
             ArrayList<PathPoint> section1 = new ArrayList<>();
-            section1.add(new PathPoint(10, 10, 1, 1, 1, 0));
+            section1.add(new PathPoint(10, 10, 1, 0, 1, 0));
             sections.add(section1);
 
             //path points here
@@ -36,29 +36,18 @@ public class ExamplePath extends AutoPipeline {
             //initialize the Pipeline Controller with whatever controller we are using
             controller = new PurePursuit(sections);
 
-            PurePursuit internalController = (PurePursuit) controller;
+           PurePursuit internalController = (PurePursuit) controller;
 
             waitForStart();
 
             //interrupt handler makes sure the robot stops when the stop button is pressed.
-//            startInterruptHandler();
-
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-//                    while(!doneShooting) {
-//
-//                    }
-                    controller.run();
-                }
-            }).start();
+            startInterruptHandler();
 
             while(opModeIsActive()) {
 
                 PathPoint currentPoint = internalController.getCurrentPoint();
                 //subsystem code here, triggers are currentPoint and then timing
-
-                internalController.startNextSection();
+                internalController.moveToPoint(section1.get(0));
 
                 if(isStopRequested())
                     break;
