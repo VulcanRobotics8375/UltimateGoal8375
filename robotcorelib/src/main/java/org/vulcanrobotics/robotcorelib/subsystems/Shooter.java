@@ -62,8 +62,15 @@ public class Shooter extends Subsystem {
             shooter.setPower(shooterPower);
             telemetry.addData("shooter power", shooter.getPower());
         }
+        if(shooterHighButton > 0){
+            shooter.setPower(shooterHighPower);
+        }
+        
+        if(this.shooterLowButton > 0){
+            shooter.setPower(shooterLowPower);
+        }
 
-        if (!shooterButton) {
+        if (!shooterButton && shooterHighButton == 0 && shooterLowButton == 0) {
             shooter.setPower(0);
             pidRunning = false;
         }
@@ -142,20 +149,6 @@ public class Shooter extends Subsystem {
 
         if(!hopperButton && this.hopperButton){
             this.hopperButton = false;
-        }
-
-        if(shooterHighButton > 0){
-            shooter.setPower(shooterHighPower);
-        }
-        else if(shooterHighButton == 0){
-            shooter.setPower(0);
-        }
-
-        if(this.shooterLowButton > 0){
-            shooter.setPower(shooterLowPower);
-        }
-        else if (shooterLowButton == 0){
-            shooter.setPower(0);
         }
 
 
