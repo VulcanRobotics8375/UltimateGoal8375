@@ -42,7 +42,8 @@ public class Shooter extends Subsystem {
     }
 
     //TODO put the shooter power calculation in a separate method to clean up some stuff
-    public void run(boolean shooterButton,boolean hopperButton, int shooterMode, float shooterHighButton, float shooterLowButton) {
+    //, float shooterHighButton, float shooterLowButton
+    public void run(boolean shooterButton,boolean hopperButton, int shooterMode) {
         if (shooterButton) {
             if(!this.shooterMode) {
                 shooterModeNum = 73.6;
@@ -143,6 +144,7 @@ public class Shooter extends Subsystem {
         if(!hopperButton && this.hopperButton){
             this.hopperButton = false;
         }
+        /*
         if(this.shooterHighButton){
             shooter.setPower(shooterHighPower);
         }
@@ -156,6 +158,8 @@ public class Shooter extends Subsystem {
         else{
             shooter.setPower(0);
         }
+
+         */
 
     }
 
