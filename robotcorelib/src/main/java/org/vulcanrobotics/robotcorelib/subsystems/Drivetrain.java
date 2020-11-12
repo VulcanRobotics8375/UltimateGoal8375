@@ -191,18 +191,19 @@ public class Drivetrain extends Subsystem {
         if(pidConstant == 0) {
             constant += turnPid.getKp();
             turnPid.setKp(constant);
-            telemetry.addData("Kp", constant);
         }
         else if(pidConstant == 1) {
             constant += turnPid.getKi();
             turnPid.setKi(constant);
-            telemetry.addData("Ki", constant);
         }
         else if(pidConstant == 2) {
             constant += turnPid.getKd();
             turnPid.setKd(constant);
-            telemetry.addData("Kd", constant);
         }
+
+        telemetry.addData("Kp", turnPid.getKp());
+        telemetry.addData("Ki", turnPid.getKi());
+        telemetry.addData("Kd", turnPid.getKd());
 
     }
 
