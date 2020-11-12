@@ -2,9 +2,9 @@ package org.vulcanrobotics.robotcorelib.math;
 
 public class PID {
 
-    private final double Kp;
-    private final double Ki;
-    private final double Kd;
+    private double Kp;
+    private double Ki;
+    private double Kd;
 
     private Timer timer = new Timer();
 
@@ -42,4 +42,27 @@ public class PID {
         return output;
     }
 
+    public double getKp() {
+        return Kp;
+    }
+
+    public void setKp(double kp) {
+        Kp = kp;
+    }
+
+    public double getKi() {
+        return Ki;
+    }
+
+    public void setKi(double ki) {
+        Ki = ki;
+    }
+
+    public double getKd() {
+        return Kd;
+    }
+
+    public void setKd(double kd) {
+        Kd = kd;
+    }
 }

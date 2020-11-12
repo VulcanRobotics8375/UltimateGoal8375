@@ -151,6 +151,61 @@ public class Drivetrain extends Subsystem {
 
     }
 
+
+    private boolean pidUp, pidDown, pidSwitch;
+    private int pidConstant = 0;
+    public void tunePID(boolean up, boolean down, boolean constantSwitch) {
+
+        double constant = 0;
+
+        if(constantSwitch && !this.pidSwitch) {
+            if(pidConstant == 2) {
+                pidConstant = 0;
+            } else {
+                pidConstant++;
+            }
+            this.pidSwitch = true;
+        }
+        if(!constantSwitch && this.pidSwitch) {
+            this.pidSwitch = false;
+        }
+
+
+
+        if(up && !this.pidUp) {
+            constant += 0.1;
+            this.pidUp = true;
+        }
+        if(!up && pidUp) {
+            this.pidUp = false;
+        }
+
+        if(down && !this.pidDown) {
+            constant -= 0.1;
+            this.pidDown = true;
+        }
+        if(!down && this.pidDown) {
+            this.pidDown = false;
+        }
+
+        if(pidConstant == 0) {
+            constant += turnPid.getKp();
+            turnPid.setKp(constant);
+            telemetry.addData("Kp", constant);
+        }
+        else if(pidConstant == 1) {
+            constant += turnPid.getKi();
+            turnPid.setKi(constant);
+            telemetry.addData("Ki", constant);
+        }
+        else if(pidConstant == 2) {
+            constant += turnPid.getKd();
+            turnPid.setKd(constant);
+            telemetry.addData("Kd", constant);
+        }
+
+    }
+
     private double curveLinearJoystick(double input) {
         return (input / 1.07) * ((0.62 * Math.pow(input, 2)) + 0.45);
     }
