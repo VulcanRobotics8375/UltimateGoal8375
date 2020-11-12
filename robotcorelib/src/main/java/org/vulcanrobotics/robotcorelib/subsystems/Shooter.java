@@ -23,6 +23,10 @@ public class Shooter extends Subsystem {
     private double shooterModeNum = 88.9;
     private double shooterPowerLeft;
     private double shooterPowerRight;
+    private double shooterHighPower = .935;
+    private double shooterLowPower = .83;
+    private float shooterHighButton;
+    private float shooterLowButton;
     private int shooterOn = -1;
 
     public Shooter() {}
@@ -38,8 +42,41 @@ public class Shooter extends Subsystem {
     }
 
     //TODO put the shooter power calculation in a separate method to clean up some stuff
-    public void run(boolean shooterButton, boolean hopperButton, int shooterMode) {
+    public void run(boolean shooterButton, boolean hopperButton, int shooterMode, float shooterHighButton, float shooterLowButton) {
+        if (shooterButton) {
+            if(!this.shooterMode) {
+                shooterModeNum = 73.6;
+            }
+            else {
+                shooterModeNum = 88.9;
+            }
+            shooterPowerLeft = ((-b + Math.sqrt((Math.pow(b, 2)) + (-4.0) * (a) * (-313.7 - shooterModeNum))) / (2.0 * (a)));
+            shooterPowerRight = ((0.13) / 204.6) * ((Math.hypot((Constants.FIELD_SIZE_CM_X - (2.5 * Constants.TILE_SIZE_CM)) - Robot.getRobotX(), (Constants.FIELD_SIZE_CM_Y) - Robot.getRobotY())) - 152.4);
 
+            //Replace setVelocity equation
+            //
+            shooterPower = (shooterPowerLeft + shooterPowerRight);
+            if(shooterPower < 0.83){
+                shooterPower = 0.83;
+            }
+            shooter.setPower(shooterPower);
+            telemetry.addData("shooter power", shooter.getPower());
+        }
+        if(shooterHighButton > 0){
+            shooter.setPower(shooterHighPower);
+        }
+
+        if(shooterLowButton > 0){
+            shooter.setPower(shooterLowPower);
+        }
+
+        if (!shooterButton && shooterHighButton == 0 && shooterLowButton == 0) {
+            shooter.setPower(0);
+            pidRunning = false;
+        }
+
+
+/*
         if (shooterButton && !this.shooterButton) {
             shooterOn *= -1;
             this.shooterButton = true;
@@ -82,6 +119,8 @@ public class Shooter extends Subsystem {
             pidRunning = false;
         }
 
+ */
+
 
         if (hopperButton) {
 
@@ -111,6 +150,8 @@ public class Shooter extends Subsystem {
         if(!hopperButton && this.hopperButton){
             this.hopperButton = false;
         }
+
+
 
     }
 
