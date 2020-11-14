@@ -24,7 +24,7 @@ public class Shooter extends Subsystem {
     private double shooterPowerLeft;
     private double shooterPowerRight;
     private double shooterHighPower = 0.895;
-    private double shooterLowPower = 0.85;
+    private double shooterLowPower = 0.84;
     private double powerShotPower = 0.7;
     private float shooterHighButton;
     private float shooterLowButton;
@@ -102,7 +102,7 @@ public class Shooter extends Subsystem {
             if(!this.shooterMode) {
                 shooterModeNum = 73.6;
             }
-            else {
+            else {\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
                 shooterModeNum = 88.9;
             }
 
