@@ -60,6 +60,9 @@ public class Shooter extends Subsystem {
             if(shooterPower < shooterLowPower){
                 shooterPower = shooterLowPower;
             }
+            if(shooterPower < shooterHighPower){
+                shooterPower = shooterHighPower;
+            }
             shooter.setPower(shooterPower);
             telemetry.addData("shooter power", shooter.getPower());
         }
