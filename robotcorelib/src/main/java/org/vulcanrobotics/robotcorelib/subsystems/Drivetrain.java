@@ -17,7 +17,7 @@ public class Drivetrain extends Subsystem {
     private DcMotor fl, fr, bl, br;
     private BNO055IMU imu;
 
-    private PID turnPid = new PID(1, 0, 0);
+    private PID turnPid = new PID(1.5, 0.01, 2);
 
     private boolean doingAutonomousTask;
 
@@ -117,7 +117,7 @@ public class Drivetrain extends Subsystem {
             }
 
             double error = Math.toRadians(Robot.getRobotAngleDeg() + offset);
-            turnPid.run(absoluteAngleToTarget, error);
+            turnPid.run(absoluteAngleToTarget + SHOOTING_DEGREE_BIAS, error);
             turnPower = turnPid.getOutput();
 
         }

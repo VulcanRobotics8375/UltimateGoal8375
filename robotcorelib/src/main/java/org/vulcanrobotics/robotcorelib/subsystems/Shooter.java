@@ -19,12 +19,13 @@ public class Shooter extends Subsystem {
     //lowest shooter power when closest is 0.8, highest shooter power when furthest is
     public double shooterPower;
     //on = goal, off = powershot
-    private boolean shooterMode;
+    private boolean shooterMode = true;
     private double shooterModeNum = 88.9;
     private double shooterPowerLeft;
     private double shooterPowerRight;
-    private double shooterHighPower = .935;
-    private double shooterLowPower = .83;
+    private double shooterHighPower = 0.895;
+    private double shooterLowPower = 0.85;
+    private double powerShotPower = 0.7;
     private float shooterHighButton;
     private float shooterLowButton;
     private int shooterOn = -1;
@@ -42,7 +43,7 @@ public class Shooter extends Subsystem {
     }
 
     //TODO put the shooter power calculation in a separate method to clean up some stuff
-    public void run(boolean shooterButton, boolean hopperButton, int shooterMode, float shooterHighButton, float shooterLowButton) {
+    public void run(boolean shooterButton, boolean hopperButton, int shooterMode, float shooterHighButton, float shooterLowButton, boolean powerShotButton) {
         if (shooterButton) {
             if(!this.shooterMode) {
                 shooterModeNum = 73.6;
@@ -51,31 +52,34 @@ public class Shooter extends Subsystem {
                 shooterModeNum = 88.9;
             }
             shooterPowerLeft = ((-b + Math.sqrt((Math.pow(b, 2)) + (-4.0) * (a) * (-313.7 - shooterModeNum))) / (2.0 * (a)));
-            shooterPowerRight = ((0.13) / 204.6) * ((Math.hypot((Constants.FIELD_SIZE_CM_X - (2.5 * Constants.TILE_SIZE_CM)) - Robot.getRobotX(), (Constants.FIELD_SIZE_CM_Y) - Robot.getRobotY())) - 152.4);
+            shooterPowerRight = ((0.14) / 204.6) * ((Math.hypot((Constants.FIELD_SIZE_CM_X - (2.5 * Constants.TILE_SIZE_CM)) - Robot.getRobotX(), (Constants.FIELD_SIZE_CM_Y) - Robot.getRobotY())) - 152.4);
 
             //Replace setVelocity equation
             //
             shooterPower = (shooterPowerLeft + shooterPowerRight);
-            if(shooterPower < 0.83){
-                shooterPower = 0.83;
+            if(shooterPower < shooterLowPower){
+                shooterPower = shooterLowPower;
             }
             shooter.setPower(shooterPower);
             telemetry.addData("shooter power", shooter.getPower());
         }
-        if(shooterHighButton > 0){
+        else if(shooterHighButton > 0){
             shooter.setPower(shooterHighPower);
         }
-
-        if(shooterLowButton > 0){
+        else if(shooterLowButton > 0){
             shooter.setPower(shooterLowPower);
         }
+        else if(powerShotButton) {
+            shooter.setPower(powerShotPower);
+        }
 
-        if (!shooterButton && shooterHighButton == 0 && shooterLowButton == 0) {
+        else {
             shooter.setPower(0);
             pidRunning = false;
         }
 
 
+        //copy paste this somehwere else, it doesn't need to stay in this file
 /*
         if (shooterButton && !this.shooterButton) {
             shooterOn *= -1;
