@@ -21,7 +21,7 @@ public class Main extends TeleOpPipeline {
         telemetry.addLine("ready");
         telemetry.update();
 
-        setStart(new Point(138.34, 21.6), 0);
+        Robot.loadRobotPosition();
 
         waitForStart();
         telemetry.addLine("starting");

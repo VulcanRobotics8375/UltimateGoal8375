@@ -10,6 +10,10 @@ import org.vulcanrobotics.robotcorelib.math.Point;
 import org.vulcanrobotics.robotcorelib.motion.PurePursuit;
 import org.vulcanrobotics.robotcorelib.robot.Robot;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 
 //@Disabled
@@ -71,6 +75,7 @@ public class ExamplePath extends AutoPipeline {
                     break;
             }
 
+            Robot.storeRobotPosition();
             controller.stop = true;
 
         } catch (RobotCoreLibException e) {
