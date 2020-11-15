@@ -105,7 +105,7 @@ public class Shooter extends Subsystem {
             if(!this.shooterMode) {
                 shooterModeNum = 73.6;
             }
-            else {\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+            else {
                 shooterModeNum = 88.9;
             }
 
