@@ -28,8 +28,8 @@ public class Shooter extends Subsystem {
     private double shooterPowerLeft;
     private double shooterPowerRight;
     private double shooterHighPower = 0.895;
-    private double shooterLowPower = 0.84;
-    private double powerShotPower = 0.7;
+    private double shooterLowPower = 0.83;
+    private double powerShotPower = 0.68;
     private float shooterHighButton;
     private float shooterLowButton;
     private int shooterOn = -1;
