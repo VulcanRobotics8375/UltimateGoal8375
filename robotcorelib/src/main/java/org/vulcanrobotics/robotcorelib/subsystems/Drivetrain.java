@@ -17,7 +17,7 @@ public class Drivetrain extends Subsystem {
     private DcMotor fl, fr, bl, br;
     private BNO055IMU imu;
 
-    private PID turnPid = new PID(1.3, 0.01, 1.9);
+    private PID turnPid = new PID(1.5, 0.01, 2);
 
     private boolean doingAutonomousTask;
     private double variableOffset = 0;
@@ -84,7 +84,7 @@ public class Drivetrain extends Subsystem {
         double turnPower = turn;
 
         if(leftOffsetButton && !this.leftOffsetButton) {
-            variableOffset -= 2;
+            variableOffset -= 3;
             this.leftOffsetButton = true;
         }
         if(!leftOffsetButton && this.leftOffsetButton) {
@@ -92,7 +92,7 @@ public class Drivetrain extends Subsystem {
         }
 
         if(rightOffsetButton && !this.rightOffsetButton) {
-            variableOffset += 2;
+            variableOffset += 3;
             this.rightOffsetButton = true;
         }
         if(!rightOffsetButton && this.rightOffsetButton) {
@@ -103,7 +103,7 @@ public class Drivetrain extends Subsystem {
             double absoluteAngleToTarget = Math.atan2(FIELD_SIZE_CM_Y - Robot.getRobotY(), (FIELD_SIZE_CM_X - (1.5*TILE_SIZE_CM)) - Robot.getRobotX());
             double distanceToTarget = Math.hypot((FIELD_SIZE_CM_X - (1.5*TILE_SIZE_CM)) - Robot.getRobotX(), (FIELD_SIZE_CM_Y - Robot.getRobotY()));
 
-            double offset = ((((SHOOTING_OFFSET_MIN - SHOOTING_OFFSET_MAX) / 204.6) * (distanceToTarget - 152.4)) + SHOOTING_OFFSET_MAX) + SHOOTING_DEGREE_BIAS;
+            double offset = ((((SHOOTING_OFFSET_MIN - SHOOTING_OFFSET_MAX) / 204.6) * (distanceToTarget - 152.4)) + SHOOTING_OFFSET_MAX) + SHOOTING_DEGREE_BIAS + variableOffset;
 
             doingAutonomousTask = true;
             double error = Functions.angleWrap(Math.toRadians(getZAngle() + offset));

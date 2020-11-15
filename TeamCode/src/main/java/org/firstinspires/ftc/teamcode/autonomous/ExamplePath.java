@@ -32,9 +32,18 @@ public class ExamplePath extends AutoPipeline {
             //defining the data structure for path points
             ArrayList<ArrayList<PathPoint>> sections = new ArrayList<>();
             ArrayList<PathPoint> section1 = new ArrayList<>();
-            section1.add(new PathPoint(0, 0, -0.5, 0, 1, 0));
-            section1.add(new PathPoint(30, 40, -0.5, 0, 1, 0));
+            ArrayList<PathPoint> section2 = new ArrayList<>();
+
+            section1.add(new PathPoint(0, 0, -0.025, 0, 20, 0));
+            section1.add(new PathPoint(30, 30, -0.025, 0, 20, 0));
+            section1.add(new PathPoint(0, 100, -0.025, 0, 20, 0));
+
+            section2.add(new PathPoint(0, 100, -0.025, 0, 20, 0));
+            section2.add(new PathPoint(30, 30, -0.025, 0, 20, 0));
+            section2.add(new PathPoint(0, 0, -0.025, 0, 20, 0));
+
             sections.add(section1);
+            sections.add(section2);
 
             //path points here
 
@@ -55,7 +64,7 @@ public class ExamplePath extends AutoPipeline {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-
+                    controller.run();
                 }
             }).start();
 
@@ -63,7 +72,7 @@ public class ExamplePath extends AutoPipeline {
 
                 PathPoint currentPoint = internalController.getCurrentPoint();
                 //subsystem code here, triggers are currentPoint and then timing
-                internalController.moveToPoint(section1.get(1));
+//                internalController.moveToPoint(section1.get(1));
 
                 telemetry.addData("robot x", Robot.getRobotX());
                 telemetry.addData("robot y", Robot.getRobotY());
