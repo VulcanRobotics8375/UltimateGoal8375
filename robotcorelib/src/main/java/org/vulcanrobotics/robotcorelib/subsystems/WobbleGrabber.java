@@ -28,49 +28,25 @@ public class WobbleGrabber extends Subsystem {
         wobbleTurn = hardwareMap.servo.get("wobble_turn");
         wobbleGrab = hardwareMap.servo.get("wobble_grab");
         wobbleLift = hardwareMap.dcMotor.get("wobble_lift");
+
     }
-        public void run ( boolean wobbleTurnButton, boolean wobbleGrabButton, double wobbleLiftJoystick){
 
-            if (wobbleTurnButton && !this.wobbleTurnButton) {
-                wobbleTurnOn *= -1;
-                this.wobbleTurnButton = true;
-            }
-            if (!wobbleTurnButton && this.wobbleTurnButton) {
-                this.wobbleTurnButton = false;
-            }
-            if (wobbleTurnOn > 0) {
-                wobbleTurn.setPosition(.70);
-            } else {
-                wobbleTurn.setPosition(0);
-            }
+    public void run(boolean wobbleTurnButton, boolean wobbleGrabButton, double wobbleLiftJoystick) {
 
-
-            if (wobbleGrabButton && !this.wobbleGrabButton) {
-                wobbleGrabOn *= -1;
-                this.wobbleGrabButton = true;
-            }
-            if (!wobbleGrabButton && this.wobbleGrabButton) {
-                this.wobbleGrabButton = false;
-            }
-            if (wobbleGrabOn > 0) {
-                wobbleGrab.setPosition(.70);
-            } else {
-                wobbleGrab.setPosition(0.05);
-            }
-
-
-            telemetry.addData("wobble_height", wobbleLift.getCurrentPosition());
-            if (wobbleLiftJoystick > 0 && wobbleLift.getCurrentPosition() >= limitMax - limitRange) {
-                liftPower = (limitMax - wobbleLift.getCurrentPosition()) / limitRange;
-            }
-
-            if (wobbleLiftJoystick < 0 && wobbleLift.getCurrentPosition() <= limitMin + limitRange) {
-                liftPower = -((wobbleLift.getCurrentPosition() - limitMin) / limitRange);
-            } else {
-                liftPower = wobbleLiftJoystick;
-            }
-            wobbleLift.setPower(liftPower);
+        if (wobbleTurnButton && !this.wobbleTurnButton) {
+            wobbleTurnOn *= -1;
+            this.wobbleTurnButton = true;
         }
+        if (!wobbleTurnButton && this.wobbleTurnButton) {
+            this.wobbleTurnButton = false;
+        }
+        if (wobbleTurnOn > 0) {
+            wobbleTurn.setPosition(.70);
+        }
+        else  {
+            wobbleTurn.setPosition(0);
+        }
+
 
         if (wobbleGrabButton && !this.wobbleGrabButton) {
             wobbleGrabOn *= -1;
@@ -104,6 +80,5 @@ public class WobbleGrabber extends Subsystem {
         wobbleLift.setPower(liftPower);
     }
         @Override
-        public void stop() {
-    }
+        public void stop() {}
 }
