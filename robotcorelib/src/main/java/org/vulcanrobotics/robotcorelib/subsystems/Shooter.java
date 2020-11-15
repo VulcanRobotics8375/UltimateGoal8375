@@ -4,12 +4,16 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
+
 import org.vulcanrobotics.robotcorelib.framework.Constants;
 import org.vulcanrobotics.robotcorelib.robot.Robot;
 
 public class Shooter extends Subsystem {
-    public DcMotorEx shooter;
-    public Servo hopper;
+    private DcMotorEx shooter;
+    private Servo hopper;
+    private VoltageSensor battery;
+
     private boolean hopperButton;
     private double a = -417.9;
     private double b = 832;
@@ -36,14 +40,21 @@ public class Shooter extends Subsystem {
     public void init() {
         shooter = (DcMotorEx) hardwareMap.dcMotor.get("shooter");
         hopper = hardwareMap.servo.get("hopper");
+        battery = hardwareMap.voltageSensor.get("Motor Controller 1");
         shooter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        shooter.setVelocityPIDFCoefficients(1.2, 0.12, 0, 11.7);
+//        shooter.setVelocityPIDFCoefficients(1.2, 0.12, 0, 11.7);
         shooter.setDirection((DcMotor.Direction.REVERSE));
         shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
     }
 
     //TODO put the shooter power calculation in a separate method to clean up some stuff
     public void run(boolean shooterButton, boolean hopperButton, int shooterMode, float shooterHighButton, float shooterLowButton, boolean powerShotButton) {
+        if(shooterMode == 1) {
+            this.shooterMode = true;
+        } else if(shooterMode == 2) {
+            this.shooterMode = false;
+        }
+
         if (shooterButton) {
             if(!this.shooterMode) {
                 shooterModeNum = 73.6;
@@ -51,8 +62,16 @@ public class Shooter extends Subsystem {
             else {
                 shooterModeNum = 88.9;
             }
+
+            double slopeY;
+            if(battery.getVoltage() < 12.8) {
+                slopeY = 0.14;
+            } else {
+                slopeY = 0.13;
+            }
+
             shooterPowerLeft = ((-b + Math.sqrt((Math.pow(b, 2)) + (-4.0) * (a) * (-313.7 - shooterModeNum))) / (2.0 * (a)));
-            shooterPowerRight = ((0.14) / 204.6) * ((Math.hypot((Constants.FIELD_SIZE_CM_X - (2.5 * Constants.TILE_SIZE_CM)) - Robot.getRobotX(), (Constants.FIELD_SIZE_CM_Y) - Robot.getRobotY())) - 152.4);
+            shooterPowerRight = ((slopeY) / 204.6) * ((Math.hypot((Constants.FIELD_SIZE_CM_X - (2.5 * Constants.TILE_SIZE_CM)) - Robot.getRobotX(), (Constants.FIELD_SIZE_CM_Y) - Robot.getRobotY())) - 152.4);
 
             //Replace setVelocity equation
             //

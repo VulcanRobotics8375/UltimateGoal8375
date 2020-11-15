@@ -24,7 +24,7 @@ public class PurePursuit extends Controller {
         int currentSection = 0;
         for (ArrayList<PathPoint> section : sections) {
             start = false;
-            while(Math.abs(Robot.getRobotX() - section.get(section.size() - 1).x) + Math.abs(Robot.getRobotY() - section.get(section.size() - 1).y) > 0.1) {
+            while(Math.abs(Robot.getRobotX() - section.get(section.size() - 1).x) + Math.abs(Robot.getRobotY() - section.get(section.size() - 1).y) > 4) {
                 PathPoint followPoint = findFollowPoint(section);
                 moveToPoint(followPoint);
                 if(stop)
@@ -42,7 +42,7 @@ public class PurePursuit extends Controller {
 
         ArrayList<Point> circleIntersections;
 
-        for (int i = 0; i < path.size(); i++) {
+        for (int i = 0; i < path.size() - 1; i++) {
             PathPoint start = path.get(i);
             PathPoint end = path.get(i + 1);
 
@@ -74,13 +74,15 @@ public class PurePursuit extends Controller {
     public void moveToPoint(PathPoint point) {
         double absoluteAngleToPoint = Math.atan2(point.y - Robot.getRobotY(), point.x - Robot.getRobotX());
 
-        double robotAngleToPoint = point.angle - Robot.getRobotAngleRad();
+        double robotAngleToPoint = point.angle + Robot.getRobotAngleRad();
 
         turnPID.run(point.angle, robotAngleToPoint);
 
         double turnSpeed = turnPID.getOutput();
 
-        Robot.drivetrain.fieldCentricMove(Math.cos(absoluteAngleToPoint) * point.speed, Math.sin(absoluteAngleToPoint) * point.speed, turnSpeed);
+        double distanceToPoint = Math.hypot(point.x - Robot.getRobotX(), point.y - Robot.getRobotY()) * point.speed;
+
+        Robot.drivetrain.fieldCentricMove(Math.cos(absoluteAngleToPoint) * distanceToPoint, Math.sin(absoluteAngleToPoint) * distanceToPoint, turnSpeed);
     }
 
     public int getCurrentSection(){

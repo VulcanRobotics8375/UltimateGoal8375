@@ -11,8 +11,12 @@ import org.vulcanrobotics.robotcorelib.motion.MotionProfile;
 import org.vulcanrobotics.robotcorelib.subsystems.Drivetrain;
 import org.vulcanrobotics.robotcorelib.subsystems.Subsystem;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 /**
  * Generic Robot class -- requires a Drivetrain subsystem, but is modular beyond that point.
@@ -52,6 +56,7 @@ public class Robot {
      */
     public static HardwareMap hardwareMap;
 
+    private static Properties internalProperties;
 
 
     /**
@@ -124,6 +129,17 @@ public class Robot {
      */
     public static void init() throws RobotCoreLibException  {
 
+        try {
+            ClassLoader loader = Thread.currentThread().getContextClassLoader();
+            InputStream input = loader.getResourceAsStream("robotconfig.properties");
+            if(input!=null) {
+                internalProperties = new Properties();
+                internalProperties.load(input);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         config.init();
         List<Subsystem> subsystems = config.subsystems;
 
@@ -156,6 +172,31 @@ public class Robot {
     public static RobotConfig getComponents() {
 
         return config;
+    }
+
+    public static Properties getPropertiesFile() {
+        return internalProperties;
+    }
+
+    public static void storeRobotPosition() {
+        try {
+            internalProperties.setProperty("startPositionX", Double.toString(getRobotX()));
+            internalProperties.setProperty("startPositionY", Double.toString(getRobotY()));
+            internalProperties.setProperty("startPositionTheta", Double.toString(getRobotAngleRad()));
+
+            Robot.getPropertiesFile().store(new FileOutputStream("robotconfig.properties"), null);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void loadRobotPosition() {
+        double x = Double.parseDouble(internalProperties.getProperty("startPositionX"));
+        double y = Double.parseDouble(internalProperties.getProperty("startPositionY"));
+        double theta = Double.parseDouble(internalProperties.getProperty("startPositionTheta"));
+
+        setRobotPos(new Point(x, y));
+        setRobotAngle(theta);
     }
 
     /**

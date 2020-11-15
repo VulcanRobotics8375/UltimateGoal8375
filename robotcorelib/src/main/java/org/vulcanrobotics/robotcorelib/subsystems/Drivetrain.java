@@ -17,9 +17,11 @@ public class Drivetrain extends Subsystem {
     private DcMotor fl, fr, bl, br;
     private BNO055IMU imu;
 
-    private PID turnPid = new PID(1.5, 0.01, 2);
+    private PID turnPid = new PID(1.3, 0.01, 1.9);
 
     private boolean doingAutonomousTask;
+    private double variableOffset = 0;
+    private boolean leftOffsetButton, rightOffsetButton;
 
     @Override
     public void init() {
@@ -72,14 +74,30 @@ public class Drivetrain extends Subsystem {
         setPowers(powers[0], powers[1], powers[2], powers[3]);
     }
 
-    public void mecanumDrive(double forward, double turn, double strafe, boolean slow, boolean highGoal, boolean powerShotLeft, boolean powerShotCenter, boolean powerShotRight) {
+    public void mecanumDrive(double forward, double turn, double strafe, boolean highGoal, boolean powerShotLeft, boolean powerShotCenter, boolean powerShotRight, boolean leftOffsetButton, boolean rightOffsetButton) {
         forward = curveLinearJoystick(forward);
         strafe = curveLinearJoystick(strafe);
-        turn = curveLinearJoystick(turn * 0.8);
+        turn = curveLinearJoystick(turn);
         double vd = Math.hypot(forward, strafe);
         double theta = Math.atan2(forward, strafe) - (Math.PI / 4);
         double multiplier = 1.0;
         double turnPower = turn;
+
+        if(leftOffsetButton && !this.leftOffsetButton) {
+            variableOffset -= 2;
+            this.leftOffsetButton = true;
+        }
+        if(!leftOffsetButton && this.leftOffsetButton) {
+            this.leftOffsetButton = false;
+        }
+
+        if(rightOffsetButton && !this.rightOffsetButton) {
+            variableOffset += 2;
+            this.rightOffsetButton = true;
+        }
+        if(!rightOffsetButton && this.rightOffsetButton) {
+            this.rightOffsetButton = false;
+        }
 
         if(highGoal) {
             double absoluteAngleToTarget = Math.atan2(FIELD_SIZE_CM_Y - Robot.getRobotY(), (FIELD_SIZE_CM_X - (1.5*TILE_SIZE_CM)) - Robot.getRobotX());
@@ -101,23 +119,23 @@ public class Drivetrain extends Subsystem {
                 absoluteAngleToTarget = Math.atan2(FIELD_SIZE_CM_Y - Robot.getRobotY(), (FIELD_SIZE_CM_X - (2.75 * TILE_SIZE_CM)) - Robot.getRobotX());
                 distanceToTarget = Math.hypot((FIELD_SIZE_CM_X - (2.75*TILE_SIZE_CM)) - Robot.getRobotX(), (FIELD_SIZE_CM_Y - Robot.getRobotY()));
 
-                offset = ((((SHOOTING_OFFSET_MIN - SHOOTING_OFFSET_MAX) / 204.6) * (distanceToTarget - 152.4)) + SHOOTING_OFFSET_MAX) + SHOOTING_DEGREE_BIAS;
+                offset = ((((SHOOTING_OFFSET_MIN - SHOOTING_OFFSET_MAX) / 204.6) * (distanceToTarget - 152.4)) + SHOOTING_OFFSET_MAX) + SHOOTING_DEGREE_BIAS + variableOffset;
             }
             else if(powerShotCenter) {
                 absoluteAngleToTarget = Math.atan2(FIELD_SIZE_CM_Y - Robot.getRobotY(), (FIELD_SIZE_CM_X - (2.5 * TILE_SIZE_CM)) - Robot.getRobotX());
                 distanceToTarget = Math.hypot((FIELD_SIZE_CM_X - (2.5*TILE_SIZE_CM)) - Robot.getRobotX(), (FIELD_SIZE_CM_Y - Robot.getRobotY()));
 
-                offset = ((((SHOOTING_OFFSET_MIN - SHOOTING_OFFSET_MAX) / 204.6) * (distanceToTarget - 152.4)) + SHOOTING_OFFSET_MAX) + SHOOTING_DEGREE_BIAS;
+                offset = ((((SHOOTING_OFFSET_MIN - SHOOTING_OFFSET_MAX) / 204.6) * (distanceToTarget - 152.4)) + SHOOTING_OFFSET_MAX) + SHOOTING_DEGREE_BIAS + variableOffset;
             }
             else {
                 absoluteAngleToTarget = Math.atan2(FIELD_SIZE_CM_Y - Robot.getRobotY(), (FIELD_SIZE_CM_X - (2.25 * TILE_SIZE_CM)) - Robot.getRobotX());
                 distanceToTarget = Math.hypot((FIELD_SIZE_CM_X - (2.25*TILE_SIZE_CM)) - Robot.getRobotX(), (FIELD_SIZE_CM_Y - Robot.getRobotY()));
 
-                offset = ((((SHOOTING_OFFSET_MIN - SHOOTING_OFFSET_MAX) / 204.6) * (distanceToTarget - 152.4)) + SHOOTING_OFFSET_MAX) + SHOOTING_DEGREE_BIAS;
+                offset = ((((SHOOTING_OFFSET_MIN - SHOOTING_OFFSET_MAX) / 204.6) * (distanceToTarget - 152.4)) + SHOOTING_OFFSET_MAX) + SHOOTING_DEGREE_BIAS + variableOffset;
             }
 
-            double error = Math.toRadians(Robot.getRobotAngleDeg() + offset);
-            turnPid.run(absoluteAngleToTarget + SHOOTING_DEGREE_BIAS, error);
+            double error = Math.toRadians(getZAngle() + offset);
+            turnPid.run(absoluteAngleToTarget, error);
             turnPower = turnPid.getOutput();
 
         }
@@ -132,9 +150,6 @@ public class Drivetrain extends Subsystem {
                 vd * Math.cos(theta) - turnPower,
                 vd * Math.sin(theta) + turnPower
         };
-        if(slow) {
-            multiplier = DRIVETRAIN_SLOW_MODE_MULTIPLIER;
-        }
 
         double[] motorOut = {
                 multiplier * v[0],
@@ -239,16 +254,17 @@ public class Drivetrain extends Subsystem {
 
     public void fieldCentricMove(double x, double y, double turn) {
 
+        x *= -1.0;
         double power = Math.hypot(x, y);
-        double theta = Math.atan2(y, x) + Robot.getRobotAngleRad();
+        double theta = Math.atan2(y, x) - Robot.getRobotAngleRad();
 
         double rx = (Math.sin(theta + (Math.PI / 4))) * power;
         double lx = (Math.sin(theta - (Math.PI / 4))) * power;
 
-        double fl = lx + turn;
-        double fr = rx - turn;
-        double bl = rx + turn;
-        double br = lx - turn;
+        double fl = lx - turn;
+        double fr = rx + turn;
+        double bl = rx - turn;
+        double br = lx + turn;
 
         setPowers(fl, fr, bl, br);
 
