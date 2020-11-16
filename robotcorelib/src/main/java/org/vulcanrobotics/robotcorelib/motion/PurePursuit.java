@@ -66,6 +66,15 @@ public class PurePursuit extends Controller {
                     followPoint.setPathPoint(end);
                     followPoint.setPoint(intersection);
                 }
+
+                //new, might not work
+                if(path.indexOf(end) == path.size() - 1) {
+                    double maxX = Math.max(start.x, end.x);
+                    if(followPoint.x > maxX) {
+                        followPoint.setPoint(end.toPoint());
+                    }
+                }
+
             }
         }
 
