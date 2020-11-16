@@ -12,7 +12,6 @@ import org.vulcanrobotics.robotcorelib.robot.Robot;
 public class Shooter extends Subsystem {
     private DcMotorEx shooter;
     private Servo hopper;
-    private VoltageSensor battery;
 
     private boolean hopperButton;
     private double a = -417.9;
@@ -28,8 +27,8 @@ public class Shooter extends Subsystem {
     private double shooterPowerLeft;
     private double shooterPowerRight;
     private double shooterHighPower = 0.895;
-    private double shooterLowPower = 0.84;
-    private double powerShotPower = 0.7;
+    private double shooterLowPower = 0.83;
+    private double powerShotPower = 0.77;
     private float shooterHighButton;
     private float shooterLowButton;
     private int shooterOn = -1;
@@ -40,7 +39,6 @@ public class Shooter extends Subsystem {
     public void init() {
         shooter = (DcMotorEx) hardwareMap.dcMotor.get("shooter");
         hopper = hardwareMap.servo.get("hopper");
-        battery = hardwareMap.voltageSensor.get("Motor Controller 1");
         shooter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 //        shooter.setVelocityPIDFCoefficients(1.2, 0.12, 0, 11.7);
         shooter.setDirection((DcMotor.Direction.REVERSE));
@@ -63,23 +61,16 @@ public class Shooter extends Subsystem {
                 shooterModeNum = 88.9;
             }
 
-            double slopeY;
-            if(battery.getVoltage() < 12.8) {
-                slopeY = 0.14;
-            } else {
-                slopeY = 0.13;
-            }
-
             shooterPowerLeft = ((-b + Math.sqrt((Math.pow(b, 2)) + (-4.0) * (a) * (-313.7 - shooterModeNum))) / (2.0 * (a)));
-            shooterPowerRight = ((slopeY) / 204.6) * ((Math.hypot((Constants.FIELD_SIZE_CM_X - (2.5 * Constants.TILE_SIZE_CM)) - Robot.getRobotX(), (Constants.FIELD_SIZE_CM_Y) - Robot.getRobotY())) - 152.4);
+            shooterPowerRight = ((0.14) / 204.6) * ((Math.hypot((Constants.FIELD_SIZE_CM_X - (2.5 * Constants.TILE_SIZE_CM)) - Robot.getRobotX(), (Constants.FIELD_SIZE_CM_Y) - Robot.getRobotY())) - 152.4);
 
             //Replace setVelocity equation
             //
-            shooterPower = (shooterPowerLeft + shooterPowerRight);
+            shooterPower = (shooterPowerLeft + shooterPowerRight) - 0.05;
             if(shooterPower < shooterLowPower){
                 shooterPower = shooterLowPower;
             }
-            if(shooterPower < shooterHighPower){
+            if(shooterPower > shooterHighPower){
                 shooterPower = shooterHighPower;
             }
             shooter.setPower(shooterPower);
