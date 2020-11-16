@@ -184,7 +184,7 @@ public class Robot {
             internalProperties.setProperty("startPositionY", Double.toString(getRobotY()));
             internalProperties.setProperty("startPositionTheta", Double.toString(getRobotAngleRad()));
 
-            Robot.getPropertiesFile().store(new FileOutputStream("robotconfig.properties"), null);
+            Robot.getPropertiesFile().store(new FileOutputStream("src/main/resources/robotconfig.properties"), null);
         } catch (IOException e) {
             e.printStackTrace();
         }
