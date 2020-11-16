@@ -101,7 +101,6 @@ public class PurePursuit extends Controller {
         return currentSection;
     }
 
-
     private void waitForStart() {
         while(!start) {
             if(stop) {
