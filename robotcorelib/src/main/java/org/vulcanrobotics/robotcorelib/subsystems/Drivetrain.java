@@ -314,6 +314,9 @@ public class Drivetrain extends Subsystem {
         br.setMode(runMode);
     }
 
+    public void run(double forward, double turn) {
+        setPowers(forward - turn, forward + turn, forward - turn, forward + turn);
+    }
 
     public boolean isDoingAutonomousTask() {
         return doingAutonomousTask;
