@@ -21,7 +21,6 @@ public class PID {
     }
 
     public void run(double target, double value) {
-       double timeElapsed = timer.getDelta();
 
         double error = target - value;
         integral += ((error + lastError) / 2);
