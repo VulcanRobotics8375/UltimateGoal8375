@@ -167,6 +167,23 @@ public class Drivetrain extends Subsystem {
     }
 
 
+    public void pidTurn(double angle) {
+        turnPid.run(angle, Math.toRadians(getZAngle()));
+        double turnPower = turnPid.getOutput();
+
+        setPowers(-turnPower, turnPower, -turnPower, turnPower);
+
+    }
+
+    public void resetPidControllers() {
+        turnPid.reset();
+    }
+
+    public void setAngleOffset(double offset) {
+        variableOffset = offset;
+    }
+
+
     private boolean pidUp, pidDown, pidSwitch;
     private int pidConstant = 0;
     public void tunePID(boolean up, boolean down, boolean constantSwitch) {

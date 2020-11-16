@@ -24,7 +24,7 @@ public class PurePursuit extends Controller {
         int currentSection = 0;
         for (ArrayList<PathPoint> section : sections) {
             start = false;
-            while(Math.abs(Robot.getRobotX() - section.get(section.size() - 1).x) + Math.abs(Robot.getRobotY() - section.get(section.size() - 1).y) > 15) {
+            while(Math.hypot(section.get(section.size() - 1).x - Robot.getRobotX(), section.get(section.size() - 1).y - Robot.getRobotY()) > 15) {
                 PathPoint followPoint = findFollowPoint(section);
                 moveToPoint(followPoint);
                 if(stop)
@@ -32,6 +32,7 @@ public class PurePursuit extends Controller {
             }
             currentSection++;
             this.currentSection = currentSection;
+            Robot.drivetrain.setPowers(0, 0, 0, 0);
             waitForStart();
 
         }

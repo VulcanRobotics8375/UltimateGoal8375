@@ -28,19 +28,18 @@ public class ExamplePath extends AutoPipeline {
             //backend initialization
             autoInit();
             //set starting coefficients, all board measurements in CM this year
-            setStart(new Point(0, 0), 0);
+            setStart(new Point(138.34, 21.6), 0);
             //defining the data structure for path points
             ArrayList<ArrayList<PathPoint>> sections = new ArrayList<>();
             ArrayList<PathPoint> section1 = new ArrayList<>();
             ArrayList<PathPoint> section2 = new ArrayList<>();
 
-            section1.add(new PathPoint(0, 0, -0.025, 0, 20, 0));
-            section1.add(new PathPoint(30, 30, -0.025, 0, 20, 0));
-            section1.add(new PathPoint(0, 100, -0.025, 0, 20, 0));
+            section1.add(new PathPoint(138.34, 21.6, -0.025, 0, 20, 0));
+            section1.add(new PathPoint(105, 80, -0.025, 0, 20, 0));
+            section1.add(new PathPoint(107, 150, -0.025, 0, 20, 0));
+            section1.add(new PathPoint(180, 200, -0.025, 0, 20, 0));
 
-            section2.add(new PathPoint(0, 100, -0.025, 0, 20, 0));
-            section2.add(new PathPoint(30, 30, -0.025, 0, 20, 0));
-            section2.add(new PathPoint(0, 0, -0.025, 0, 20, 0));
+            section2.add(new PathPoint(180, 170, -0.025, 0, 20, 0));
 
             sections.add(section1);
             sections.add(section2);
@@ -77,8 +76,20 @@ public class ExamplePath extends AutoPipeline {
                 telemetry.addData("robot x", Robot.getRobotX());
                 telemetry.addData("robot y", Robot.getRobotY());
                 telemetry.addData("robot angle", Robot.getRobotAngleDeg());
+                telemetry.addData("current section", internalController.getCurrentSection());
 
                 telemetry.update();
+
+                if(internalController.getCurrentSection() == 1) {
+                    internalController.startNextSection();
+                }
+
+                if (internalController.getCurrentSection() == 2) {
+//                    subsytems.drivetrain.pidTurn(Math.toRadians(-20));
+
+                    subsytems.drivetrain.mecanumDrive(0, 0, 0, false, true, false, false, false, false);
+                    subsytems.shooter.run(false, true, 0, 0, 0, true);
+                }
 
                 if(isStopRequested())
                     break;
