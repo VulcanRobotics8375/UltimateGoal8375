@@ -1,10 +1,9 @@
 package org.vulcanrobotics.robotcorelib.subsystems;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.VoltageSensor;
+import com.qualcomm.robotcore.hardware.configuration.annotations.MotorType;
+import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
 import org.vulcanrobotics.robotcorelib.framework.Constants;
 import org.vulcanrobotics.robotcorelib.robot.Robot;
@@ -40,6 +39,10 @@ public class Shooter extends Subsystem {
         shooter = (DcMotorEx) hardwareMap.dcMotor.get("shooter");
         hopper = hardwareMap.servo.get("hopper");
         shooter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        shooter.getMotorType().setMaxRPM(1620);
+//        shooter.getMotorType().setGearing(3.7);
+//        shooter.getMotorType().setTicksPerRev(103.6);
+//        shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 //        shooter.setVelocityPIDFCoefficients(1.2, 0.12, 0, 11.7);
         shooter.setDirection((DcMotor.Direction.REVERSE));
         shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -172,6 +175,14 @@ public class Shooter extends Subsystem {
 
     }
 
+    public void testShooterVelocity(boolean shooterOn) {
+        double power = 0.84;
+        double velocity = power * (1620.0 * 103.6 / 60.0);
+        if(shooterOn) {
+            shooter.setVelocity(velocity);
+        }
+    }
+
     private long lastPidTime;
     private boolean pidRunning;
     private double lastError, integral = 0, lastPosition;
@@ -208,6 +219,13 @@ public class Shooter extends Subsystem {
 
     }
 
+    public void setHopperPosition(double position) {
+        hopper.setPosition(position);
+    }
+
+    public void setShooterPower(double power) {
+        shooter.setPower(power);
+    }
 
     public void shoot(){
 
