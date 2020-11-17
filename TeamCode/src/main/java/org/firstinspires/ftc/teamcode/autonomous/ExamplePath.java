@@ -37,9 +37,8 @@ public class ExamplePath extends AutoPipeline {
             section1.add(new PathPoint(138.34, 21.6, -0.025, 0, 20, 0));
             section1.add(new PathPoint(105, 80, -0.025, 0, 20, 0));
             section1.add(new PathPoint(107, 150, -0.025, 0, 20, 0));
-            section1.add(new PathPoint(180, 200, -0.025, 0, 20, 0));
 
-            section2.add(new PathPoint(180, 170, -0.025, 0, 20, 0));
+            section2.add(new PathPoint(180, 200, -0.025, 0, 20, 0));
 
             sections.add(section1);
             sections.add(section2);
@@ -85,10 +84,7 @@ public class ExamplePath extends AutoPipeline {
                 }
 
                 if (internalController.getCurrentSection() == 2) {
-//                    subsytems.drivetrain.pidTurn(Math.toRadians(-20));
 
-                    subsytems.drivetrain.mecanumDrive(0, 0, 0, false, true, false, false, false, false);
-                    subsytems.shooter.run(false, true, 0, 0, 0, true);
                 }
 
                 if(isStopRequested())
