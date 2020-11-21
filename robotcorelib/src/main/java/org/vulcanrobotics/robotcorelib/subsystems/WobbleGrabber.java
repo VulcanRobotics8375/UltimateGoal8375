@@ -11,9 +11,10 @@ public class WobbleGrabber extends Subsystem {
     public Servo wobbleTurn;
     public Servo wobbleGrab;
     public DcMotor wobbleLift;
-    public double limitRange = 500;
-    public double limitMin = 0;
-    public double limitMax = 1750;
+    private double wobbleMode = -1.0;
+    private double limitRange = 500;
+    private double limitMin = 0;
+    private double limitMax = 1750;
     private boolean wobbleTurnButton;
     private boolean wobbleGrabButton;
     private double liftPower = 1;
@@ -56,14 +57,18 @@ public class WobbleGrabber extends Subsystem {
         if (!wobbleGrabButton && this.wobbleGrabButton) {
             this.wobbleGrabButton = false;
         }
-        if (wobbleGrabOn > 0) {
-            wobbleGrab.setPosition(.70);
+        if(wobbleGrabOn > 0) {
+            wobbleMode *= -1;
+            if (wobbleMode == 1) {
+                wobbleGrab.setPosition(0.7);
+            }
+            if(wobbleMode == -1){
+                wobbleGrab.setPosition(.2);
+            }
+            else{
+                wobbleGrab.setPosition(0.05);
+            }
         }
-        else {
-            wobbleGrab.setPosition(0.05);
-        }
-
-
 
 
        telemetry.addData("wobble height", wobbleLift.getCurrentPosition());
