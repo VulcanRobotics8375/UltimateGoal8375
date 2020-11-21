@@ -60,16 +60,16 @@ public class StackDetectorCV extends OpenCvPipeline {
         Imgproc.rectangle(output, boundingRect, new Scalar(255, 0, 0));
         Imgproc.putText(output, "detectedStack", new Point(boundingRect.x, boundingRect.y), Imgproc.FONT_HERSHEY_PLAIN, 1, new Scalar(255, 0, 0));
 
-        stackContourHeight = biggestContour;
+        stackContourHeight = boundingRect.height;
 
-        if(stackContourHeight * 2 < 290) {
+        if(stackContourHeight * 2 < 40) {
+            stackHeight = 0;
+        }
+        if(stackContourHeight * 2 > 40 && stackContourHeight * 2 < 120) {
             stackHeight = 1;
         }
-        if(stackContourHeight * 2 > 290 && stackContourHeight * 2 < 350) {
-            stackHeight = 2;
-        }
-        if(stackContourHeight * 2 > 350) {
-            stackHeight = 3;
+        if(stackContourHeight * 2 > 120) {
+            stackHeight = 4;
         }
 
         ringColorFilter.release();

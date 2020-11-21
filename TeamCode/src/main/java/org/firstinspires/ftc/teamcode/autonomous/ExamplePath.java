@@ -34,11 +34,11 @@ public class ExamplePath extends AutoPipeline {
             ArrayList<PathPoint> section1 = new ArrayList<>();
             ArrayList<PathPoint> section2 = new ArrayList<>();
 
-            section1.add(new PathPoint(138.34, 21.6, -0.025, 0, 20, 0));
-            section1.add(new PathPoint(105, 80, -0.025, 0, 20, 0));
-            section1.add(new PathPoint(107, 150, -0.025, 0, 20, 0));
+            section1.add(new PathPoint(138.34, 21.6, -0.05, 1, 20, 0));
+            section1.add(new PathPoint(105, 80, -0.05, 1, 20, 0));
+            section1.add(new PathPoint(110, 150, -0.05, 1, 20, 0));
 
-            section2.add(new PathPoint(180, 200, -0.025, 0, 20, 0));
+            section2.add(new PathPoint(180, 200, -0.025, 1, 20, 0));
 
             sections.add(section1);
             sections.add(section2);
@@ -79,9 +79,73 @@ public class ExamplePath extends AutoPipeline {
 
                 telemetry.update();
 
-                if(internalController.getCurrentSection() == 1) {
-                    internalController.startNextSection();
+                if(internalController.getCurrentSection() == 1 && !doneShooting) {
+//                    internalController.startNextSection();
+                    int ringCount = 0;
+                    boolean ringOneShot = false, ringTwoShot = false, ringThreeShot = false;
+                    long lastTime = System.currentTimeMillis();
+                    subsytems.shooter.setHopperPosition(0);
+                    subsytems.shooter.setShooterPower(0.75);
+                    while(ringCount == 0 && !isStopRequested()) {
+                        subsytems.drivetrain.mecanumDrive(0, 0, 0, false, false, false, true, false, false);
+                        if(System.currentTimeMillis() - lastTime < 1000 && !ringOneShot) {
+                            continue;
+                        }
+                        if(!ringOneShot) {
+                            lastTime = System.currentTimeMillis();
+                            ringOneShot = true;
+                        }
+                        subsytems.shooter.setHopperPosition(0.35);
+                        if(System.currentTimeMillis() - lastTime < 500) {
+                            subsytems.shooter.setHopperPosition(0.35);
+                            continue;
+                        }
+//                        subsytems.shooter.setHopperPosition(0);
+                        ringCount++;
+
+                    }
+                    subsytems.shooter.setHopperPosition(0);
+                    lastTime = System.currentTimeMillis();
+                    while(ringCount == 1 && !isStopRequested()) {
+                        subsytems.drivetrain.mecanumDrive(0, 0, 0, false, false, true, false, false, false);
+                        if(System.currentTimeMillis() - lastTime < 500 && !ringTwoShot) {
+//                            subsytems.shooter.setHopperPosition(0);
+                            continue;
+                        }
+                        if(!ringTwoShot) {
+                            lastTime = System.currentTimeMillis();
+                            ringTwoShot = true;
+                        }
+                        subsytems.shooter.setHopperPosition(0.35);
+                        if(System.currentTimeMillis() - lastTime < 500) {
+                            subsytems.shooter.setHopperPosition(0.35);
+                            continue;
+                        }
+                        subsytems.shooter.setHopperPosition(0);
+                        ringCount++;
+                    }
+
+                    lastTime = System.currentTimeMillis();
+                    while (ringCount == 2 && !isStopRequested()) {
+                        subsytems.drivetrain.mecanumDrive(0, 0, 0, false, true, false, false, false, false);
+                        if(System.currentTimeMillis() - lastTime < 500 && !ringThreeShot) {
+                            continue;
+                        }
+                        if(!ringThreeShot) {
+                            lastTime = System.currentTimeMillis();
+                            ringThreeShot = true;
+                        }
+                        subsytems.shooter.setHopperPosition(0.35);
+                        if(System.currentTimeMillis() - lastTime < 500) {
+                            continue;
+                        }
+                        subsytems.shooter.setHopperPosition(0);
+                        ringCount++;
+                    }
+                        doneShooting = true;
+//                    internalController.startNextSection();
                 }
+                subsytems.shooter.setShooterPower(0);
 
                 if (internalController.getCurrentSection() == 2) {
 
