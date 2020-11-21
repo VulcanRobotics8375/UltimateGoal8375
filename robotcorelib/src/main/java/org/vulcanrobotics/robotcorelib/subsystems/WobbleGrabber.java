@@ -20,6 +20,7 @@ public class WobbleGrabber extends Subsystem {
     private double wobbleLiftJoystick = -1.0;
 
     private double wobbleTurnOn = -1.0;
+
     private double wobbleGrabOn = -1.0;
 
     @Override
