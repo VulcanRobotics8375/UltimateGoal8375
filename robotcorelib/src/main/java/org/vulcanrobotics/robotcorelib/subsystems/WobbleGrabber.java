@@ -52,18 +52,18 @@ public class WobbleGrabber extends Subsystem {
 
         if (wobbleGrabButton && !this.wobbleGrabButton) {
             wobbleGrabOn *= -1;
+            wobbleMode *= -1;
             this.wobbleGrabButton = true;
         }
         if (!wobbleGrabButton && this.wobbleGrabButton) {
             this.wobbleGrabButton = false;
         }
         if(wobbleGrabOn > 0) {
-            wobbleMode *= -1;
             if (wobbleMode == 1) {
                 wobbleGrab.setPosition(0.7);
             }
             if(wobbleMode == -1){
-                wobbleGrab.setPosition(.2);
+                wobbleGrab.setPosition(.5);
             }
             else{
                 wobbleGrab.setPosition(0.05);
