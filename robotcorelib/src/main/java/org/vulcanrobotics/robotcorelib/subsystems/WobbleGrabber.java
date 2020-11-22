@@ -31,6 +31,11 @@ public class WobbleGrabber extends Subsystem {
         wobbleGrab = hardwareMap.servo.get("wobble_grab");
         wobbleLift = hardwareMap.dcMotor.get("wobble_lift");
 
+        wobbleLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        wobbleLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        wobbleLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
     }
 
     public void run(boolean wobbleTurnButton, boolean wobbleGrabButton, double wobbleLiftJoystick) {
@@ -77,7 +82,7 @@ public class WobbleGrabber extends Subsystem {
            }
 
            if(wobbleLiftJoystick < 0 && wobbleLift.getCurrentPosition() <= limitMin + limitRange) {
-               liftPower = -((wobbleLift.getCurrentPosition() - limitMin)/limitRange) * wobbleLiftJoystick;
+               liftPower = ((wobbleLift.getCurrentPosition() - limitMin)/limitRange) * wobbleLiftJoystick;
            }
 
        else{
@@ -85,6 +90,15 @@ public class WobbleGrabber extends Subsystem {
        }
         wobbleLift.setPower(liftPower);
     }
+
+    public void setGrabPosition(double position) {
+        wobbleGrab.setPosition(position);
+    }
+
+    public void setTurnPosition(double position) {
+        wobbleTurn.setPosition(position);
+    }
+
         @Override
         public void stop() {}
 }

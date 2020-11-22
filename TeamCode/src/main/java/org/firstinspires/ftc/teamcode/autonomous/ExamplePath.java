@@ -33,16 +33,18 @@ public class ExamplePath extends AutoPipeline {
             ArrayList<ArrayList<PathPoint>> sections = new ArrayList<>();
             ArrayList<PathPoint> section1 = new ArrayList<>();
             ArrayList<PathPoint> section2 = new ArrayList<>();
+            ArrayList<PathPoint> section3 = new ArrayList<>();
 
-            section1.add(new PathPoint(138.34, 21.6, -0.025, 0, 20, 0));
-            section1.add(new PathPoint(105, 80, -0.025, 0, 20, 0));
-            section1.add(new PathPoint(107, 150, -0.025, 0, 20, 0));
-            section1.add(new PathPoint(180, 200, -0.025, 0, 20, 0));
+            section1.add(new PathPoint(138.34, 21.6, -0.05, 1, 20, 0));
+            section1.add(new PathPoint(100, 80, -0.05, 1, 20, 0));
+            section1.add(new PathPoint(110, 145, -0.05, 1, 20, 0));
 
-            section2.add(new PathPoint(180, 170, -0.025, 0, 20, 0));
+            section2.add(new PathPoint(185, 223, -0.025, 1, 20, 0));
+//            section2.add(new PathPoint(135, 35, -0.05, 1, 20, 0));
 
             sections.add(section1);
             sections.add(section2);
+//            sections.add(section3);
 
             //path points here
 
@@ -63,6 +65,7 @@ public class ExamplePath extends AutoPipeline {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
+                    sleep(1500);
                     controller.run();
                 }
             }).start();
@@ -79,16 +82,86 @@ public class ExamplePath extends AutoPipeline {
                 telemetry.addData("current section", internalController.getCurrentSection());
 
                 telemetry.update();
+//                subsytems.wobbleGrabber.run(false, true, 0);
+                if(internalController.getCurrentSection() < 2) {
+                    subsytems.wobbleGrabber.setGrabPosition(0.05);
+                    subsytems.wobbleGrabber.setTurnPosition(0.2);
 
-                if(internalController.getCurrentSection() == 1) {
-                    internalController.startNextSection();
+                } else {
+                    subsytems.wobbleGrabber.setGrabPosition(0.7);
                 }
 
-                if (internalController.getCurrentSection() == 2) {
-//                    subsytems.drivetrain.pidTurn(Math.toRadians(-20));
+                if(internalController.getCurrentSection() == 1 && !doneShooting) {
+//                    internalController.startNextSection();
+                    int ringCount = 0;
+                    boolean ringOneShot = false, ringTwoShot = false, ringThreeShot = false;
+                    long lastTime = System.currentTimeMillis();
+                    subsytems.shooter.setHopperPosition(0);
+                    subsytems.shooter.setShooterPower(0.74);
+                    while(ringCount == 0 && !isStopRequested()) {
+                        subsytems.drivetrain.mecanumDrive(0, 0, 0, false, false, false, true, false, false);
+                        if(System.currentTimeMillis() - lastTime < 1650 && !ringOneShot) {
+                            continue;
+                        }
+                        if(!ringOneShot) {
+                            lastTime = System.currentTimeMillis();
+                            ringOneShot = true;
+                        }
+                        subsytems.shooter.setHopperPosition(0.35);
+                        if(System.currentTimeMillis() - lastTime < 500) {
+                            subsytems.shooter.setHopperPosition(0.35);
+                            continue;
+                        }
+//                        subsytems.shooter.setHopperPosition(0);
+                        ringCount++;
 
-                    subsytems.drivetrain.mecanumDrive(0, 0, 0, false, true, false, false, false, false);
-                    subsytems.shooter.run(false, true, 0, 0, 0, true);
+                    }
+                    subsytems.shooter.setHopperPosition(0);
+                    lastTime = System.currentTimeMillis();
+                    subsytems.drivetrain.setAngleOffset(-1);
+                    while(ringCount == 1 && !isStopRequested()) {
+                        subsytems.drivetrain.mecanumDrive(0, 0, 0, false, false, true, false, false, false);
+                        if(System.currentTimeMillis() - lastTime < 750 && !ringTwoShot) {
+//                            subsytems.shooter.setHopperPosition(0);
+                            continue;
+                        }
+                        if(!ringTwoShot) {
+                            lastTime = System.currentTimeMillis();
+                            ringTwoShot = true;
+                        }
+                        subsytems.shooter.setHopperPosition(0.35);
+                        if(System.currentTimeMillis() - lastTime < 500) {
+                            subsytems.shooter.setHopperPosition(0.35);
+                            continue;
+                        }
+                        subsytems.shooter.setHopperPosition(0);
+                        ringCount++;
+                    }
+
+                    lastTime = System.currentTimeMillis();
+                    while (ringCount == 2 && !isStopRequested()) {
+                        subsytems.drivetrain.mecanumDrive(0, 0, 0, false, true, false, false, false, false);
+                        if(System.currentTimeMillis() - lastTime < 750 && !ringThreeShot) {
+                            continue;
+                        }
+                        if(!ringThreeShot) {
+                            lastTime = System.currentTimeMillis();
+                            ringThreeShot = true;
+                        }
+                        subsytems.shooter.setHopperPosition(0.35);
+                        if(System.currentTimeMillis() - lastTime < 500) {
+                            continue;
+                        }
+                        subsytems.shooter.setHopperPosition(0);
+                        ringCount++;
+                    }
+                        doneShooting = true;
+                    internalController.startNextSection();
+                }
+                subsytems.shooter.setShooterPower(0);
+
+                if (internalController.getCurrentSection() == 2) {
+
                 }
 
                 if(isStopRequested())
