@@ -68,7 +68,7 @@ public class Main extends TeleOpPipeline {
         telemetry.addData("robot x", Robot.getRobotX());
         telemetry.addData("robot y", Robot.getRobotY());
         telemetry.addData("robot angle", Robot.getRobotAngleDeg());
-//        telemetry.addData("zAngle", subsystems.drivetrain.getZAngle());
+        telemetry.addData("zAngle", subsystems.drivetrain.getZAngle());
     }
 
 }

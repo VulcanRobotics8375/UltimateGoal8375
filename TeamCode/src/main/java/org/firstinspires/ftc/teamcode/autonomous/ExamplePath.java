@@ -17,7 +17,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 
 //@Disabled
-@Autonomous(name = "example path", group = "example")
+@Autonomous(name = "auto -- main", group = "example")
 public class ExamplePath extends AutoPipeline {
 
     volatile boolean doneShooting = false;
@@ -31,20 +31,31 @@ public class ExamplePath extends AutoPipeline {
             setStart(new Point(138.34, 21.6), 0);
             //defining the data structure for path points
             ArrayList<ArrayList<PathPoint>> sections = new ArrayList<>();
+
+            //powershot section-- same for each path
             ArrayList<PathPoint> section1 = new ArrayList<>();
-            ArrayList<PathPoint> section2 = new ArrayList<>();
-            ArrayList<PathPoint> section3 = new ArrayList<>();
+
+            //0 ring auto
+            ArrayList<PathPoint> aPosition1 = new ArrayList<>();
+            ArrayList<PathPoint> aPosition2 = new ArrayList<>();
+
+            //1 ring auto
+            ArrayList<PathPoint> bPosition1 = new ArrayList<>();
+
+            //4 ring auto
+            ArrayList<PathPoint> cPosition1 = new ArrayList<>();
 
             section1.add(new PathPoint(138.34, 21.6, -0.05, 1, 20, 0));
             section1.add(new PathPoint(100, 80, -0.05, 1, 20, 0));
-            section1.add(new PathPoint(110, 145, -0.05, 1, 20, 0));
+            section1.add(new PathPoint(110, 150, -0.05, 1, 20, 0));
 
-            section2.add(new PathPoint(185, 223, -0.025, 1, 20, 0));
-//            section2.add(new PathPoint(135, 35, -0.05, 1, 20, 0));
+            aPosition1.add(new PathPoint(188, 225, -0.025, 1, 20, 0));
+
+            aPosition2.add(new PathPoint(135, 35, -0.05, 1, 20, 0));
 
             sections.add(section1);
-            sections.add(section2);
-//            sections.add(section3);
+            sections.add(aPosition1);
+            sections.add(aPosition2);
 
             //path points here
 
@@ -87,8 +98,6 @@ public class ExamplePath extends AutoPipeline {
                     subsytems.wobbleGrabber.setGrabPosition(0.05);
                     subsytems.wobbleGrabber.setTurnPosition(0.2);
 
-                } else {
-                    subsytems.wobbleGrabber.setGrabPosition(0.7);
                 }
 
                 if(internalController.getCurrentSection() == 1 && !doneShooting) {
@@ -161,6 +170,7 @@ public class ExamplePath extends AutoPipeline {
                 subsytems.shooter.setShooterPower(0);
 
                 if (internalController.getCurrentSection() == 2) {
+                    subsytems.wobbleGrabber.setGrabPosition(1.0);
 
                 }
 

@@ -37,6 +37,14 @@ public class WobbleGrabber extends Subsystem {
 
     }
 
+    /**
+     * add any auto init stuff to this, rn its just run to position initialization
+     * runs alongside init(), not instead of
+     */
+    public void autoInit() {
+        wobbleLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+
     public void run(boolean wobbleTurnButton, boolean wobbleGrabButton, double wobbleLiftJoystick) {
 
         if (wobbleTurnButton && !this.wobbleTurnButton) {
@@ -68,9 +76,6 @@ public class WobbleGrabber extends Subsystem {
             wobbleGrab.setPosition(0.05);
         }
 
-
-
-
        telemetry.addData("wobble height", wobbleLift.getCurrentPosition());
            if(wobbleLiftJoystick > 0 && wobbleLift.getCurrentPosition() >= limitMax - limitRange) {
                liftPower = ((limitMax - wobbleLift.getCurrentPosition())/limitRange) * wobbleLiftJoystick;
@@ -92,6 +97,19 @@ public class WobbleGrabber extends Subsystem {
 
     public void setTurnPosition(double position) {
         wobbleTurn.setPosition(position);
+    }
+
+    private boolean liftRunningAuto = false;
+    public void moveLiftToPosition(int position, double power) {
+        if(wobbleLift.isBusy()) {
+            liftRunningAuto = false;
+        }
+        if(!liftRunningAuto) {
+            wobbleLift.setTargetPosition(position);
+            liftRunningAuto = true;
+        }
+        wobbleLift.setPower(power);
+
     }
 
         @Override
