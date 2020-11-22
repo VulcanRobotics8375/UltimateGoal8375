@@ -33,15 +33,18 @@ public class ExamplePath extends AutoPipeline {
             ArrayList<ArrayList<PathPoint>> sections = new ArrayList<>();
             ArrayList<PathPoint> section1 = new ArrayList<>();
             ArrayList<PathPoint> section2 = new ArrayList<>();
+            ArrayList<PathPoint> section3 = new ArrayList<>();
 
             section1.add(new PathPoint(138.34, 21.6, -0.05, 1, 20, 0));
-            section1.add(new PathPoint(105, 80, -0.05, 1, 20, 0));
-            section1.add(new PathPoint(110, 150, -0.05, 1, 20, 0));
+            section1.add(new PathPoint(100, 80, -0.05, 1, 20, 0));
+            section1.add(new PathPoint(110, 145, -0.05, 1, 20, 0));
 
-            section2.add(new PathPoint(180, 200, -0.025, 1, 20, 0));
+            section2.add(new PathPoint(185, 223, -0.025, 1, 20, 0));
+//            section2.add(new PathPoint(135, 35, -0.05, 1, 20, 0));
 
             sections.add(section1);
             sections.add(section2);
+//            sections.add(section3);
 
             //path points here
 
@@ -62,6 +65,7 @@ public class ExamplePath extends AutoPipeline {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
+                    sleep(1500);
                     controller.run();
                 }
             }).start();
@@ -78,6 +82,14 @@ public class ExamplePath extends AutoPipeline {
                 telemetry.addData("current section", internalController.getCurrentSection());
 
                 telemetry.update();
+//                subsytems.wobbleGrabber.run(false, true, 0);
+                if(internalController.getCurrentSection() < 2) {
+                    subsytems.wobbleGrabber.setGrabPosition(0.05);
+                    subsytems.wobbleGrabber.setTurnPosition(0.2);
+
+                } else {
+                    subsytems.wobbleGrabber.setGrabPosition(0.7);
+                }
 
                 if(internalController.getCurrentSection() == 1 && !doneShooting) {
 //                    internalController.startNextSection();
@@ -85,10 +97,10 @@ public class ExamplePath extends AutoPipeline {
                     boolean ringOneShot = false, ringTwoShot = false, ringThreeShot = false;
                     long lastTime = System.currentTimeMillis();
                     subsytems.shooter.setHopperPosition(0);
-                    subsytems.shooter.setShooterPower(0.75);
+                    subsytems.shooter.setShooterPower(0.74);
                     while(ringCount == 0 && !isStopRequested()) {
                         subsytems.drivetrain.mecanumDrive(0, 0, 0, false, false, false, true, false, false);
-                        if(System.currentTimeMillis() - lastTime < 1000 && !ringOneShot) {
+                        if(System.currentTimeMillis() - lastTime < 1650 && !ringOneShot) {
                             continue;
                         }
                         if(!ringOneShot) {
@@ -106,9 +118,10 @@ public class ExamplePath extends AutoPipeline {
                     }
                     subsytems.shooter.setHopperPosition(0);
                     lastTime = System.currentTimeMillis();
+                    subsytems.drivetrain.setAngleOffset(-1);
                     while(ringCount == 1 && !isStopRequested()) {
                         subsytems.drivetrain.mecanumDrive(0, 0, 0, false, false, true, false, false, false);
-                        if(System.currentTimeMillis() - lastTime < 500 && !ringTwoShot) {
+                        if(System.currentTimeMillis() - lastTime < 750 && !ringTwoShot) {
 //                            subsytems.shooter.setHopperPosition(0);
                             continue;
                         }
@@ -128,7 +141,7 @@ public class ExamplePath extends AutoPipeline {
                     lastTime = System.currentTimeMillis();
                     while (ringCount == 2 && !isStopRequested()) {
                         subsytems.drivetrain.mecanumDrive(0, 0, 0, false, true, false, false, false, false);
-                        if(System.currentTimeMillis() - lastTime < 500 && !ringThreeShot) {
+                        if(System.currentTimeMillis() - lastTime < 750 && !ringThreeShot) {
                             continue;
                         }
                         if(!ringThreeShot) {
@@ -143,7 +156,7 @@ public class ExamplePath extends AutoPipeline {
                         ringCount++;
                     }
                         doneShooting = true;
-//                    internalController.startNextSection();
+                    internalController.startNextSection();
                 }
                 subsytems.shooter.setShooterPower(0);
 
