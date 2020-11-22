@@ -150,7 +150,7 @@ public class Shooter extends Subsystem {
                 hopperBeforeTime = System.currentTimeMillis();
             }
 
-            if ((System.currentTimeMillis() - hopperBeforeTime) >= 400) {
+            if ((System.currentTimeMillis() - hopperBeforeTime) >= 450) {
                 hopperOut = !hopperOut;
                 hopperBeforeTime = System.currentTimeMillis();
             }
