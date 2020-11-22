@@ -65,7 +65,7 @@ public class WobbleGrabber extends Subsystem {
         }
         if(wobbleGrabOn > 0) {
             if (wobbleMode == 1) {
-                wobbleGrab.setPosition(0.7);
+                wobbleGrab.setPosition(0.6);
             }
             if(wobbleMode == -1){
                 wobbleGrab.setPosition(.5);
