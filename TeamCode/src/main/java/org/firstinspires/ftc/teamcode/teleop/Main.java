@@ -28,7 +28,7 @@ public class Main extends TeleOpPipeline {
         telemetry.addLine("starting");
         telemetry.update();
 
-        Robot.startOdometryThread();
+//        Robot.startOdometryThread();
 
         Mecanum motionProfile = (Mecanum) Robot.motionProfile;
 
@@ -44,9 +44,9 @@ public class Main extends TeleOpPipeline {
             }
 
             subsystems.drivetrain.mecanumDrive(gamepad1.left_stick_y, -gamepad1.right_stick_x, -gamepad1.left_stick_x, gamepad1.a, gamepad1.b, gamepad1.y, gamepad1.x, gamepad1.left_bumper, gamepad1.right_bumper);
-            subsystems.intake.run(gamepad2.a, gamepad2.b);
+            subsystems.intake.run(gamepad2.a, gamepad2.b, gamepad2.right_bumper);
             subsystems.shooter.run(gamepad2.left_bumper, gamepad2.right_bumper, shoot, gamepad2.right_trigger, gamepad2.left_trigger, gamepad2.dpad_down);
-            subsystems.wobbleGrabber.run(gamepad2.x,gamepad2.y, -gamepad2.left_stick_y);
+            subsystems.wobbleGrabber.run(gamepad2.x,gamepad2.y, -gamepad2.left_stick_y * 0.5);
 
 //            motionProfile.update();
 
@@ -55,9 +55,9 @@ public class Main extends TeleOpPipeline {
                 debug();
             }
 
-            telemetry.addData("left", motionProfile.getLeft().getPosition());
-            telemetry.addData("right", motionProfile.getRight().getPosition());
-            telemetry.addData("horizontal", motionProfile.getHorizontal().getPosition());
+//            telemetry.addData("left", motionProfile.getLeft().getPosition());
+//            telemetry.addData("right", motionProfile.getRight().getPosition());
+//            telemetry.addData("horizontal", motionProfile.getHorizontal().getPosition());
 
             telemetry.update();
         }
@@ -68,7 +68,7 @@ public class Main extends TeleOpPipeline {
         telemetry.addData("robot x", Robot.getRobotX());
         telemetry.addData("robot y", Robot.getRobotY());
         telemetry.addData("robot angle", Robot.getRobotAngleDeg());
-        telemetry.addData("zAngle", subsystems.drivetrain.getZAngle());
+//        telemetry.addData("zAngle", subsystems.drivetrain.getZAngle());
     }
 
 }

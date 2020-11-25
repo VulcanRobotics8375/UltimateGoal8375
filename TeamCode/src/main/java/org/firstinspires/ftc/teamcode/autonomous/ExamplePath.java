@@ -21,41 +21,69 @@ import java.util.ArrayList;
 public class ExamplePath extends AutoPipeline {
 
     volatile boolean doneShooting = false;
+    int sectionStart = 0;
 
     @Override
     public void runOpMode() {
         try {
             //backend initialization
             autoInit();
+            subsytems.drivetrain.autoInit();
             //set starting coefficients, all board measurements in CM this year
             setStart(new Point(138.34, 21.6), 0);
             //defining the data structure for path points
             ArrayList<ArrayList<PathPoint>> sections = new ArrayList<>();
 
             //powershot section-- same for each path
-            ArrayList<PathPoint> section1 = new ArrayList<>();
+            ArrayList<PathPoint> start = new ArrayList<>();
 
             //0 ring auto
             ArrayList<PathPoint> aPosition1 = new ArrayList<>();
             ArrayList<PathPoint> aPosition2 = new ArrayList<>();
+            ArrayList<PathPoint> aPosition3 = new ArrayList<>();
+            ArrayList<PathPoint> aPosition4 = new ArrayList<>();
+            ArrayList<PathPoint> aPosition5 = new ArrayList<>();
+            ArrayList<PathPoint> park = new ArrayList<>();
 
             //1 ring auto
             ArrayList<PathPoint> bPosition1 = new ArrayList<>();
+            ArrayList<PathPoint> bPosition2 = new ArrayList<>();
 
             //4 ring auto
             ArrayList<PathPoint> cPosition1 = new ArrayList<>();
 
-            section1.add(new PathPoint(138.34, 21.6, -0.05, 1, 20, 0));
-            section1.add(new PathPoint(100, 80, -0.05, 1, 20, 0));
-            section1.add(new PathPoint(110, 150, -0.05, 1, 20, 0));
+            start.add(new PathPoint(138.34, 21.6, -0.05, 1, 20, 0));
+            start.add(new PathPoint(96, 80, -0.05, 1, 20, 0));
+            start.add(new PathPoint(105, 155, -0.025, 1, 20, 0));
 
             aPosition1.add(new PathPoint(188, 225, -0.025, 1, 20, 0));
 
-            aPosition2.add(new PathPoint(135, 35, -0.05, 1, 20, 0));
+            aPosition2.add(new PathPoint(192, 150, -0.025, 1, 20, 0));
+            aPosition3.add(new PathPoint(192, 150, -0.025, 1, 20, 0));
+            aPosition3.add(new PathPoint(191, 100, -0.025, 1, 20, Math.PI / 2.0));
+            aPosition3.add(new PathPoint(173, 102, -0.025, 1, 20, Math.PI / 2.0));
 
-            sections.add(section1);
-            sections.add(aPosition1);
+            aPosition4.add(new PathPoint(173, 102, -0.025, 1, 20, Math.PI / 2.0));
+            aPosition4.add(new PathPoint(188, 100, -0.025, 1, 20, Math.PI / 2.0));
+            aPosition4.add(new PathPoint(172, 210, -0.025, 1, 20, 0));
+            aPosition4.add(new PathPoint(171, 211, -0.025, 1, 20, 0));
+
+
+            bPosition1.add(new PathPoint(132, 273, -0.025, 1, 20, 0));
+
+            bPosition2.add(new PathPoint(173, 102, -0.025, 1, 20, Math.PI / 2.0));
+            bPosition2.add(new PathPoint(188, 100, -0.025, 1, 20, Math.PI / 2.0));
+            bPosition2.add(new PathPoint(105, 270, -0.05, 1, 20, 0));
+            bPosition2.add(new PathPoint(97, 265, -0.025, 1, 20, 0));
+
+            park.add(new PathPoint(115, 210, -0.025, 1, 20, 0));
+
+            sections.add(start);
+            sections.add(bPosition1);
             sections.add(aPosition2);
+            sections.add(aPosition3);
+            sections.add(bPosition2);
+            sections.add(park);
 
             //path points here
 
@@ -81,6 +109,7 @@ public class ExamplePath extends AutoPipeline {
                 }
             }).start();
 
+            boolean secondWobble = false;
             while(opModeIsActive()) {
 
                 PathPoint currentPoint = internalController.getCurrentPoint();
@@ -91,6 +120,7 @@ public class ExamplePath extends AutoPipeline {
                 telemetry.addData("robot y", Robot.getRobotY());
                 telemetry.addData("robot angle", Robot.getRobotAngleDeg());
                 telemetry.addData("current section", internalController.getCurrentSection());
+                telemetry.addData("section start", sectionStart);
 
                 telemetry.update();
 //                subsytems.wobbleGrabber.run(false, true, 0);
@@ -106,7 +136,8 @@ public class ExamplePath extends AutoPipeline {
                     boolean ringOneShot = false, ringTwoShot = false, ringThreeShot = false;
                     long lastTime = System.currentTimeMillis();
                     subsytems.shooter.setHopperPosition(0);
-                    subsytems.shooter.setShooterPower(0.74);
+                    subsytems.shooter.setShooterPower(0.75);
+                    subsytems.drivetrain.setAngleOffset(1);
                     while(ringCount == 0 && !isStopRequested()) {
                         subsytems.drivetrain.mecanumDrive(0, 0, 0, false, false, false, true, false, false);
                         if(System.currentTimeMillis() - lastTime < 1650 && !ringOneShot) {
@@ -130,7 +161,7 @@ public class ExamplePath extends AutoPipeline {
                     subsytems.drivetrain.setAngleOffset(-1);
                     while(ringCount == 1 && !isStopRequested()) {
                         subsytems.drivetrain.mecanumDrive(0, 0, 0, false, false, true, false, false, false);
-                        if(System.currentTimeMillis() - lastTime < 750 && !ringTwoShot) {
+                        if(System.currentTimeMillis() - lastTime < 1750 && !ringTwoShot) {
 //                            subsytems.shooter.setHopperPosition(0);
                             continue;
                         }
@@ -150,7 +181,7 @@ public class ExamplePath extends AutoPipeline {
                     lastTime = System.currentTimeMillis();
                     while (ringCount == 2 && !isStopRequested()) {
                         subsytems.drivetrain.mecanumDrive(0, 0, 0, false, true, false, false, false, false);
-                        if(System.currentTimeMillis() - lastTime < 750 && !ringThreeShot) {
+                        if(System.currentTimeMillis() - lastTime < 1750 && !ringThreeShot) {
                             continue;
                         }
                         if(!ringThreeShot) {
@@ -165,13 +196,46 @@ public class ExamplePath extends AutoPipeline {
                         ringCount++;
                     }
                         doneShooting = true;
-                    internalController.startNextSection();
+                    if(sectionStart == 0) {
+                        internalController.startNextSection();
+                        sectionStart++;
+                    }
+
                 }
                 subsytems.shooter.setShooterPower(0);
 
                 if (internalController.getCurrentSection() == 2) {
                     subsytems.wobbleGrabber.setGrabPosition(1.0);
+                    subsytems.wobbleGrabber.setTurnPosition(0);
+                    sleep(500);
+                    if(sectionStart == 1) {
+                        internalController.startNextSection();
+                        sectionStart++;
+                    }
+                }
+                if(internalController.getCurrentSection() == 3) {
+                    if(sectionStart == 2) {
+                        internalController.startNextSection();
+                        sectionStart++;
+                    }
+                }
 
+                if(internalController.getCurrentSection() == 4) {
+                    subsytems.wobbleGrabber.setTurnPosition(0.2);
+                    subsytems.wobbleGrabber.setGrabPosition(0.05);
+                    sleep(1000);
+                    if(sectionStart == 3) {
+                        internalController.startNextSection();
+                        sectionStart++;
+                    }
+                }
+                if(internalController.getCurrentSection() == 5) {
+                    subsytems.wobbleGrabber.setGrabPosition(1.0);
+                    subsytems.wobbleGrabber.setTurnPosition(0.0);
+                    if(sectionStart == 4) {
+                        internalController.startNextSection();
+                        sectionStart++;
+                    }
                 }
 
                 if(isStopRequested())
