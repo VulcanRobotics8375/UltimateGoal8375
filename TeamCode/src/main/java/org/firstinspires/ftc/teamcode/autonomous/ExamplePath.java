@@ -42,7 +42,6 @@ public class ExamplePath extends AutoPipeline {
             ArrayList<PathPoint> aPosition2 = new ArrayList<>();
             ArrayList<PathPoint> aPosition3 = new ArrayList<>();
             ArrayList<PathPoint> aPosition4 = new ArrayList<>();
-            ArrayList<PathPoint> aPosition5 = new ArrayList<>();
             ArrayList<PathPoint> park = new ArrayList<>();
 
             //1 ring auto
