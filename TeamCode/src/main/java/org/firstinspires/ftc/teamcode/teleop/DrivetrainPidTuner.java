@@ -29,7 +29,7 @@ public class DrivetrainPidTuner extends TeleOpPipeline {
         Mecanum motionProfile = (Mecanum) Robot.motionProfile;
 
         while(opModeIsActive()) {
-            subsystems.drivetrain.mecanumDrive(gamepad1.left_stick_y, -gamepad1.right_stick_x, -gamepad1.left_stick_x, gamepad1.a, gamepad1.b, gamepad1.y, gamepad1.x, gamepad1.left_bumper, gamepad1.right_bumper);
+//            subsystems.drivetrain.mecanumDrive(gamepad1.left_stick_y, gamepad1.right_stick_x, gamepad1.left_stick_x, gamepad1.left_bumper, gamepad1.a, gamepad1.x, gamepad1.y, gamepad1.b);
             subsystems.drivetrain.tunePID(gamepad1.dpad_up, gamepad1.dpad_down, gamepad1.right_bumper);
             telemetry.update();
         }

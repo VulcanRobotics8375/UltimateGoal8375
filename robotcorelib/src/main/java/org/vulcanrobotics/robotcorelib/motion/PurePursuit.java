@@ -24,7 +24,7 @@ public class PurePursuit extends Controller {
         int currentSection = 0;
         for (ArrayList<PathPoint> section : sections) {
             start = false;
-            while(Math.hypot(section.get(section.size() - 1).x - Robot.getRobotX(), section.get(section.size() - 1).y - Robot.getRobotY()) > 6) {
+            while(Math.hypot(section.get(section.size() - 1).x - Robot.getRobotX(), section.get(section.size() - 1).y - Robot.getRobotY()) > 5) {
                 PathPoint followPoint = findFollowPoint(section);
                 moveToPoint(followPoint);
                 if(stop)
@@ -86,7 +86,7 @@ public class PurePursuit extends Controller {
     public void moveToPoint(PathPoint point) {
         double absoluteAngleToPoint = Math.atan2(point.y - Robot.getRobotY(), point.x - Robot.getRobotX());
 
-        double robotAngleToPoint = Robot.getRobotAngleRad();
+        double robotAngleToPoint = point.angle + Robot.getRobotAngleRad();
 
         turnPID.run(point.angle, robotAngleToPoint);
 

@@ -158,8 +158,6 @@ public class Robot {
 
     }
 
-    public static void test() {}
-
     public static void init(HardwareMap hardwareMap, Telemetry telemetry) throws RobotCoreLibException {
         Robot.hardwareMap = hardwareMap;
         Robot.setTelemetry(telemetry);

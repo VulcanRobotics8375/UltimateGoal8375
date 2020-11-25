@@ -56,7 +56,7 @@ public class WobbleGrabber extends Subsystem {
             this.wobbleTurnButton = false;
         }
         if (wobbleTurnOn > 0) {
-            wobbleTurn.setPosition(.45);
+            wobbleTurn.setPosition(.70);
         }
         else  {
             wobbleTurn.setPosition(0);
@@ -65,9 +65,7 @@ public class WobbleGrabber extends Subsystem {
 
         if (wobbleGrabButton && !this.wobbleGrabButton) {
             wobbleGrabOn *= -1;
-            if(wobbleGrabOn > 0) {
-                wobbleMode *= -1;
-            }
+            wobbleMode *= -1;
             this.wobbleGrabButton = true;
         }
         if (!wobbleGrabButton && this.wobbleGrabButton) {
@@ -77,22 +75,24 @@ public class WobbleGrabber extends Subsystem {
             if (wobbleMode == 1) {
                 wobbleGrab.setPosition(0.7);
             }
-            else if(wobbleMode == -1){
-                wobbleGrab.setPosition(0.3);
+            if(wobbleMode == -1){
+                wobbleGrab.setPosition(.5);
             }
-
-        } else {
-            wobbleGrab.setPosition(0.05);
+            else{
+                wobbleGrab.setPosition(0.05);
+            }
         }
 
        telemetry.addData("wobble height", wobbleLift.getCurrentPosition());
-       if(wobbleLiftJoystick > 0 && wobbleLift.getCurrentPosition() >= limitMax - limitRange) {
-           liftPower = ((limitMax - wobbleLift.getCurrentPosition())/limitRange) * wobbleLiftJoystick;
-       }
+           if(wobbleLiftJoystick > 0 && wobbleLift.getCurrentPosition() >= limitMax - limitRange) {
+               liftPower = ((limitMax - wobbleLift.getCurrentPosition())/limitRange) * wobbleLiftJoystick;
+           }
 
-       else if(wobbleLiftJoystick < 0 && wobbleLift.getCurrentPosition() <= limitMin + limitRange) {
-           liftPower = ((wobbleLift.getCurrentPosition() - limitMin)/limitRange) * wobbleLiftJoystick;
-       } else {
+           if(wobbleLiftJoystick < 0 && wobbleLift.getCurrentPosition() <= limitMin + limitRange) {
+               liftPower = ((wobbleLift.getCurrentPosition() - limitMin)/limitRange) * wobbleLiftJoystick;
+           }
+
+       else{
             liftPower = wobbleLiftJoystick;
        }
         wobbleLift.setPower(liftPower);
