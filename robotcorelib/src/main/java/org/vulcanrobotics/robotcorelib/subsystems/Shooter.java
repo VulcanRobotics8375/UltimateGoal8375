@@ -32,7 +32,6 @@ public class Shooter extends Subsystem {
     private float shooterHighButton;
     private float shooterLowButton;
     private int shooterOn = -1;
-    PIDFCoefficients coefficients = shooter.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
 
     public Shooter() {}
 
@@ -45,6 +44,7 @@ public class Shooter extends Subsystem {
 //        shooter.getMotorType().setGearing(3.7);
 //        shooter.getMotorType().setTicksPerRev(103.6);
         shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        PIDFCoefficients coefficients = shooter.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
         shooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(10.0, 9.0, 35.0, coefficients.f));
 //        shooter.setVelocityPIDFCoefficients(1.2, 0.12, 0, 11.7);
         shooter.setDirection((DcMotor.Direction.REVERSE));
