@@ -1,6 +1,7 @@
 package org.vulcanrobotics.robotcorelib.subsystems;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.configuration.annotations.MotorType;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
@@ -31,6 +32,7 @@ public class Shooter extends Subsystem {
     private float shooterHighButton;
     private float shooterLowButton;
     private int shooterOn = -1;
+    PIDFCoefficients coefficients = shooter.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
 
     public Shooter() {}
 
@@ -43,6 +45,7 @@ public class Shooter extends Subsystem {
 //        shooter.getMotorType().setGearing(3.7);
 //        shooter.getMotorType().setTicksPerRev(103.6);
         shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        shooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(10.0, 9.0, 35.0, coefficients.f));
 //        shooter.setVelocityPIDFCoefficients(1.2, 0.12, 0, 11.7);
         shooter.setDirection((DcMotor.Direction.REVERSE));
         shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -55,6 +58,7 @@ public class Shooter extends Subsystem {
         } else if(shooterMode == 2) {
             this.shooterMode = false;
         }
+
 
         if (shooterButton) {
             if(!this.shooterMode) {
@@ -93,6 +97,12 @@ public class Shooter extends Subsystem {
             shooter.setPower(0);
             pidRunning = false;
         }
+
+//        telemetry.addData("p", shooter.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER).p);
+//
+//        telemetry.addData("i", shooter.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER).i);
+//        telemetry.addData("d", shooter.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER).d);
+//        telemetry.addData("f", shooter.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER).f);
 
 
         //copy paste this somehwere else, it doesn't need to stay in this file
@@ -150,7 +160,7 @@ public class Shooter extends Subsystem {
                 hopperBeforeTime = System.currentTimeMillis();
             }
 
-            if ((System.currentTimeMillis() - hopperBeforeTime) >= 450) {
+            if ((System.currentTimeMillis() - hopperBeforeTime) >= 500) {
                 hopperOut = !hopperOut;
                 hopperBeforeTime = System.currentTimeMillis();
             }
