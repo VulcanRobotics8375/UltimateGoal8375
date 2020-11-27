@@ -7,8 +7,8 @@ import org.vulcanrobotics.robotcorelib.math.Point;
 import org.vulcanrobotics.robotcorelib.motion.Mecanum;
 import org.vulcanrobotics.robotcorelib.robot.Robot;
 
-@TeleOp(name = "main", group = "main")
-public class Main extends TeleOpPipeline {
+@TeleOp(name = "-- DRIVER PRACTICE --", group = "main")
+public class DriverPractice extends TeleOpPipeline {
 
     boolean debug = true;
 
@@ -21,8 +21,8 @@ public class Main extends TeleOpPipeline {
         telemetry.addLine("ready");
         telemetry.update();
 
-        Robot.loadRobotPosition();
-//        setStart(new Point(138.34, 21.6), 0);
+//        Robot.loadRobotPosition();
+        setStart(new Point(138.34, 21.6), 0);
 
         waitForStart();
         telemetry.addLine("starting");

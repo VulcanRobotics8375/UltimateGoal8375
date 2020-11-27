@@ -31,6 +31,8 @@ public class StackDetectorCV extends OpenCvPipeline {
     @Override
     public Mat processFrame(Mat input) {
         Mat output = input.clone();
+        Rect cropRect = new Rect((input.width() / 2) - 40, (input.height() / 2) - 70, 60, 60);
+//        input = input.submat(cropRect);
         Imgproc.blur(input, workingMat, new Size(5, 5));
         Imgproc.cvtColor(workingMat, workingMat, Imgproc.COLOR_BGR2HSV);
 
@@ -52,24 +54,31 @@ public class StackDetectorCV extends OpenCvPipeline {
         for (MatOfPoint contour :
                 ringContours) {
             if(contour.size().height > biggestContour) {
-                biggestContour = contour.size().height;
                 boundingRect = Imgproc.boundingRect(contour);
+                if(!cropRect.contains(new Point(boundingRect.x, boundingRect.y))) {
+                    continue;
+                }
+
+                biggestContour = contour.size().height;
             }
         }
+
+        Imgproc.rectangle(output, cropRect, new Scalar(0, 255, 0));
+        Imgproc.putText(output, "crop", new Point(cropRect.x, cropRect.y), Imgproc.FONT_HERSHEY_PLAIN, 1, new Scalar(0, 255, 0));
 
         Imgproc.rectangle(output, boundingRect, new Scalar(255, 0, 0));
         Imgproc.putText(output, "detectedStack", new Point(boundingRect.x, boundingRect.y), Imgproc.FONT_HERSHEY_PLAIN, 1, new Scalar(255, 0, 0));
 
         stackContourHeight = boundingRect.height;
 
-        if(stackContourHeight * 2 < 40) {
+        if(stackContourHeight < 2) {
             stackHeight = 0;
         }
-        if(stackContourHeight * 2 > 40 && stackContourHeight * 2 < 120) {
+        if(stackContourHeight > 2 && stackContourHeight * 2 < 20) {
             stackHeight = 1;
         }
-        if(stackContourHeight * 2 > 120) {
-            stackHeight = 4;
+        if(stackContourHeight * 2 > 20) {
+            stackHeight = 2;
         }
 
         ringColorFilter.release();

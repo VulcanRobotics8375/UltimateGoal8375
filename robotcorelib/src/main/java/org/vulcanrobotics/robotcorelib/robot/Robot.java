@@ -132,25 +132,12 @@ public class Robot {
      */
     public static void init() throws RobotCoreLibException  {
 
-        try {
-            ClassLoader loader = Thread.currentThread().getContextClassLoader();
-            InputStream input = loader.getResourceAsStream("robotconfig.properties");
-            if(input!=null) {
-                internalProperties = new Properties();
-                internalProperties.load(input);
-
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-
         config.init();
         List<Subsystem> subsystems = config.subsystems;
 
         for (Subsystem sub : subsystems) {
-            telemetry.addData("initializing subsystem:", sub.toString());
-            telemetry.update();
+//            telemetry.addData("initializing subsystem:", sub.toString());
+//            telemetry.update();
             sub.hardwareMap = hardwareMap;
             sub.setTelemetry(telemetry);
             sub.init();

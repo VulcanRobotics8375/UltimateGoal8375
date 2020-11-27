@@ -10,6 +10,7 @@ import org.vulcanrobotics.robotcorelib.math.PathPoint;
 import org.vulcanrobotics.robotcorelib.math.Point;
 import org.vulcanrobotics.robotcorelib.motion.PurePursuit;
 import org.vulcanrobotics.robotcorelib.robot.Robot;
+import org.vulcanrobotics.robotcorelib.vision.StackDetectorCV;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -34,6 +35,11 @@ public class ExamplePath extends AutoPipeline {
             subsytems.drivetrain.autoInit();
             //set starting coefficients, all board measurements in CM this year
             setStart(new Point(138.34, 21.6), 0);
+
+            //vision initialization
+            StackDetectorCV detector = new StackDetectorCV();
+            initVision(detector);
+
             //defining the data structure for path points
             ArrayList<ArrayList<PathPoint>> sections = new ArrayList<>();
 
@@ -127,6 +133,9 @@ public class ExamplePath extends AutoPipeline {
             /*
             VISION
              */
+
+            wobbleGoalPosition = detector.getStackHeight();
+
             if(wobbleGoalPosition == 0) {
                 sections.add(start);
                 sections.add(aPosition1);

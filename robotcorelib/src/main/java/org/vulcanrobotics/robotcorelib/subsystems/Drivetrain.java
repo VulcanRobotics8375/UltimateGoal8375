@@ -17,7 +17,7 @@ public class Drivetrain extends Subsystem {
     private DcMotor fl, fr, bl, br;
     private BNO055IMU imu;
 
-    private PID turnPid = new PID(2.0, 0, 1.8);
+    private PID turnPid = new PID(1, 0, 0.5);
 
     private boolean doingAutonomousTask;
     private double variableOffset = 0;
@@ -61,6 +61,9 @@ public class Drivetrain extends Subsystem {
         fr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        turnPid.setKp(2.0);
+        turnPid.setKi(0.0);
+        turnPid.setKd(1.8);
     }
 
     public void move(double forward, double turn) {
