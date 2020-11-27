@@ -230,6 +230,12 @@ public class Shooter extends Subsystem {
 
     }
 
+    public void setPIDFCoefficients(PIDFCoefficients coefficients) {
+        if(shooter != null) {
+            shooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(coefficients.p, coefficients.i, coefficients.d, shooter.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER).f));
+        }
+    }
+
     public void setHopperPosition(double position) {
         hopper.setPosition(position);
     }

@@ -21,14 +21,14 @@ public class Main extends TeleOpPipeline {
         telemetry.addLine("ready");
         telemetry.update();
 
-//        Robot.loadRobotPosition();
-        setStart(new Point(138.34, 21.6), 0);
+        Robot.loadRobotPosition();
+//        setStart(new Point(138.34, 21.6), 0);
 
         waitForStart();
         telemetry.addLine("starting");
         telemetry.update();
 
-//        Robot.startOdometryThread();
+        Robot.startOdometryThread();
 
         Mecanum motionProfile = (Mecanum) Robot.motionProfile;
 
@@ -55,9 +55,9 @@ public class Main extends TeleOpPipeline {
                 debug();
             }
 
-//            telemetry.addData("left", motionProfile.getLeft().getPosition());
-//            telemetry.addData("right", motionProfile.getRight().getPosition());
-//            telemetry.addData("horizontal", motionProfile.getHorizontal().getPosition());
+            telemetry.addData("left", motionProfile.getLeft().getPosition());
+            telemetry.addData("right", motionProfile.getRight().getPosition());
+            telemetry.addData("horizontal", motionProfile.getHorizontal().getPosition());
 
             telemetry.update();
         }
@@ -68,7 +68,7 @@ public class Main extends TeleOpPipeline {
         telemetry.addData("robot x", Robot.getRobotX());
         telemetry.addData("robot y", Robot.getRobotY());
         telemetry.addData("robot angle", Robot.getRobotAngleDeg());
-//        telemetry.addData("zAngle", subsystems.drivetrain.getZAngle());
+        telemetry.addData("zAngle", subsystems.drivetrain.getZAngle());
     }
 
 }

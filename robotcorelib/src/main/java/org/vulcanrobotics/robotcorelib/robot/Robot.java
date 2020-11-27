@@ -1,8 +1,10 @@
 package org.vulcanrobotics.robotcorelib.robot;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ReadWriteFile;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.vulcanrobotics.robotcorelib.framework.RobotConfig;
 import org.vulcanrobotics.robotcorelib.framework.RobotCoreLibException;
 import org.vulcanrobotics.robotcorelib.math.Point;
@@ -11,6 +13,7 @@ import org.vulcanrobotics.robotcorelib.motion.MotionProfile;
 import org.vulcanrobotics.robotcorelib.subsystems.Drivetrain;
 import org.vulcanrobotics.robotcorelib.subsystems.Subsystem;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -135,10 +138,12 @@ public class Robot {
             if(input!=null) {
                 internalProperties = new Properties();
                 internalProperties.load(input);
+
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+
 
         config.init();
         List<Subsystem> subsystems = config.subsystems;
@@ -181,24 +186,28 @@ public class Robot {
     }
 
     public static void storeRobotPosition() {
-        try {
-            internalProperties.setProperty("startPositionX", Double.toString(getRobotX()));
-            internalProperties.setProperty("startPositionY", Double.toString(getRobotY()));
-            internalProperties.setProperty("startPositionTheta", Double.toString(getRobotAngleRad()));
+        File xPosFile = AppUtil.getInstance().getSettingsFile("xPos.txt");
+        File yPosFile = AppUtil.getInstance().getSettingsFile("yPos.txt");
+        File thetaFile = AppUtil.getInstance().getSettingsFile("theta.txt");
 
-            Robot.getPropertiesFile().store(new FileOutputStream("src/main/resources/robotconfig.properties"), null);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        ReadWriteFile.writeFile(xPosFile, String.valueOf(getRobotX()));
+        ReadWriteFile.writeFile(yPosFile, String.valueOf(getRobotY()));
+        ReadWriteFile.writeFile(thetaFile, String.valueOf(getRobotAngleRad()));
+
     }
 
     public static void loadRobotPosition() {
-        double x = Double.parseDouble(internalProperties.getProperty("startPositionX"));
-        double y = Double.parseDouble(internalProperties.getProperty("startPositionY"));
-        double theta = Double.parseDouble(internalProperties.getProperty("startPositionTheta"));
+        File xPosFile = AppUtil.getInstance().getSettingsFile("xPos.txt");
+        File yPosFile = AppUtil.getInstance().getSettingsFile("yPos.txt");
+        File thetaFile = AppUtil.getInstance().getSettingsFile("theta.txt");
+
+        double x = Double.parseDouble(ReadWriteFile.readFile(xPosFile).trim());
+        double y = Double.parseDouble(ReadWriteFile.readFile(yPosFile).trim());
+        double theta = Double.parseDouble(ReadWriteFile.readFile(thetaFile).trim());
 
         setRobotPos(new Point(x, y));
         setRobotAngle(theta);
+
     }
 
     /**
