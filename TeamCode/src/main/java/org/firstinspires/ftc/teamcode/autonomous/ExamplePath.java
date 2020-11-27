@@ -86,32 +86,32 @@ public class ExamplePath extends AutoPipeline {
             bPosition1.add(new PathPoint(128, 273, -0.025, 1, 20, 0));
 
             bPosition2.add(new PathPoint(128, 273, -0.02, 1, 20, 0));
-            bPosition2.add(new PathPoint(97, 81, -0.04, 1, 20, 0));
-            bPosition2.add(new PathPoint(142, 60, -0.04, 1, 20, 0));
+            bPosition2.add(new PathPoint(97, 81, -0.03, 1, 20, 0));
+            bPosition2.add(new PathPoint(142, 60, -0.03, 1, 20, 0));
 
             bPositionDum.add(new PathPoint(142, 60, -0.025, 1, 20, 0));
 
             bPosition3.add(new PathPoint(142, 60, -0.025, 1, 20, 0));
-            bPosition3.add(new PathPoint(141, 170, -0.04, 1, 20, 0));
-            bPosition3.add(new PathPoint(143, 170, -0.04, 1, 20, 0));
+            bPosition3.add(new PathPoint(141, 170, -0.03, 1, 20, 0));
+            bPosition3.add(new PathPoint(143, 170, -0.03, 1, 20, 0));
 
-            bPosition4.add(new PathPoint(142, 170, -0.04, 1, 20, 0));
+            bPosition4.add(new PathPoint(142, 170, -0.03, 1, 20, 0));
             bPosition4.add(new PathPoint(120, 265, -0.025, 1, 20, 0));
-            bPosition4.add(new PathPoint(121, 265, -0.04, 1, 20, 0));
+            bPosition4.add(new PathPoint(121, 265, -0.03, 1, 20, 0));
 
-            cPosition1.add(new PathPoint(190, 310, -0.05, 1, 20, 0));
+            cPosition1.add(new PathPoint(190, 310, -0.04, 1, 20, 0));
 //            cPosition1.add(new PathPoint(189, 309, -0.025, 1, 20, 0));
 
 //            cPosition2.add(new PathPoint(155, 305, -0.03, 1, 20, 0));
             cPosition2.add(new PathPoint(118, 273, -0.05, 1, 20, Math.PI / 2.0));
             cPosition2.add(new PathPoint(83, 81, -0.04, 1, 20, Math.PI - 0.01));
-            cPosition2.add(new PathPoint(142, 60, -0.04, 1, 20, 0));
+            cPosition2.add(new PathPoint(142, 60, -0.03, 1, 20, 0));
 
             cPositionDum.add(new PathPoint(142, 60, -0.03, 1, 20, 0));
 
             cPosition3.add(new PathPoint(142, 60, -0.05, 1, 20, 0));
-            cPosition3.add(new PathPoint(141, 130, -0.05, 1, 20, 0));
-            cPosition3.add(new PathPoint(143, 130, -0.05, 1, 20, 0));
+            cPosition3.add(new PathPoint(141, 130, -0.04, 1, 20, 0));
+            cPosition3.add(new PathPoint(143, 130, -0.04, 1, 20, 0));
 
             cPosition4.add(new PathPoint(142, 130, -0.04, 1, 20, 0));
             cPosition4.add(new PathPoint(177, 330, -0.04, 1, 20, 0));
