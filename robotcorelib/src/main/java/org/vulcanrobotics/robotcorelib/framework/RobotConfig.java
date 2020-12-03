@@ -2,6 +2,7 @@ package org.vulcanrobotics.robotcorelib.framework;
 
 import org.vulcanrobotics.robotcorelib.dashboard.hardware.Odometer;
 import org.vulcanrobotics.robotcorelib.motion.Mecanum;
+import org.vulcanrobotics.robotcorelib.motion.MecanumCurve;
 import org.vulcanrobotics.robotcorelib.motion.MotionProfile;
 import org.vulcanrobotics.robotcorelib.subsystems.Drivetrain;
 import org.vulcanrobotics.robotcorelib.subsystems.Intake;
@@ -39,7 +40,7 @@ public class RobotConfig {
         Odometer right = new Odometer("right", drivetrain.getFrontRight());
         Odometer strafe = new Odometer("strafe", drivetrain.getBackRight());
 
-        motionProfile = new Mecanum(3, left, right, strafe);
+        motionProfile = new MecanumCurve(3, left, right, strafe);
         motionProfile.init();
     }
 
