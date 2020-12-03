@@ -20,7 +20,7 @@ import java.util.ArrayList;
 
 //@Disabled
 @Autonomous(name = "auto -- main", group = "example")
-public class ExamplePath extends AutoPipeline {
+public class AutoPaths extends AutoPipeline {
 
     volatile boolean doneShooting = false;
     int sectionStart = 0;
@@ -43,7 +43,7 @@ public class ExamplePath extends AutoPipeline {
             //defining the data structure for path points
             ArrayList<ArrayList<PathPoint>> sections = new ArrayList<>();
 
-            //powershot section-- same for each path
+            //start section-- same for each path
             ArrayList<PathPoint> start = new ArrayList<>();
 
             //0 ring auto
@@ -81,7 +81,7 @@ public class ExamplePath extends AutoPipeline {
             aPosition4.add(new PathPoint(173, 102, -0.025, 1, 20, Math.PI / 2.0));
             aPosition4.add(new PathPoint(188, 100, -0.025, 1, 20, Math.PI / 2.0));
             aPosition4.add(new PathPoint(172, 210, -0.025, 1, 20, 0));
-            aPosition4.add(new PathPoint(171, 211, -0.025, 1, 20, 0));
+            aPosition4.add(new PathPoint(171, 210, -0.025, 1, 20, 0));
 
             bPosition1.add(new PathPoint(128, 273, -0.025, 1, 20, 0));
 
@@ -178,6 +178,7 @@ public class ExamplePath extends AutoPipeline {
             boolean secondWobble = false;
             subsytems.drivetrain.setAngleOffset(0);
 //            subsytems.shooter.setPIDFCoefficients(new PIDFCoefficients(10.0, 3.0, 0.0, 0.0));
+            subsytems.drivetrain.setAngleOffset(3);
             while(opModeIsActive()) {
 
                 PathPoint currentPoint = internalController.getCurrentPoint();
@@ -423,7 +424,7 @@ public class ExamplePath extends AutoPipeline {
                     if (internalController.getCurrentSection() == 6) {
                         subsytems.wobbleGrabber.setGrabPosition(1.0);
                         subsytems.wobbleGrabber.setTurnPosition(0.0);
-                        sleep(1000);
+                        sleep(500);
                         if (sectionStart == 5) {
                             internalController.startNextSection();
                         }

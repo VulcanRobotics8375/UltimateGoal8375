@@ -70,7 +70,8 @@ public class PurePursuit extends Controller {
                 //new, might not work
                 if(path.indexOf(end) == path.size() - 1) {
                     double maxX = Math.max(start.x, end.x);
-                    if(followPoint.x > maxX) {
+                    double minX = Math.min(start.x, end.x);
+                    if(followPoint.x > maxX || followPoint.x < minX) {
                         followPoint.setPoint(end.toPoint());
                     }
                 }

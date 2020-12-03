@@ -10,7 +10,7 @@ import org.vulcanrobotics.robotcorelib.robot.Robot;
 public abstract class TeleOpPipeline extends LinearOpMode {
 
     protected String ip;
-    protected boolean dash;
+    protected boolean dash = false;
     protected RobotConfig subsystems;
 
     public void teleopInit() {

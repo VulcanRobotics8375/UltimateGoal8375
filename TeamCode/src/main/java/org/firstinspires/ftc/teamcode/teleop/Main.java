@@ -14,15 +14,11 @@ public class Main extends TeleOpPipeline {
 
     public void runOpMode() {
 
-        dash = false;
-        ip = "";
         teleopInit();
+        Robot.loadRobotPosition();
 
         telemetry.addLine("ready");
         telemetry.update();
-
-        Robot.loadRobotPosition();
-//        setStart(new Point(138.34, 21.6), 0);
 
         waitForStart();
         telemetry.addLine("starting");
@@ -30,7 +26,7 @@ public class Main extends TeleOpPipeline {
 
         Robot.startOdometryThread();
 
-        Mecanum motionProfile = (Mecanum) Robot.motionProfile;
+//        Mecanum motionProfile = (Mecanum) Robot.motionProfile;
 
         while (opModeIsActive()) {
 

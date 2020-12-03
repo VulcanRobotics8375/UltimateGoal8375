@@ -37,7 +37,7 @@ public class Intake extends Subsystem {
         }
 
         if(transferOn) {
-            transfer.setPower(0.25);
+            transfer.setPower(0.35);
         }
 
     }

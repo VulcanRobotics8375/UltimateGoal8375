@@ -45,7 +45,7 @@ public class Shooter extends Subsystem {
 //        shooter.getMotorType().setTicksPerRev(103.6);
         shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         PIDFCoefficients coefficients = shooter.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
-        shooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(10.0, 9.0, 35.0, coefficients.f));
+        shooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(30.0, 9.0, 0, coefficients.f));
 //        shooter.setVelocityPIDFCoefficients(1.2, 0.12, 0, 11.7);
         shooter.setDirection((DcMotor.Direction.REVERSE));
         shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -102,7 +102,7 @@ public class Shooter extends Subsystem {
 //
 //        telemetry.addData("i", shooter.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER).i);
 //        telemetry.addData("d", shooter.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER).d);
-//        telemetry.addData("f", shooter.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER).f);
+        telemetry.addData("f", shooter.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER).f);
 
 
         //copy paste this somehwere else, it doesn't need to stay in this file
