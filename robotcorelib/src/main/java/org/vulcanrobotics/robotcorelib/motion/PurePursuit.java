@@ -12,21 +12,32 @@ public class PurePursuit extends Controller {
 
     ArrayList<ArrayList<PathPoint>> sections;
 
-    private PID turnPID = new PID(1, 1, 1);
+    private PID turnPID = new PID(1.8, 0, 1);
+    private volatile int currentSection = 0;
+    private volatile boolean start = false;
 
     public PurePursuit(ArrayList<ArrayList<PathPoint>> sections) {
         this.sections = sections;
     }
 
     public void run() {
+        int currentSection = 0;
         for (ArrayList<PathPoint> section : sections) {
-            while(Math.abs(Robot.getRobotX() - section.get(section.size() - 1).x) + Math.abs(Robot.getRobotY() - section.get(section.size() - 1).y) > 0.1) {
+            start = false;
+            while(Math.hypot(section.get(section.size() - 1).x - Robot.getRobotX(), section.get(section.size() - 1).y - Robot.getRobotY()) > 6) {
                 PathPoint followPoint = findFollowPoint(section);
                 moveToPoint(followPoint);
                 if(stop)
                     break;
             }
+            currentSection++;
+            this.currentSection = currentSection;
+            Robot.drivetrain.setPowers(0, 0, 0, 0);
+            waitForStart();
+
         }
+        Robot.drivetrain.setPowers(0, 0, 0, 0);
+
     }
 
     private PathPoint findFollowPoint(ArrayList<PathPoint> path) {
@@ -34,7 +45,7 @@ public class PurePursuit extends Controller {
 
         ArrayList<Point> circleIntersections;
 
-        for (int i = 0; i < path.size(); i++) {
+        for (int i = 0; i < path.size() - 1; i++) {
             PathPoint start = path.get(i);
             PathPoint end = path.get(i + 1);
 
@@ -55,6 +66,16 @@ public class PurePursuit extends Controller {
                     followPoint.setPathPoint(end);
                     followPoint.setPoint(intersection);
                 }
+
+                //new, might not work
+                if(path.indexOf(end) == path.size() - 1) {
+                    double maxX = Math.max(start.x, end.x);
+                    double minX = Math.min(start.x, end.x);
+                    if(followPoint.x > maxX || followPoint.x < minX) {
+                        followPoint.setPoint(end.toPoint());
+                    }
+                }
+
             }
         }
 
@@ -63,16 +84,36 @@ public class PurePursuit extends Controller {
         return followPoint;
     }
 
+    //TODO make the point speed independent from lookahead distance, possibly with a ratio or maybe with a check to see if it is last point or not.
+    //Don't implement with constantVelocity method in Drivetrain until that has been tested.
     public void moveToPoint(PathPoint point) {
         double absoluteAngleToPoint = Math.atan2(point.y - Robot.getRobotY(), point.x - Robot.getRobotX());
 
-        double robotAngleToPoint = point.angle - Robot.getRobotAngleRad();
+        double robotAngleToPoint = Robot.getRobotAngleRad();
 
         turnPID.run(point.angle, robotAngleToPoint);
 
-        double turnSpeed = turnPID.getOutput();
+        double turnSpeed = turnPID.getOutput() * point.turnSpeed;
 
-        Robot.drivetrain.fieldCentricMove(Math.cos(absoluteAngleToPoint) * point.speed, Math.sin(absoluteAngleToPoint) * point.speed, turnSpeed);
+        double distanceToPoint = Math.hypot(point.x - Robot.getRobotX(), point.y - Robot.getRobotY()) * point.speed;
+
+        Robot.drivetrain.fieldCentricMove(Math.cos(absoluteAngleToPoint) * distanceToPoint, Math.sin(absoluteAngleToPoint) * distanceToPoint, turnSpeed);
+    }
+
+    public int getCurrentSection(){
+        return currentSection;
+    }
+
+    private void waitForStart() {
+        while(!start) {
+            if(stop) {
+                break;
+            }
+        }
+    }
+
+    public void startNextSection() {
+        start = true;
     }
 
 }

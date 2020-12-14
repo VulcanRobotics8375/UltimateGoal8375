@@ -7,18 +7,22 @@ import org.vulcanrobotics.robotcorelib.math.Point;
 import org.vulcanrobotics.robotcorelib.motion.Mecanum;
 import org.vulcanrobotics.robotcorelib.robot.Robot;
 
-@TeleOp(name = "main", group = "main")
-public class Main extends TeleOpPipeline {
+@TeleOp(name = "-- DRIVER PRACTICE --", group = "main")
+public class DriverPractice extends TeleOpPipeline {
 
     boolean debug = true;
 
     public void runOpMode() {
 
+        dash = false;
+        ip = "";
         teleopInit();
-        Robot.loadRobotPosition();
 
         telemetry.addLine("ready");
         telemetry.update();
+
+//        Robot.loadRobotPosition();
+        setStart(new Point(138.34, 21.6), 0);
 
         waitForStart();
         telemetry.addLine("starting");
@@ -26,7 +30,7 @@ public class Main extends TeleOpPipeline {
 
         Robot.startOdometryThread();
 
-//        Mecanum motionProfile = (Mecanum) Robot.motionProfile;
+        Mecanum motionProfile = (Mecanum) Robot.motionProfile;
 
         while (opModeIsActive()) {
 
@@ -45,9 +49,6 @@ public class Main extends TeleOpPipeline {
             subsystems.wobbleGrabber.run(gamepad2.x,gamepad2.y, -gamepad2.left_stick_y * 0.5);
 
 //            motionProfile.update();
-            if(gamepad1.left_trigger > 0 && gamepad1.right_trigger > 0) {
-                Robot.resetRobotPosition();
-            }
 
             //TODO disable debug for competition code
             if(debug) {

@@ -14,7 +14,7 @@ import java.util.Properties;
 
 public abstract class MotionProfile {
 
-     List<Odometer> odometers = new ArrayList<>();
+    List<Odometer> odometers = new ArrayList<>();
     int odometerNum;
     Properties properties = new Properties();
     protected Timer timer = new Timer();

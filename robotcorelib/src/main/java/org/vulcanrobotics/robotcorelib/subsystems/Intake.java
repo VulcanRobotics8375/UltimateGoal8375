@@ -12,17 +12,22 @@ public class Intake extends Subsystem {
     public void init() {
         transfer = hardwareMap.dcMotor.get("transfer_intake");
         intake = hardwareMap.dcMotor.get("roller_intake");
+
+        intake.setDirection(DcMotorSimple.Direction.FORWARD);
+        transfer.setDirection(DcMotorSimple.Direction.REVERSE);
+
     }
 
-    public void run(boolean intakeButton, boolean reverse) {
+    //TODO add sensor code/ring counter for intake stage 1
+    public void run(boolean intakeButton, boolean reverse, boolean transferOn) {
         //yeet. Im not throwin away my shot
         if (intakeButton) {
-            transfer.setPower(-1);
+            transfer.setPower(1);
             intake.setPower(1);
         }
 
         else if (reverse) {
-            transfer.setPower(1);
+            transfer.setPower(-1);
             intake.setPower(-1);
         }
 
@@ -30,6 +35,11 @@ public class Intake extends Subsystem {
             transfer.setPower(0);
             intake.setPower(0);
         }
+
+        if(transferOn) {
+            transfer.setPower(0.35);
+        }
+
     }
 
     @Override

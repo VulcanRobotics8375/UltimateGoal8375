@@ -58,7 +58,7 @@ public abstract class AutoPipeline extends LinearOpMode {
             @Override
             public void run() {
                 while(!isStopRequested()) {}
-               controller.stop = isStopRequested();
+               controller.stop = true;
             }
         }).start();
     }

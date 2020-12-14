@@ -1,28 +1,36 @@
 package org.vulcanrobotics.robotcorelib.subsystems;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.configuration.annotations.MotorType;
+import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
+
 import org.vulcanrobotics.robotcorelib.framework.Constants;
 import org.vulcanrobotics.robotcorelib.robot.Robot;
 
 public class Shooter extends Subsystem {
-    public DcMotorEx shooter;
-    public Servo hopper;
+    private DcMotorEx shooter;
+    private Servo hopper;
+
     private boolean hopperButton;
-    private double a = 402.6;
-    private double b = 192.0;
+    private double a = -417.9;
+    private double b = 832;
     private double hopperBeforeTime;
     private boolean hopperOut;
     private boolean shooterButton;
     //lowest shooter power when closest is 0.8, highest shooter power when furthest is
     public double shooterPower;
     //on = goal, off = powershot
-    private boolean shooterMode;
+    private boolean shooterMode = true;
     private double shooterModeNum = 88.9;
     private double shooterPowerLeft;
     private double shooterPowerRight;
+    private double shooterHighPower = 0.895;
+    private double shooterLowPower = 0.82;
+    private double powerShotPower = 0.77;
+    private float shooterHighButton;
+    private float shooterLowButton;
     private int shooterOn = -1;
 
     public Shooter() {}
@@ -31,15 +39,74 @@ public class Shooter extends Subsystem {
     public void init() {
         shooter = (DcMotorEx) hardwareMap.dcMotor.get("shooter");
         hopper = hardwareMap.servo.get("hopper");
+//        shooter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        shooter.getMotorType().setMaxRPM(1620);
+//        shooter.getMotorType().setGearing(3.7);
+//        shooter.getMotorType().setTicksPerRev(103.6);
         shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        shooter.setVelocityPIDFCoefficients(1.2, 0.12, 0, 11.7);
+        PIDFCoefficients coefficients = shooter.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
+        shooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(30.0, 9.0, 0, coefficients.f));
+//        shooter.setVelocityPIDFCoefficients(1.2, 0.12, 0, 11.7);
         shooter.setDirection((DcMotor.Direction.REVERSE));
         shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
     }
 
     //TODO put the shooter power calculation in a separate method to clean up some stuff
-    public void run(boolean shooterButton, boolean hopperButton, boolean shooterMode) {
+    public void run(boolean shooterButton, boolean hopperButton, int shooterMode, float shooterHighButton, float shooterLowButton, boolean powerShotButton) {
+        if(shooterMode == 1) {
+            this.shooterMode = true;
+        } else if(shooterMode == 2) {
+            this.shooterMode = false;
+        }
 
+
+        if (shooterButton) {
+            if(!this.shooterMode) {
+                shooterModeNum = 73.6;
+            }
+            else {
+                shooterModeNum = 88.9;
+            }
+
+            shooterPowerLeft = ((-b + Math.sqrt((Math.pow(b, 2)) + (-4.0) * (a) * (-313.7 - shooterModeNum))) / (2.0 * (a)));
+            shooterPowerRight = ((0.14) / 204.6) * ((Math.hypot((Constants.FIELD_SIZE_CM_X - (2.5 * Constants.TILE_SIZE_CM)) - Robot.getRobotX(), (Constants.FIELD_SIZE_CM_Y) - Robot.getRobotY())) - 152.4);
+
+            //Replace setVelocity equation
+            //
+            shooterPower = (shooterPowerLeft + shooterPowerRight) - 0.05;
+            if(shooterPower < shooterLowPower){
+                shooterPower = shooterLowPower;
+            }
+            if(shooterPower > shooterHighPower){
+                shooterPower = shooterHighPower;
+            }
+            shooter.setPower(shooterPower);
+            telemetry.addData("shooter power", shooter.getPower());
+        }
+        else if(shooterHighButton > 0){
+            shooter.setPower(shooterHighPower);
+        }
+        else if(shooterLowButton > 0){
+            shooter.setPower(shooterLowPower);
+        }
+        else if(powerShotButton) {
+            shooter.setPower(powerShotPower);
+        }
+
+        else {
+            shooter.setPower(0);
+            pidRunning = false;
+        }
+
+//        telemetry.addData("p", shooter.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER).p);
+//
+//        telemetry.addData("i", shooter.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER).i);
+//        telemetry.addData("d", shooter.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER).d);
+        telemetry.addData("f", shooter.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER).f);
+
+
+        //copy paste this somehwere else, it doesn't need to stay in this file
+/*
         if (shooterButton && !this.shooterButton) {
             shooterOn *= -1;
             this.shooterButton = true;
@@ -49,35 +116,51 @@ public class Shooter extends Subsystem {
             this.shooterButton = false;
         }
 
+        if(shooterMode == 1) {
+            this.shooterMode = true;
+        }
+        if (shooterMode == 2) {
+            this.shooterMode = false;
+        }
+
         if (shooterOn > 0) {
 
-            if (!shooterMode) {
+            if(!this.shooterMode) {
                 shooterModeNum = 73.6;
             }
+            else {
+                shooterModeNum = 88.9;
+            }
 
-            shooterPowerLeft = ((-a + Math.sqrt((Math.pow(a, 2)) + (-4.0) * (-b) * (-110.3 - shooterModeNum))) / (2.0 * (-b)));
-            shooterPowerRight = ((0.12) / 204.6) * ((Math.hypot((Constants.FIELD_SIZE_CM_X - (2.5 * Constants.TILE_SIZE_CM)) - Robot.getRobotX(), (Constants.FIELD_SIZE_CM_Y) - Robot.getRobotY())) - 152.4);
+            shooterPowerLeft = ((-b + Math.sqrt((Math.pow(b, 2)) + (-4.0) * (a) * (-313.7 - shooterModeNum))) / (2.0 * (a)));
+            shooterPowerRight = ((0.14) / 204.6) * ((Math.hypot((Constants.FIELD_SIZE_CM_X - (2.5 * Constants.TILE_SIZE_CM)) - Robot.getRobotX(), (Constants.FIELD_SIZE_CM_Y) - Robot.getRobotY())) - 152.4);
 
             //Replace setVelocity equation
             //
-            shooterPower = (shooterPowerLeft + shooterPowerRight)*((1620.0 / 60.0) * 103.6);
-            ;
-            shooter.setVelocity(shooterPower);
-            shooterModeNum = 88.9;
+            shooterPower = (shooterPowerLeft + shooterPowerRight);
+            if(shooterPower < 0.83){
+                shooterPower = 0.83;
+            }
+            shooter.setPower(shooterPower);
+            telemetry.addData("shooter power", shooter.getPower());
+
         } else if (shooterOn < 0) {
             shooter.setPower(0);
             pidRunning = false;
         }
+
+ */
 
 
         if (hopperButton) {
 
             if(!this.hopperButton){
                 this.hopperButton = true;
+                hopperOut = true;
                 hopperBeforeTime = System.currentTimeMillis();
             }
 
-            if ((System.currentTimeMillis() - hopperBeforeTime) >= 450) {
+            if ((System.currentTimeMillis() - hopperBeforeTime) >= 500) {
                 hopperOut = !hopperOut;
                 hopperBeforeTime = System.currentTimeMillis();
             }
@@ -87,7 +170,7 @@ public class Shooter extends Subsystem {
             }
 
             if (!hopperOut){
-                hopper.setPosition(.2);
+                hopper.setPosition(0);
             }
         }
 
@@ -99,6 +182,16 @@ public class Shooter extends Subsystem {
             this.hopperButton = false;
         }
 
+
+
+    }
+
+    public void testShooterVelocity(boolean shooterOn) {
+        double power = 0.84;
+        double velocity = power * (1620.0 * 103.6 / 60.0);
+        if(shooterOn) {
+            shooter.setVelocity(velocity);
+        }
     }
 
     private long lastPidTime;
@@ -137,6 +230,19 @@ public class Shooter extends Subsystem {
 
     }
 
+    public void setPIDFCoefficients(PIDFCoefficients coefficients) {
+        if(shooter != null) {
+            shooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(coefficients.p, coefficients.i, coefficients.d, shooter.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER).f));
+        }
+    }
+
+    public void setHopperPosition(double position) {
+        hopper.setPosition(position);
+    }
+
+    public void setShooterPower(double power) {
+        shooter.setPower(power);
+    }
 
     public void shoot(){
 
