@@ -268,11 +268,21 @@ public class Drivetrain extends Subsystem {
 
     }
 
-    public void driveWithConstantVelocity(double velocity, double angularVelocity) {
+    //TODO add PID
+    //^^ easier said than done, bc PID may change based on batt voltage, we are running into the same problem as before
+    //might not be an issue tho, our turning has been pretty consistent and we are using PID for that
+    //and that turn PID is barely tuned anyway, it might just be running PD or P
+    public void driveWithConstantVelocity(Point targetVelocity, double angularVelocity) {
+        double errorX = targetVelocity.x - Robot.getRobotVelocity().x;
+        double errorY = targetVelocity.y - Robot.getRobotVelocity().y;
+
+        fieldCentricMove(errorX, errorY, angularVelocity);
 
     }
 
     @Deprecated
+    //this isn't actually deprecated since we need it for backend/calibration,
+    // but I never want to see it be used in any main code. ever.
     public double getZAngle() {
       return AngleUnit.DEGREES.normalize(imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
     }

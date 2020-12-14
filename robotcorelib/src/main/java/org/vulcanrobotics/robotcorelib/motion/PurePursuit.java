@@ -84,6 +84,8 @@ public class PurePursuit extends Controller {
         return followPoint;
     }
 
+    //TODO make the point speed independent from lookahead distance, possibly with a ratio or maybe with a check to see if it is last point or not.
+    //Don't implement with constantVelocity method in Drivetrain until that has been tested.
     public void moveToPoint(PathPoint point) {
         double absoluteAngleToPoint = Math.atan2(point.y - Robot.getRobotY(), point.x - Robot.getRobotX());
 
