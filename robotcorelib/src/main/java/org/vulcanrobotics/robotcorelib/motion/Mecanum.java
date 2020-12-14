@@ -14,6 +14,8 @@ public class Mecanum extends MotionProfile {
 
     private double lastLeftPos = 0, lastRightPos = 0, lastStrafePos = 0, lastTheta = 0;
 
+    private Point lastPosition;
+
     public Mecanum(int odometerNum, Odometer... odometer) throws RobotCoreLibException {
         super(odometerNum, odometer);
     }
@@ -38,6 +40,7 @@ public class Mecanum extends MotionProfile {
 
     public synchronized void update() {
         Point currentPos = Robot.getRobotPos();
+        Point currentVelocity = Robot.getRobotVelocity();
 
         double leftPosition = left.getPosition();
         double rightPosition = right.getPosition();
@@ -53,15 +56,22 @@ public class Mecanum extends MotionProfile {
 
         double verticalChange = (leftChange + rightChange) / 2;
 
-        currentPos.x += ((verticalChange * Math.sin(robotAngle)) + (horizontalChange * Math.cos(robotAngle))) * (1 / countsPerCm);
-        currentPos.y += ((verticalChange * Math.cos(robotAngle)) - (horizontalChange * Math.sin(robotAngle))) * (1 / countsPerCm);
+        double vx = ((verticalChange * Math.sin(robotAngle)) + (horizontalChange * Math.cos(robotAngle))) * (1 / countsPerCm);
+        double vy = ((verticalChange * Math.cos(robotAngle)) - (horizontalChange * Math.sin(robotAngle))) * (1 / countsPerCm);
+
+        currentPos.x += vx;
+        currentPos.y += vy;
+
+        currentVelocity.x = vx;
+        currentVelocity.y = vy;
 
         lastLeftPos = leftPosition;
         lastRightPos = rightPosition;
         lastStrafePos = horizontalPosition;
         lastTheta = robotAngle;
-        Robot.setRobotPos(currentPos);
+//        Robot.setRobotPos(currentPos);
         Robot.setRobotAngle(robotAngle);
+//        Robot.setRobotVelocity(currentVelocity);
     }
 
     public void calibrate(double gain) {

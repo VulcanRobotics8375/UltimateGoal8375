@@ -9,6 +9,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.vulcanrobotics.robotcorelib.math.Functions;
 import org.vulcanrobotics.robotcorelib.math.PID;
+import org.vulcanrobotics.robotcorelib.math.Point;
+import org.vulcanrobotics.robotcorelib.motion.Mecanum;
 import org.vulcanrobotics.robotcorelib.robot.Robot;
 import static org.vulcanrobotics.robotcorelib.framework.Constants.*;
 
@@ -35,6 +37,8 @@ public class Drivetrain extends Subsystem {
 
         setDrivetrainMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setDrivetrainMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        Robot.setResetPosition(new Point(21.6, 21.6));
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.mode = BNO055IMU.SensorMode.IMU;
@@ -152,15 +156,6 @@ public class Drivetrain extends Subsystem {
 
     }
 
-
-    public void pidTurn(double angle) {
-        turnPid.run(angle, Math.toRadians(getZAngle()));
-        double turnPower = turnPid.getOutput();
-
-        setPowers(-turnPower, turnPower, -turnPower, turnPower);
-
-    }
-
     public void resetPidControllers() {
         turnPid.reset();
     }
@@ -273,6 +268,11 @@ public class Drivetrain extends Subsystem {
 
     }
 
+    public void driveWithConstantVelocity(double velocity, double angularVelocity) {
+
+    }
+
+    @Deprecated
     public double getZAngle() {
       return AngleUnit.DEGREES.normalize(imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
     }

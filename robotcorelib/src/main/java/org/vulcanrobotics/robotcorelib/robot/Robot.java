@@ -30,6 +30,8 @@ public class Robot {
      * Robot Position
      */
     private static volatile Point robotPos = new Point();
+    private static volatile Point robotVelocity = new Point();
+    private static Point resetPosition = new Point();
     /**
      * robot angle in Radians
      */
@@ -126,6 +128,31 @@ public class Robot {
         return robotPos.y;
     }
 
+    public static double getRobotXVelocity() {
+        return robotVelocity.x;
+    }
+
+    public static double getRobotYVelocity() {
+        return robotVelocity.y;
+    }
+
+    public static void setRobotVelocity(Point velocity) {
+        robotVelocity.setPoint(velocity);
+    }
+
+    public static Point getRobotVelocity() {
+        return robotVelocity;
+    }
+
+    public static void resetRobotPosition() {
+        robotPos.setPoint(resetPosition);
+        robotAngle = 0;
+    }
+
+    public static void setResetPosition(Point reset) {
+        resetPosition.setPoint(reset);
+    }
+
     /**
      * The init() method initializes all subsystems, motion profiles, etc. This is run during an OpMode's INIT period.
      * @throws RobotCoreLibException whenever something goes wrong
@@ -158,6 +185,9 @@ public class Robot {
         Robot.init();
     }
 
+    public static MotionProfile getMotionProfile() {
+        return motionProfile;
+    }
 
     public static void setTelemetry(Telemetry telemetry) {
         Robot.telemetry = telemetry;
