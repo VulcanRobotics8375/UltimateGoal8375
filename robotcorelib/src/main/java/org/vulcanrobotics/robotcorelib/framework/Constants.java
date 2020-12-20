@@ -15,7 +15,7 @@ public class Constants {
     public static final double ODOMETRY_RADIUS = 1.9;
     public static final double ODOMETRY_COUNTS_PER_CM = 1440.0 / (2.0 * Math.PI * ODOMETRY_RADIUS);
     public static final double ODOMETRY_HORIZONTAL_TICKS_PER_REV = 19.3;
-    public static final double SHOOTING_OFFSET_RAD = 14.0 * (Math.PI / 180.0);
+    public static final double SHOOTING_OFFSET_RAD = 0.0 * (Math.PI / 180.0);
 
 
 }
