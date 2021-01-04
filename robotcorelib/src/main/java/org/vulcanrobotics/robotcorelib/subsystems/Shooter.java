@@ -39,14 +39,9 @@ public class Shooter extends Subsystem {
     public void init() {
         shooter = (DcMotorEx) hardwareMap.dcMotor.get("shooter");
         hopper = hardwareMap.servo.get("hopper");
-//        shooter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-//        shooter.getMotorType().setMaxRPM(1620);
-//        shooter.getMotorType().setGearing(3.7);
-//        shooter.getMotorType().setTicksPerRev(103.6);
         shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         PIDFCoefficients coefficients = shooter.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
         shooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(30.0, 9.0, 0, coefficients.f));
-//        shooter.setVelocityPIDFCoefficients(1.2, 0.12, 0, 11.7);
         shooter.setDirection((DcMotor.Direction.REVERSE));
         shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
     }
@@ -99,58 +94,9 @@ public class Shooter extends Subsystem {
         }
 
 //        telemetry.addData("p", shooter.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER).p);
-//
 //        telemetry.addData("i", shooter.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER).i);
 //        telemetry.addData("d", shooter.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER).d);
-        telemetry.addData("f", shooter.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER).f);
-
-
-        //copy paste this somehwere else, it doesn't need to stay in this file
-/*
-        if (shooterButton && !this.shooterButton) {
-            shooterOn *= -1;
-            this.shooterButton = true;
-        }
-
-        if (!shooterButton && this.shooterButton) {
-            this.shooterButton = false;
-        }
-
-        if(shooterMode == 1) {
-            this.shooterMode = true;
-        }
-        if (shooterMode == 2) {
-            this.shooterMode = false;
-        }
-
-        if (shooterOn > 0) {
-
-            if(!this.shooterMode) {
-                shooterModeNum = 73.6;
-            }
-            else {
-                shooterModeNum = 88.9;
-            }
-
-            shooterPowerLeft = ((-b + Math.sqrt((Math.pow(b, 2)) + (-4.0) * (a) * (-313.7 - shooterModeNum))) / (2.0 * (a)));
-            shooterPowerRight = ((0.14) / 204.6) * ((Math.hypot((Constants.FIELD_SIZE_CM_X - (2.5 * Constants.TILE_SIZE_CM)) - Robot.getRobotX(), (Constants.FIELD_SIZE_CM_Y) - Robot.getRobotY())) - 152.4);
-
-            //Replace setVelocity equation
-            //
-            shooterPower = (shooterPowerLeft + shooterPowerRight);
-            if(shooterPower < 0.83){
-                shooterPower = 0.83;
-            }
-            shooter.setPower(shooterPower);
-            telemetry.addData("shooter power", shooter.getPower());
-
-        } else if (shooterOn < 0) {
-            shooter.setPower(0);
-            pidRunning = false;
-        }
-
- */
-
+//        telemetry.addData("f", shooter.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER).f);
 
         if (hopperButton) {
 
