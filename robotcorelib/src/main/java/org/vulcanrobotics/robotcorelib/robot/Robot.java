@@ -161,7 +161,7 @@ public class Robot {
 
         config.init();
         List<Subsystem> subsystems = config.subsystems;
-
+        
         for (Subsystem sub : subsystems) {
 //            telemetry.addData("initializing subsystem:", sub.toString());
 //            telemetry.update();
