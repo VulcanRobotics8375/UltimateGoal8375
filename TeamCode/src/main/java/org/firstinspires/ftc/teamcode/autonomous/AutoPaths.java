@@ -19,7 +19,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 
 //@Disabled
-@Autonomous(name = "auto -- main", group = "example")
+@Autonomous(name = "auto -- main", group = "example", preselectTeleOp = "main")
 public class AutoPaths extends AutoPipeline {
 
     volatile boolean doneShooting = false;

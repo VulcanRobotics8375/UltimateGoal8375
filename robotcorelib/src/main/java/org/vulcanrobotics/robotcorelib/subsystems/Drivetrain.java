@@ -91,14 +91,16 @@ public class Drivetrain extends Subsystem {
     }
 
     public void mecanumDrive(double forward, double turn, double strafe, boolean highGoal, boolean powerShotLeft, boolean powerShotCenter, boolean powerShotRight, boolean leftOffsetButton, boolean rightOffsetButton) {
+        //handle/parse initial data for basic mecanum drive
         forward = curveLinearJoystick(forward);
         strafe = curveLinearJoystick(strafe);
         turn = curveLinearJoystick(turn);
         double vd = Math.hypot(forward, strafe);
         double theta = Math.atan2(forward, strafe) - (Math.PI / 4);
-        double multiplier = 1.0;
+        double multiplier = Math.sqrt(2.0);
         double turnPower = turn;
 
+        //check variable offset buttons, and change accordingly
         if(leftOffsetButton && !this.leftOffsetButton) {
             if(powerShotRight) {
                 variableOffset -= 4.5;
@@ -125,35 +127,46 @@ public class Drivetrain extends Subsystem {
             this.rightOffsetButton = false;
         }
 
+        //auto aim configuration
+        double variableOffsetRad = Math.toRadians(variableOffset);
+        Point target = new Point();
+        boolean aiming = false;
         if(highGoal) {
-            double absoluteAngleToTarget = Math.atan2(FIELD_SIZE_CM_Y - Robot.getRobotY(), (FIELD_SIZE_CM_X - (1.5 * TILE_SIZE_CM)) - Robot.getRobotX());
+            target.setPoint(new Point(FIELD_SIZE_CM_X - (1.5 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
+            aiming = true;
+        }
+        else if(powerShotLeft) {
+            target.setPoint(new Point(FIELD_SIZE_CM_X - (2.25 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
+            aiming = true;
+        }
+        else if(powerShotCenter) {
+            target.setPoint(new Point(FIELD_SIZE_CM_X - (2.5 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
+            aiming = true;
+        }
+        else if(powerShotRight) {
+            target.setPoint(new Point(FIELD_SIZE_CM_X - (2.75 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
+            aiming = true;
+        }
+        //auto aim calculation and determine drive style
+        if(aiming) {
+            double absoluteAngleToTarget = Math.atan2(target.y - Robot.getRobotY(), target.x - Robot.getRobotX());
 
             double error = Functions.angleWrap(absoluteAngleToTarget - Robot.getRobotAngleRad());
-            //non pid solution for testing
-            turnPower = (error + variableOffset + SHOOTING_OFFSET_RAD) * turnPid.getKp();
+            //non pid code for testing
+            turnPower = (error + variableOffsetRad + SHOOTING_OFFSET_RAD) * turnPid.getKp();
 
+            fieldCentricMove(strafe, forward, turnPower);
+        } else {
+            //basic mecanum calculations
+            double[] v = {
+                    (vd * Math.cos(theta) + turnPower) * multiplier,
+                    (vd * Math.sin(theta) - turnPower) * multiplier,
+                    (vd * Math.sin(theta) + turnPower) * multiplier,
+                    (vd * Math.cos(theta) - turnPower) * multiplier
+            };
+
+            setPowers(v);
         }
-
-        double[] v = {
-                vd * Math.sin(theta) - turnPower,
-                vd * Math.cos(theta) + turnPower,
-                vd * Math.cos(theta) - turnPower,
-                vd * Math.sin(theta) + turnPower
-        };
-
-        double[] motorOut = {
-                multiplier * v[0],
-                multiplier * v[1],
-                multiplier * v[2],
-                multiplier * v[3]
-        };
-
-        fr.setPower(motorOut[0]);
-        fl.setPower(motorOut[1]);
-        br.setPower(motorOut[2]);
-        bl.setPower(motorOut[3]);
-
-
     }
 
     public void resetPidControllers() {
