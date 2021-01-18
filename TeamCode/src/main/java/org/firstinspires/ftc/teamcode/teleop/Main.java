@@ -45,8 +45,11 @@ public class Main extends TeleOpPipeline {
             subsystems.wobbleGrabber.run(gamepad2.x,gamepad2.y, -gamepad2.left_stick_y * 0.5);
 
 //            motionProfile.update();
-            if(gamepad1.left_trigger > 0 && gamepad1.right_trigger > 0) {
-                Robot.resetRobotPosition();
+            if(gamepad1.left_trigger > 0) {
+                Robot.setRobotPos(new Point(Robot.getRobotX(), 21.6));
+            }
+            if(gamepad1.right_trigger  > 0) {
+                Robot.setRobotPos(new Point(21.6, Robot.getRobotY()));
             }
 
             //TODO disable debug for competition code

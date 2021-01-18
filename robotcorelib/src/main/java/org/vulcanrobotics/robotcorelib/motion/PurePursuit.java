@@ -50,9 +50,13 @@ public class PurePursuit extends Controller {
             PathPoint end = path.get(i + 1);
 
             if(path.indexOf(end) == path.size() - 1) {
-                circleIntersections = Functions.lineCircleIntersectNoBoundingBox(start.toPoint(), end.toPoint(), end.lookAhead, Robot.getRobotPos());
+                if(end.x < start.x) {
+                    circleIntersections = Functions.lineCircleIntersect(start.toPoint(), end.toPoint(), end.lookAhead, Robot.getRobotPos(), false, true);
+                } else {
+                    circleIntersections = Functions.lineCircleIntersect(start.toPoint(), end.toPoint(), end.lookAhead, Robot.getRobotPos(), true, false);
+                }
             } else {
-                circleIntersections = Functions.lineCircleIntersect(start.toPoint(), end.toPoint(), end.lookAhead, Robot.getRobotPos());
+                circleIntersections = Functions.lineCircleIntersect(start.toPoint(), end.toPoint(), end.lookAhead, Robot.getRobotPos(), false, true);
             }
 
             double closestAngle = Double.MAX_VALUE;
@@ -66,17 +70,37 @@ public class PurePursuit extends Controller {
                     followPoint.setPathPoint(end);
                     followPoint.setPoint(intersection);
                 }
+            }
 
-                //new, might not work
-                if(path.indexOf(end) == path.size() - 1) {
-                    double maxX = Math.max(start.x, end.x);
-                    double minX = Math.min(start.x, end.x);
-                    if(followPoint.x > maxX || followPoint.x < minX) {
-                        followPoint.setPoint(end.toPoint());
-                    }
+            //new, might not work
+            if(path.indexOf(end) == path.size() - 1) {
+                double maxX = Math.max(start.x, end.x);
+                double minX = Math.min(start.x, end.x);
+                if(followPoint.x > maxX || followPoint.x < minX) {
+                    followPoint.setPoint(end.toPoint());
                 }
 
+                double slowDownStart = 15;
+                double minSpeed = 0.4;
+                double distanceToTarget = Math.hypot(end.x - Robot.getRobotX(), end.y - Robot.getRobotY());
+                if(distanceToTarget < slowDownStart) {
+                    double m = (1 - minSpeed) / slowDownStart;
+                    followPoint.speed *= m * (distanceToTarget - slowDownStart) + 1;
+//                    System.out.println("changing speed");
+                }
             }
+
+            //start acceleration, might be redundant for actual robot bc odometry is pog
+            if(path.indexOf(start) == 0) {
+               double slowDownStart = 15;
+               double minSpeed = 0.5;
+               double distanceToTarget = Math.hypot(start.x - Robot.getRobotX(), start.y - Robot.getRobotY());
+               if(distanceToTarget < slowDownStart) {
+                   double m = (1 - minSpeed) / slowDownStart;
+                   followPoint.speed *= m * (distanceToTarget - slowDownStart) + 1;
+               }
+            }
+
         }
 
         currentPoint.setPathPoint(followPoint);
@@ -86,6 +110,7 @@ public class PurePursuit extends Controller {
 
     //TODO make the point speed independent from lookahead distance, possibly with a ratio or maybe with a check to see if it is last point or not.
     //Don't implement with constantVelocity method in Drivetrain until that has been tested.
+    //removing distanceToPoint and replacing it with the acceleration inside findFollowPoint()
     public void moveToPoint(PathPoint point) {
         double absoluteAngleToPoint = Math.atan2(point.y - Robot.getRobotY(), point.x - Robot.getRobotX());
 
@@ -95,9 +120,9 @@ public class PurePursuit extends Controller {
 
         double turnSpeed = turnPID.getOutput() * point.turnSpeed;
 
-        double distanceToPoint = Math.hypot(point.x - Robot.getRobotX(), point.y - Robot.getRobotY()) * point.speed;
+//        double distanceToPoint = Math.hypot(point.x - Robot.getRobotX(), point.y - Robot.getRobotY()) * point.speed;
 
-        Robot.drivetrain.fieldCentricMove(Math.cos(absoluteAngleToPoint) * distanceToPoint, Math.sin(absoluteAngleToPoint) * distanceToPoint, turnSpeed);
+        Robot.drivetrain.fieldCentricMove(Math.cos(absoluteAngleToPoint) * point.speed, Math.sin(absoluteAngleToPoint) * point.speed, turnSpeed);
     }
 
     public int getCurrentSection(){

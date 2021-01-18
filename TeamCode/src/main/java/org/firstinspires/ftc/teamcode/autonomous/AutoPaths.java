@@ -171,7 +171,9 @@ public class AutoPaths extends AutoPipeline {
                 @Override
                 public void run() {
                     sleep(1500);
-                    controller.run();
+                    if(!isStopRequested()) {
+                        controller.run();
+                    }
                 }
             }).start();
 
@@ -438,6 +440,9 @@ public class AutoPaths extends AutoPipeline {
 
             Robot.storeRobotPosition();
             controller.stop = true;
+
+            //should be a fix to the jittering issue at an early shut down event
+            subsytems.drivetrain.setPowers(0, 0, 0, 0);
 
         } catch (RobotCoreLibException e) {
             e.printStackTrace();
