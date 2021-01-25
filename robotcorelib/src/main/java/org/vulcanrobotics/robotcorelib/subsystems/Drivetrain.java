@@ -19,7 +19,7 @@ public class Drivetrain extends Subsystem {
     private DcMotor fl, fr, bl, br;
     private BNO055IMU imu;
 
-    private PID turnPid = new PID(1, 0, 0.5);
+    private PID turnPid = new PID(1.8, 0.1, 1);
 
     private boolean doingAutonomousTask;
     private boolean unlockedAim;
@@ -150,11 +150,12 @@ public class Drivetrain extends Subsystem {
         //auto aim calculation and determine drive style
         if(aiming) {
             double absoluteAngleToTarget = Math.atan2(target.y - Robot.getRobotY(), target.x - Robot.getRobotX());
-
-            double error = Functions.angleWrap(absoluteAngleToTarget - Robot.getRobotAngleRad());
+            doingAutonomousTask = true;
+            double error = Functions.angleWrap(absoluteAngleToTarget - (Robot.getRobotAngleRad() * -1.0));
             //non pid code for testing
-            turnPower = (error + variableOffsetRad + SHOOTING_OFFSET_RAD) * turnPid.getKp();
-
+            turnPid.run(absoluteAngleToTarget, ((Robot.getRobotAngleRad() * -1.0) + variableOffsetRad + SHOOTING_OFFSET_RAD));
+//            turnPower = (error + variableOffsetRad + SHOOTING_OFFSET_RAD) * turnPid.getKp();
+            turnPower = turnPid.getOutput() * -1.0;
             fieldCentricMove(strafe, forward, turnPower);
         } else {
             //basic mecanum calculations
@@ -164,7 +165,10 @@ public class Drivetrain extends Subsystem {
                     (vd * Math.sin(theta) + turnPower) * multiplier,
                     (vd * Math.cos(theta) - turnPower) * multiplier
             };
-
+            if(doingAutonomousTask) {
+                turnPid.reset();
+                doingAutonomousTask = false;
+            }
             setPowers(v);
         }
     }

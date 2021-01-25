@@ -27,10 +27,11 @@ public class RobotConfig {
     }
 
     public void init() {
+        subsystems.clear();
         subsystems.add(drivetrain);
         subsystems.add(shooter);
         subsystems.add(intake);
-        subsystems.add(wobbleGrabber);
+//        subsystems.add(wobbleGrabber);
 
     }
 

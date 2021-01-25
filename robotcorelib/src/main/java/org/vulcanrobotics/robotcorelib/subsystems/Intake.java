@@ -8,13 +8,15 @@ public class Intake extends Subsystem {
     private DcMotor transfer, intake;
     private boolean intakeButton;
 
+    //TODO add intake sensor after its on the robot
+
     @Override
     public void init() {
         transfer = hardwareMap.dcMotor.get("transfer_intake");
         intake = hardwareMap.dcMotor.get("roller_intake");
 
         intake.setDirection(DcMotorSimple.Direction.FORWARD);
-        transfer.setDirection(DcMotorSimple.Direction.REVERSE);
+        transfer.setDirection(DcMotorSimple.Direction.FORWARD);
 
     }
 

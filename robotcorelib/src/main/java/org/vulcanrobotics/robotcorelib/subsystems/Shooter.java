@@ -1,16 +1,17 @@
 package org.vulcanrobotics.robotcorelib.subsystems;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.MotorControlAlgorithm;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.configuration.annotations.MotorType;
-import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
 import org.vulcanrobotics.robotcorelib.framework.Constants;
 import org.vulcanrobotics.robotcorelib.robot.Robot;
 
 public class Shooter extends Subsystem {
-    private DcMotorEx shooter;
+    private DcMotorEx shooter_one;
+    private DcMotorEx shooter_two;
     private Servo hopper;
 
     private boolean hopperButton;
@@ -37,13 +38,18 @@ public class Shooter extends Subsystem {
 
     @Override
     public void init() {
-        shooter = (DcMotorEx) hardwareMap.dcMotor.get("shooter");
+        shooter_one = (DcMotorEx) hardwareMap.dcMotor.get("shooter_one");
+        shooter_two = (DcMotorEx) hardwareMap.dcMotor.get("shooter_two");
         hopper = hardwareMap.servo.get("hopper");
-        shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        PIDFCoefficients coefficients = shooter.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
-        shooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(30.0, 9.0, 0, coefficients.f));
-        shooter.setDirection((DcMotor.Direction.REVERSE));
-        shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        shooter_one.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        shooter_two.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        PIDFCoefficients coefficients = shooter_one.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
+        shooter_one.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(10.0, 3.0, 0.0, 12.0));
+        shooter_two.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(10.0, 3.0, 0.0, 12.0));
+        shooter_one.setDirection((DcMotor.Direction.FORWARD));
+        shooter_two.setDirection(DcMotorSimple.Direction.REVERSE);
+        shooter_one.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        shooter_two.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
     }
 
     //TODO put the shooter power calculation in a separate method to clean up some stuff
@@ -75,21 +81,25 @@ public class Shooter extends Subsystem {
             if(shooterPower > shooterHighPower){
                 shooterPower = shooterHighPower;
             }
-            shooter.setPower(shooterPower);
-            telemetry.addData("shooter power", shooter.getPower());
+            shooter_one.setPower(shooterPower);
+            telemetry.addData("shooter power", shooter_one.getPower());
         }
         else if(shooterHighButton > 0){
-            shooter.setPower(shooterHighPower);
+            shooter_one.setPower(shooterHighPower);
+            shooter_two.setPower(shooterHighPower);
         }
         else if(shooterLowButton > 0){
-            shooter.setPower(shooterLowPower);
+            shooter_one.setPower(shooterLowPower);
+            shooter_two.setPower(shooterLowPower);
         }
         else if(powerShotButton) {
-            shooter.setPower(powerShotPower);
+            shooter_one.setPower(powerShotPower);
+            shooter_two.setPower(powerShotPower);
         }
 
         else {
-            shooter.setPower(0);
+            shooter_one.setPower(0);
+            shooter_two.setPower(0);
             pidRunning = false;
         }
 
@@ -106,13 +116,13 @@ public class Shooter extends Subsystem {
                 hopperBeforeTime = System.currentTimeMillis();
             }
 
-            if ((System.currentTimeMillis() - hopperBeforeTime) >= 500) {
+            if ((System.currentTimeMillis() - hopperBeforeTime) >= 200) {
                 hopperOut = !hopperOut;
                 hopperBeforeTime = System.currentTimeMillis();
             }
 
             if(hopperOut) {
-                hopper.setPosition(.35);
+                hopper.setPosition(0.15);
             }
 
             if (!hopperOut){
@@ -136,7 +146,7 @@ public class Shooter extends Subsystem {
         double power = 0.84;
         double velocity = power * (1620.0 * 103.6 / 60.0);
         if(shooterOn) {
-            shooter.setVelocity(velocity);
+            shooter_one.setVelocity(velocity);
         }
     }
 
@@ -158,7 +168,7 @@ public class Shooter extends Subsystem {
         double conversion = ((1620.0 / 60.0) * 103.6);
 
         double targetSpeed = power * conversion;
-        double currentSpeed = (shooter.getCurrentPosition() - lastPosition) / (time / 1000.0);
+        double currentSpeed = (shooter_one.getCurrentPosition() - lastPosition) / (time / 1000.0);
         double error = (targetSpeed - currentSpeed) / (conversion);
         integral += ((error + lastError) / 2) / (time / 1000.0);
         double derivative = (error - lastError) / (time / 1000.0);
@@ -168,17 +178,17 @@ public class Shooter extends Subsystem {
         double kd = 1;
         double output = (kp * error) + (ki * integral) + (kd * derivative);
 
-        shooter.setPower(output);
+        shooter_one.setPower(output);
 
         lastError = error;
-        lastPosition = shooter.getCurrentPosition();
+        lastPosition = shooter_one.getCurrentPosition();
 
 
     }
 
     public void setPIDFCoefficients(PIDFCoefficients coefficients) {
-        if(shooter != null) {
-            shooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(coefficients.p, coefficients.i, coefficients.d, shooter.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER).f));
+        if(shooter_one != null) {
+            shooter_one.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(coefficients.p, coefficients.i, coefficients.d, shooter_one.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER).f));
         }
     }
 
@@ -187,7 +197,7 @@ public class Shooter extends Subsystem {
     }
 
     public void setShooterPower(double power) {
-        shooter.setPower(power);
+        shooter_one.setPower(power);
     }
 
     public void shoot(){
