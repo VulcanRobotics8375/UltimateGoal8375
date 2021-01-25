@@ -9,6 +9,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.vulcanrobotics.robotcorelib.math.Functions;
 import org.vulcanrobotics.robotcorelib.math.PID;
+import org.vulcanrobotics.robotcorelib.math.Point;
+import org.vulcanrobotics.robotcorelib.motion.Mecanum;
 import org.vulcanrobotics.robotcorelib.robot.Robot;
 import static org.vulcanrobotics.robotcorelib.framework.Constants.*;
 
@@ -17,7 +19,7 @@ public class Drivetrain extends Subsystem {
     private DcMotor fl, fr, bl, br;
     private BNO055IMU imu;
 
-    private PID turnPid = new PID(1, 0, 0.5);
+    private PID turnPid = new PID(1.8, 0.1, 1);
 
     private boolean doingAutonomousTask;
     private boolean unlockedAim;
@@ -35,6 +37,8 @@ public class Drivetrain extends Subsystem {
 
         setDrivetrainMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setDrivetrainMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        Robot.setResetPosition(new Point(21.6, 21.6));
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.mode = BNO055IMU.SensorMode.IMU;
@@ -87,14 +91,16 @@ public class Drivetrain extends Subsystem {
     }
 
     public void mecanumDrive(double forward, double turn, double strafe, boolean highGoal, boolean powerShotLeft, boolean powerShotCenter, boolean powerShotRight, boolean leftOffsetButton, boolean rightOffsetButton) {
+        //handle/parse initial data for basic mecanum drive
         forward = curveLinearJoystick(forward);
         strafe = curveLinearJoystick(strafe);
         turn = curveLinearJoystick(turn);
         double vd = Math.hypot(forward, strafe);
         double theta = Math.atan2(forward, strafe) - (Math.PI / 4);
-        double multiplier = 1.0;
+        double multiplier = Math.sqrt(2.0);
         double turnPower = turn;
 
+        //check variable offset buttons, and change accordingly
         if(leftOffsetButton && !this.leftOffsetButton) {
             if(powerShotRight) {
                 variableOffset -= 4.5;
@@ -121,98 +127,50 @@ public class Drivetrain extends Subsystem {
             this.rightOffsetButton = false;
         }
 
+        //auto aim configuration
+        double variableOffsetRad = Math.toRadians(variableOffset);
+        Point target = new Point();
+        boolean aiming = false;
         if(highGoal) {
-            double absoluteAngleToTarget = Math.atan2(FIELD_SIZE_CM_Y - Robot.getRobotY(), (FIELD_SIZE_CM_X - (1.5*TILE_SIZE_CM)) - Robot.getRobotX());
-            double distanceToTarget = Math.hypot((FIELD_SIZE_CM_X - (1.5*TILE_SIZE_CM)) - Robot.getRobotX(), (FIELD_SIZE_CM_Y - Robot.getRobotY()));
-
-            double offset = ((((SHOOTING_OFFSET_MIN - SHOOTING_OFFSET_MAX) / 204.6) * (distanceToTarget - 152.4)) + SHOOTING_OFFSET_MAX) + SHOOTING_DEGREE_BIAS + variableOffset;
-
+            target.setPoint(new Point(FIELD_SIZE_CM_X - (1.5 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
+            aiming = true;
+        }
+        else if(powerShotLeft) {
+            target.setPoint(new Point(FIELD_SIZE_CM_X - (2.25 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
+            aiming = true;
+        }
+        else if(powerShotCenter) {
+            target.setPoint(new Point(FIELD_SIZE_CM_X - (2.5 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
+            aiming = true;
+        }
+        else if(powerShotRight) {
+            target.setPoint(new Point(FIELD_SIZE_CM_X - (2.75 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
+            aiming = true;
+        }
+        //auto aim calculation and determine drive style
+        if(aiming) {
+            double absoluteAngleToTarget = Math.atan2(target.y - Robot.getRobotY(), target.x - Robot.getRobotX());
             doingAutonomousTask = true;
-            double error = Functions.angleWrap(Math.toRadians(getZAngle() + offset));
-            turnPid.run(absoluteAngleToTarget, error);
-            turnPower = turnPid.getOutput();
-
+            double error = Functions.angleWrap(absoluteAngleToTarget - (Robot.getRobotAngleRad() * -1.0));
+            //non pid code for testing
+            turnPid.run(absoluteAngleToTarget, ((Robot.getRobotAngleRad() * -1.0) + variableOffsetRad + SHOOTING_OFFSET_RAD));
+//            turnPower = (error + variableOffsetRad + SHOOTING_OFFSET_RAD) * turnPid.getKp();
+            turnPower = turnPid.getOutput() * -1.0;
+            fieldCentricMove(strafe, forward, turnPower);
+        } else {
+            //basic mecanum calculations
+            double[] v = {
+                    (vd * Math.cos(theta) + turnPower) * multiplier,
+                    (vd * Math.sin(theta) - turnPower) * multiplier,
+                    (vd * Math.sin(theta) + turnPower) * multiplier,
+                    (vd * Math.cos(theta) - turnPower) * multiplier
+            };
+            if(doingAutonomousTask) {
+                turnPid.reset();
+                doingAutonomousTask = false;
+            }
+            setPowers(v);
         }
-//        else if(powerShotCenter || powerShotLeft || powerShotRight) {
-//            doingAutonomousTask = true;
-//            double absoluteAngleToTarget;
-//            double distanceToTarget;
-//            double offset;
-//            if(powerShotLeft) {
-//                absoluteAngleToTarget = Math.atan2(FIELD_SIZE_CM_Y - Robot.getRobotY(), (FIELD_SIZE_CM_X - (2.75 * TILE_SIZE_CM)) - Robot.getRobotX());
-//                distanceToTarget = Math.hypot((FIELD_SIZE_CM_X - (2.75*TILE_SIZE_CM)) - Robot.getRobotX(), (FIELD_SIZE_CM_Y - Robot.getRobotY()));
-//
-//                offset = ((((SHOOTING_OFFSET_MIN - SHOOTING_OFFSET_MAX) / 204.6) * (distanceToTarget - 152.4)) + SHOOTING_OFFSET_MAX) + SHOOTING_DEGREE_BIAS + variableOffset;
-//            }
-//            else if(powerShotCenter) {
-//                absoluteAngleToTarget = Math.atan2(FIELD_SIZE_CM_Y - Robot.getRobotY(), (FIELD_SIZE_CM_X - (2.5 * TILE_SIZE_CM)) - Robot.getRobotX());
-//                distanceToTarget = Math.hypot((FIELD_SIZE_CM_X - (2.5*TILE_SIZE_CM)) - Robot.getRobotX(), (FIELD_SIZE_CM_Y - Robot.getRobotY()));
-//
-//                offset = ((((SHOOTING_OFFSET_MIN - SHOOTING_OFFSET_MAX) / 204.6) * (distanceToTarget - 152.4)) + SHOOTING_OFFSET_MAX) + SHOOTING_DEGREE_BIAS + variableOffset;
-//            }
-//            else {
-//                absoluteAngleToTarget = Math.atan2(FIELD_SIZE_CM_Y - Robot.getRobotY(), (FIELD_SIZE_CM_X - (2.25 * TILE_SIZE_CM)) - Robot.getRobotX());
-//                distanceToTarget = Math.hypot((FIELD_SIZE_CM_X - (2.25*TILE_SIZE_CM)) - Robot.getRobotX(), (FIELD_SIZE_CM_Y - Robot.getRobotY()));
-//
-//                offset = ((((SHOOTING_OFFSET_MIN - SHOOTING_OFFSET_MAX) / 204.6) * (distanceToTarget - 152.4)) + SHOOTING_OFFSET_MAX) + SHOOTING_DEGREE_BIAS + variableOffset;
-//            }
-//
-//            double error = Math.toRadians(getZAngle() + offset);
-//            turnPid.run(absoluteAngleToTarget, error);
-//            turnPower = turnPid.getOutput();
-//
-//        }
-        else {
-            doingAutonomousTask = false;
-            turnPid.reset();
-        }
-
-        if(powerShotRight && !unlockedAim) {
-
-            unlockAimAngle = Math.toRadians(getZAngle());
-
-            unlockedAim = true;
-        }
-
-        if(unlockedAim) {
-            turnPid.run(unlockAimAngle, Math.toRadians(getZAngle() + variableOffset));
-            turnPower = turnPid.getOutput();
-        }
-
-        if(!powerShotRight && unlockedAim) {
-            turnPid.reset();
-            unlockedAim = false;
-        }
-
-        double[] v = {
-                vd * Math.sin(theta) - turnPower,
-                vd * Math.cos(theta) + turnPower,
-                vd * Math.cos(theta) - turnPower,
-                vd * Math.sin(theta) + turnPower
-        };
-
-        double[] motorOut = {
-                multiplier * v[0],
-                multiplier * v[1],
-                multiplier * v[2],
-                multiplier * v[3]
-        };
-
-        fr.setPower(motorOut[0]);
-        fl.setPower(motorOut[1]);
-        br.setPower(motorOut[2]);
-        bl.setPower(motorOut[3]);
-
-
-    }
-
-
-    public void pidTurn(double angle) {
-        turnPid.run(angle, Math.toRadians(getZAngle()));
-        double turnPower = turnPid.getOutput();
-
-        setPowers(-turnPower, turnPower, -turnPower, turnPower);
-
     }
 
     public void resetPidControllers() {
@@ -327,6 +285,21 @@ public class Drivetrain extends Subsystem {
 
     }
 
+    //TODO add PID
+    //^^ easier said than done, bc PID may change based on batt voltage, we are running into the same problem as before
+    //might not be an issue tho, our turning has been pretty consistent and we are using PID for that
+    //and that turn PID is barely tuned anyway, it might just be running PD or P
+    public void driveWithConstantVelocity(Point targetVelocity, double angularVelocity) {
+        double errorX = targetVelocity.x - Robot.getRobotVelocity().x;
+        double errorY = targetVelocity.y - Robot.getRobotVelocity().y;
+
+        fieldCentricMove(errorX, errorY, angularVelocity);
+
+    }
+
+    @Deprecated
+    //this isn't actually deprecated since we need it for backend/calibration,
+    // but I never want to see it be used in any main code. ever.
     public double getZAngle() {
       return AngleUnit.DEGREES.normalize(imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
     }

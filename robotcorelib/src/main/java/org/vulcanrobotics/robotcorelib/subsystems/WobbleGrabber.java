@@ -15,10 +15,9 @@ public class WobbleGrabber extends Subsystem {
     private double limitRange = 500;
     private double limitMin = 0;
     private double limitMax = 1750;
-    private boolean wobbleTurnButton;
-    private boolean wobbleGrabButton;
-    private double liftPower = 1;
-    private double wobbleLiftJoystick = -1.0;
+    private boolean wobbleTurnButton = false;
+    private boolean wobbleGrabButton = false;
+    private double liftPower;
 
     private double wobbleTurnOn = -1.0;
 

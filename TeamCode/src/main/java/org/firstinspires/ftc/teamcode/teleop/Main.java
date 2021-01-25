@@ -26,7 +26,7 @@ public class Main extends TeleOpPipeline {
 
         Robot.startOdometryThread();
 
-//        Mecanum motionProfile = (Mecanum) Robot.motionProfile;
+        Mecanum motionProfile = (Mecanum) Robot.motionProfile;
 
         while (opModeIsActive()) {
 
@@ -42,9 +42,15 @@ public class Main extends TeleOpPipeline {
             subsystems.drivetrain.mecanumDrive(gamepad1.left_stick_y, -gamepad1.right_stick_x, -gamepad1.left_stick_x, gamepad1.a, gamepad1.b, gamepad1.y, gamepad1.x, gamepad1.left_bumper, gamepad1.right_bumper);
             subsystems.intake.run(gamepad2.b, gamepad2.a, gamepad2.right_bumper);
             subsystems.shooter.run(gamepad2.left_bumper, gamepad2.right_bumper, shoot, gamepad2.right_trigger, gamepad2.left_trigger, gamepad2.dpad_down);
-            subsystems.wobbleGrabber.run(gamepad2.x,gamepad2.y, -gamepad2.left_stick_y * 0.5);
+//            subsystems.wobbleGrabber.run(gamepad2.x,gamepad2.y, -gamepad2.left_stick_y * 0.5);
 
 //            motionProfile.update();
+            if(gamepad1.left_trigger > 0) {
+                Robot.setRobotPos(new Point(Robot.getRobotX(), 21.6));
+            }
+            if(gamepad1.right_trigger  > 0) {
+                Robot.setRobotPos(new Point(21.6, Robot.getRobotY()));
+            }
 
             //TODO disable debug for competition code
             if(debug) {
@@ -64,7 +70,7 @@ public class Main extends TeleOpPipeline {
         telemetry.addData("robot x", Robot.getRobotX());
         telemetry.addData("robot y", Robot.getRobotY());
         telemetry.addData("robot angle", Robot.getRobotAngleDeg());
-        telemetry.addData("zAngle", subsystems.drivetrain.getZAngle());
+//        telemetry.addData("zAngle", subsystems.drivetrain.getZAngle());
     }
 
 }

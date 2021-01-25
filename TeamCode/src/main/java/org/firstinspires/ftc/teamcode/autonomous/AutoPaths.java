@@ -19,7 +19,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 
 //@Disabled
-@Autonomous(name = "auto -- main", group = "example")
+@Autonomous(name = "auto -- main", group = "example", preselectTeleOp = "main")
 public class AutoPaths extends AutoPipeline {
 
     volatile boolean doneShooting = false;
@@ -67,9 +67,9 @@ public class AutoPaths extends AutoPipeline {
             ArrayList<PathPoint> cPosition3 = new ArrayList<>();
             ArrayList<PathPoint> cPosition4 = new ArrayList<>();
 
-            start.add(new PathPoint(138.34, 21.6, -0.05, 1, 20, 0));
-            start.add(new PathPoint(96, 80, -0.05, 1, 20, 0));
-            start.add(new PathPoint(105, 155, -0.025, 1, 20, 0));
+            start.add(new PathPoint(138.34, 21.6, -1, 1, 20, 0));
+            start.add(new PathPoint(80, 80, -1, 1, 20, 0));
+            start.add(new PathPoint(105, 170, -0.5, 1, 20, 0));
 
             aPosition1.add(new PathPoint(188, 225, -0.03, 1, 20, 0));
 
@@ -171,7 +171,9 @@ public class AutoPaths extends AutoPipeline {
                 @Override
                 public void run() {
                     sleep(1500);
-                    controller.run();
+                    if(!isStopRequested()) {
+                        controller.run();
+                    }
                 }
             }).start();
 
@@ -194,8 +196,8 @@ public class AutoPaths extends AutoPipeline {
                 telemetry.update();
 //                subsytems.wobbleGrabber.run(false, true, 0);
                 if(internalController.getCurrentSection() < 2) {
-                    subsytems.wobbleGrabber.setGrabPosition(0.05);
-                    subsytems.wobbleGrabber.setTurnPosition(0.2);
+//                    subsytems.wobbleGrabber.setGrabPosition(0.05);
+//                    subsytems.wobbleGrabber.setTurnPosition(0.2);
 
                 }
 
@@ -272,8 +274,8 @@ public class AutoPaths extends AutoPipeline {
                  */
                 if (wobbleGoalPosition == 0) {
                     if (internalController.getCurrentSection() == 2) {
-                        subsytems.wobbleGrabber.setGrabPosition(1.0);
-                        subsytems.wobbleGrabber.setTurnPosition(0);
+//                        subsytems.wobbleGrabber.setGrabPosition(1.0);
+//                        subsytems.wobbleGrabber.setTurnPosition(0);
                         sleep(500);
                         if (sectionStart == 1) {
                             internalController.startNextSection();
@@ -299,9 +301,9 @@ public class AutoPaths extends AutoPipeline {
                     }
 
                     if (internalController.getCurrentSection() == 5) {
-//                            subsytems.shooter.setShooterPower(0.82);
-                        subsytems.wobbleGrabber.setGrabPosition(0.2);
-//                            subsytems.wobbleGrabber.setTurnPosition(0.0);
+////                            subsytems.shooter.setShooterPower(0.82);
+//                        subsytems.wobbleGrabber.setGrabPosition(0.2);
+////                            subsytems.wobbleGrabber.setTurnPosition(0.0);
                         if (sectionStart == 4) {
                             internalController.startNextSection();
                             sectionStart++;
@@ -310,8 +312,8 @@ public class AutoPaths extends AutoPipeline {
                     }
 
                     if (internalController.getCurrentSection() == 6) {
-                        subsytems.wobbleGrabber.setGrabPosition(1.0);
-                        subsytems.wobbleGrabber.setTurnPosition(0.0);
+//                        subsytems.wobbleGrabber.setGrabPosition(1.0);
+//                        subsytems.wobbleGrabber.setTurnPosition(0.0);
                         if (sectionStart == 5) {
                             internalController.startNextSection();
                             sectionStart++;
@@ -324,8 +326,8 @@ public class AutoPaths extends AutoPipeline {
                      */
                 else if(wobbleGoalPosition == 1) {
                     if (internalController.getCurrentSection() == 2) {
-                        subsytems.wobbleGrabber.setGrabPosition(1.0);
-                        subsytems.wobbleGrabber.setTurnPosition(0);
+//                        subsytems.wobbleGrabber.setGrabPosition(1.0);
+//                        subsytems.wobbleGrabber.setTurnPosition(0);
                         sleep(500);
                         if (sectionStart == 1) {
                             internalController.startNextSection();
@@ -340,8 +342,8 @@ public class AutoPaths extends AutoPipeline {
                     }
 
                     if (internalController.getCurrentSection() == 4) {
-                        subsytems.wobbleGrabber.setTurnPosition(0.2);
-                        subsytems.wobbleGrabber.setGrabPosition(0.05);
+//                        subsytems.wobbleGrabber.setTurnPosition(0.2);
+//                        subsytems.wobbleGrabber.setGrabPosition(0.05);
                         subsytems.intake.run(true, false, false);
                         sleep(1000);
                         if (sectionStart == 3) {
@@ -365,8 +367,8 @@ public class AutoPaths extends AutoPipeline {
                         }
                     }
                     if (internalController.getCurrentSection() == 6) {
-                        subsytems.wobbleGrabber.setGrabPosition(1.0);
-                        subsytems.wobbleGrabber.setTurnPosition(0.0);
+//                        subsytems.wobbleGrabber.setGrabPosition(1.0);
+//                        subsytems.wobbleGrabber.setTurnPosition(0.0);
                         sleep(1000);
                         if (sectionStart == 5) {
                             internalController.startNextSection();
@@ -379,8 +381,8 @@ public class AutoPaths extends AutoPipeline {
                  */
                 else if(wobbleGoalPosition == 2) {
                     if (internalController.getCurrentSection() == 2) {
-                        subsytems.wobbleGrabber.setGrabPosition(1.0);
-                        subsytems.wobbleGrabber.setTurnPosition(0);
+//                        subsytems.wobbleGrabber.setGrabPosition(1.0);
+//                        subsytems.wobbleGrabber.setTurnPosition(0);
                         sleep(500);
                         if (sectionStart == 1) {
                             internalController.startNextSection();
@@ -395,8 +397,8 @@ public class AutoPaths extends AutoPipeline {
                     }
 
                     if (internalController.getCurrentSection() == 4) {
-                        subsytems.wobbleGrabber.setTurnPosition(0.2);
-                        subsytems.wobbleGrabber.setGrabPosition(0.05);
+//                        subsytems.wobbleGrabber.setTurnPosition(0.2);
+//                        subsytems.wobbleGrabber.setGrabPosition(0.05);
                         subsytems.intake.run(true, false, false);
                         sleep(1000);
                         if (sectionStart == 3) {
@@ -422,8 +424,8 @@ public class AutoPaths extends AutoPipeline {
                         }
                     }
                     if (internalController.getCurrentSection() == 6) {
-                        subsytems.wobbleGrabber.setGrabPosition(1.0);
-                        subsytems.wobbleGrabber.setTurnPosition(0.0);
+//                        subsytems.wobbleGrabber.setGrabPosition(1.0);
+//                        subsytems.wobbleGrabber.setTurnPosition(0.0);
                         sleep(500);
                         if (sectionStart == 5) {
                             internalController.startNextSection();
@@ -438,6 +440,9 @@ public class AutoPaths extends AutoPipeline {
 
             Robot.storeRobotPosition();
             controller.stop = true;
+
+            //should be a fix to the jittering issue at an early shut down event
+            subsytems.drivetrain.setPowers(0, 0, 0, 0);
 
         } catch (RobotCoreLibException e) {
             e.printStackTrace();
