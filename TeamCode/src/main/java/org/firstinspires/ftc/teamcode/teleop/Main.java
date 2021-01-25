@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.vulcanrobotics.robotcorelib.framework.TeleOpPipeline;
 import org.vulcanrobotics.robotcorelib.math.Point;
 import org.vulcanrobotics.robotcorelib.motion.Mecanum;
+import org.vulcanrobotics.robotcorelib.motion.MecanumCurve;
 import org.vulcanrobotics.robotcorelib.robot.Robot;
 
 @TeleOp(name = "main", group = "main")
@@ -26,7 +27,7 @@ public class Main extends TeleOpPipeline {
 
         Robot.startOdometryThread();
 
-        Mecanum motionProfile = (Mecanum) Robot.motionProfile;
+        MecanumCurve motionProfile = (MecanumCurve) Robot.motionProfile;
 
         while (opModeIsActive()) {
 
@@ -56,6 +57,7 @@ public class Main extends TeleOpPipeline {
             if(debug) {
                 debug();
             }
+
 
 //            telemetry.addData("left", motionProfile.getLeft().getPosition());
 //            telemetry.addData("right", motionProfile.getRight().getPosition());
