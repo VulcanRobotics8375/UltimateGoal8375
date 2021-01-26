@@ -6,27 +6,33 @@ public class PID {
     private double Ki;
     private double Kd;
 
-    private Timer timer = new Timer();
+//    private Timer timer = new Timer();
 
     private double lastError = 0;
     private double integral = 0;
+    private double derivative;
+    private double lastValue;
+    private double tau;
+    private double loopTime;
 
     private double output;
 
-    public PID(double Kp, double Ki, double Kd) {
-
+    public PID(double Kp, double Ki, double Kd, double tau, double loopTime) {
         this.Kp = Kp;
         this.Ki = Ki;
         this.Kd = Kd;
+        this.tau = tau;
+        this.loopTime = loopTime;
     }
 
     public void run(double target, double value) {
 
         double error = target - value;
-        integral += ((error + lastError) / 2);
-        double derivative = (error - lastError);
+        double proportional = Kp * error;
+        integral += ((error + lastError) / 2.0) * loopTime;
+        derivative = (2.0 * Kd * (value - lastValue) * ((2.0 * tau) - loopTime) * derivative) / ((2.0 * tau) + loopTime);
 
-        output = Kp * error + Ki * integral + Kd * derivative;
+        output = proportional + integral + derivative;
 
         lastError = error;
     }
@@ -35,6 +41,8 @@ public class PID {
         lastError = 0;
         integral = 0;
         output = 0;
+        derivative = 0;
+        lastValue = 0;
     }
 
     public double getOutput() {

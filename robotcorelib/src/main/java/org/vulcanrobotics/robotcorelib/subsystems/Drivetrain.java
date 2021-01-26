@@ -153,7 +153,7 @@ public class Drivetrain extends Subsystem {
             doingAutonomousTask = true;
             double error = Functions.angleWrap(absoluteAngleToTarget - (Robot.getRobotAngleRad() * -1.0));
             //non pid code for testing
-            turnPid.run(absoluteAngleToTarget, ((Robot.getRobotAngleRad() * -1.0) + variableOffsetRad + SHOOTING_OFFSET_RAD));
+            turnPid.run(absoluteAngleToTarget, Functions.angleWrap(((Robot.getRobotAngleRad() * -1.0) + variableOffsetRad + SHOOTING_OFFSET_RAD)));
 //            turnPower = (error + variableOffsetRad + SHOOTING_OFFSET_RAD) * turnPid.getKp();
             turnPower = turnPid.getOutput() * -1.0;
             fieldCentricMove(strafe, forward, turnPower);

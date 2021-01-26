@@ -1,16 +1,21 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.vulcanrobotics.robotcorelib.framework.TeleOpPipeline;
 import org.vulcanrobotics.robotcorelib.math.Point;
 import org.vulcanrobotics.robotcorelib.motion.Mecanum;
 import org.vulcanrobotics.robotcorelib.robot.Robot;
 
+import java.util.concurrent.TimeUnit;
+
 @TeleOp(name = "main", group = "main")
 public class Main extends TeleOpPipeline {
 
     boolean debug = true;
+
+    private ElapsedTime timer = new ElapsedTime();
 
     public void runOpMode() {
 
@@ -27,8 +32,10 @@ public class Main extends TeleOpPipeline {
         Robot.startOdometryThread();
 
         Mecanum motionProfile = (Mecanum) Robot.motionProfile;
+        timer.reset();
 
         while (opModeIsActive()) {
+            timer.reset();
 
             int shoot;
             if(gamepad1.a) {
@@ -60,7 +67,7 @@ public class Main extends TeleOpPipeline {
 //            telemetry.addData("left", motionProfile.getLeft().getPosition());
 //            telemetry.addData("right", motionProfile.getRight().getPosition());
 //            telemetry.addData("horizontal", motionProfile.getHorizontal().getPosition());
-
+            telemetry.addData("loop time", timer.time(TimeUnit.MILLISECONDS));
             telemetry.update();
         }
 
