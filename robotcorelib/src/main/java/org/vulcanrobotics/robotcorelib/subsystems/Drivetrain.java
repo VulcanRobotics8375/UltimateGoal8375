@@ -19,7 +19,7 @@ public class Drivetrain extends Subsystem {
     private DcMotor fl, fr, bl, br;
     private BNO055IMU imu;
 
-    private PID turnPid = new PID(1.8, 0.1, 1);
+    private PID turnPid = new PID(1.8, 0.1, 1, 1, 0.05, -0.3, 0.3);
 
     private boolean doingAutonomousTask;
     private boolean unlockedAim;

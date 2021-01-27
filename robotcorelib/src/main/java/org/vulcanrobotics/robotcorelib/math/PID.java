@@ -55,6 +55,7 @@ public class PID {
         output = proportional + integral + derivative;
 
         lastError = error;
+        lastValue = value;
     }
 
     public void reset() {
@@ -92,4 +93,37 @@ public class PID {
     public void setKd(double kd) {
         Kd = kd;
     }
+
+    public double getTau() {
+        return tau;
+    }
+
+    public void setTau(double tau) {
+        this.tau = tau;
+    }
+
+    public double getLoopTime() {
+        return loopTime;
+    }
+
+    public void setLoopTime(double loopTime) {
+        this.loopTime = loopTime;
+    }
+
+    public double getLimMin() {
+        return limMin;
+    }
+
+    public void setLimMin(double limMin) {
+        this.limMin = limMin;
+    }
+
+    public double getLimMax() {
+        return limMax;
+    }
+
+    public void setLimMax(double limMax) {
+        this.limMax = limMax;
+    }
+
 }
