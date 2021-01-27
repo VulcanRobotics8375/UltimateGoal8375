@@ -1,5 +1,7 @@
 package org.vulcanrobotics.robotcorelib.math;
 
+import com.qualcomm.robotcore.util.Range;
+
 public class PID {
 
     private double Kp;
@@ -14,15 +16,18 @@ public class PID {
     private double lastValue;
     private double tau;
     private double loopTime;
+    private double limMin, limMax;
 
     private double output;
 
-    public PID(double Kp, double Ki, double Kd, double tau, double loopTime) {
+    public PID(double Kp, double Ki, double Kd, double tau, double loopTime, double limMin, double limMax) {
         this.Kp = Kp;
         this.Ki = Ki;
         this.Kd = Kd;
         this.tau = tau;
         this.loopTime = loopTime;
+        this.limMin = limMin;
+        this.limMax = limMax;
     }
 
     public void run(double target, double value) {
@@ -30,6 +35,21 @@ public class PID {
         double error = target - value;
         double proportional = Kp * error;
         integral += ((error + lastError) / 2.0) * loopTime;
+
+        double limMinInt, limMaxInt;
+        if(proportional < limMax) {
+            limMaxInt = limMax;
+        } else {
+            limMaxInt = 0.0;
+        }
+        if(proportional > limMin) {
+            limMinInt = limMin;
+        } else {
+            limMinInt = 0.0;
+        }
+
+        integral = Range.clip(integral, limMinInt, limMaxInt);
+
         derivative = (2.0 * Kd * (value - lastValue) * ((2.0 * tau) - loopTime) * derivative) / ((2.0 * tau) + loopTime);
 
         output = proportional + integral + derivative;
