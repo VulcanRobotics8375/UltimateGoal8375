@@ -167,6 +167,11 @@ public class Shooter extends Subsystem {
         }
     }
 
+    public void setPowers(double power) {
+        shooter_one.setPower(power);
+        shooter_two.setPower(power);
+    }
+
     private long lastPidTime;
     private boolean pidRunning;
     private double lastError, integral = 0, lastPosition;

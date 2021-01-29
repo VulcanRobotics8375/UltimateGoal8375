@@ -26,6 +26,7 @@ public class Drivetrain extends Subsystem {
     private double unlockAimAngle = 0;
     private double variableOffset = 0;
     private boolean leftOffsetButton, rightOffsetButton;
+    private boolean aimed = false;
 
     @Override
     public void init() {
@@ -40,16 +41,7 @@ public class Drivetrain extends Subsystem {
 
         Robot.setResetPosition(new Point(21.6, 21.6));
 
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.mode = BNO055IMU.SensorMode.IMU;
-        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.loggingEnabled = false;
-        if(imu.initialize(parameters)) {
-            while (!imu.isGyroCalibrated()) {}
-        } else {
-            imu.initialize(parameters);
-        }
+
 
         fl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         fr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -60,6 +52,19 @@ public class Drivetrain extends Subsystem {
         fr.setDirection(DcMotorSimple.Direction.FORWARD);
         bl.setDirection(DcMotorSimple.Direction.REVERSE);
         br.setDirection(DcMotorSimple.Direction.FORWARD);
+    }
+
+    public void initIMU() {
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.mode = BNO055IMU.SensorMode.IMU;
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.loggingEnabled = false;
+        if(imu.initialize(parameters)) {
+            while (!imu.isGyroCalibrated()) {}
+        } else {
+            imu.initialize(parameters);
+        }
     }
 
     public void autoInit() {
@@ -171,6 +176,43 @@ public class Drivetrain extends Subsystem {
             }
             setPowers(v);
         }
+    }
+
+    //right to left = 1 to 3, high goal = 0
+    //invalid id defaults to aim at high goal
+    public void aim(int shotId, double errorThresh) {
+        Point target = new Point();
+        if(shotId == 0) {
+            target.setPoint(new Point(FIELD_SIZE_CM_X - (1.5 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
+        }
+        else if(shotId == 1) {
+            target.setPoint(new Point(FIELD_SIZE_CM_X - (2.25 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
+        }
+        else if(shotId == 2) {
+            target.setPoint(new Point(FIELD_SIZE_CM_X - (2.5 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
+        }
+        else if(shotId == 3) {
+            target.setPoint(new Point(FIELD_SIZE_CM_X - (2.75 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
+        }
+        else {
+            target.setPoint(new Point(FIELD_SIZE_CM_X - (1.5 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
+        }
+
+        double absoluteAngleToTarget = Math.atan2(target.y - Robot.getRobotY(), target.x - Robot.getRobotX());
+        double error = Functions.angleWrap(absoluteAngleToTarget - (Robot.getRobotAngleRad() * -1.0));
+        turnPid.run(absoluteAngleToTarget, Functions.angleWrap(((Robot.getRobotAngleRad() * -1.0) + SHOOTING_OFFSET_RAD)));
+        run(0, turnPid.getOutput());
+        if(error < errorThresh) {
+            aimed = true;
+        } else {
+            aimed = false;
+        }
+
+    }
+
+    public void resetAiming() {
+        aimed = false;
+        turnPid.reset();
     }
 
     public void resetPidControllers() {
@@ -318,6 +360,10 @@ public class Drivetrain extends Subsystem {
 
     public DcMotor getBackRight() {
         return br;
+    }
+
+    public boolean isAimed() {
+        return aimed;
     }
 
     public void setDrivetrainMode(DcMotor.RunMode runMode) {

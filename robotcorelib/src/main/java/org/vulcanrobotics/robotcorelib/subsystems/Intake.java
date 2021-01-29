@@ -13,7 +13,6 @@ public class Intake extends Subsystem {
     private double intakeSpeed;
     private ElapsedTime jamTimer = new ElapsedTime();
 
-    //TODO add intake sensor after its on the robot
 
     @Override
     public void init() {

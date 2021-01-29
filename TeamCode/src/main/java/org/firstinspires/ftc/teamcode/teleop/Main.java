@@ -16,6 +16,7 @@ public class Main extends TeleOpPipeline {
     boolean debug = true;
 
     private ElapsedTime timer = new ElapsedTime();
+    private double time;
 
     public void runOpMode() {
 
@@ -67,8 +68,10 @@ public class Main extends TeleOpPipeline {
 //            telemetry.addData("left", motionProfile.getLeft().getPosition());
 //            telemetry.addData("right", motionProfile.getRight().getPosition());
 //            telemetry.addData("horizontal", motionProfile.getHorizontal().getPosition());
-            telemetry.addData("loop time", timer.time(TimeUnit.MILLISECONDS));
+            telemetry.addData("loop time", time);
             telemetry.update();
+            time = timer.milliseconds();
+            timer.reset();
         }
 
     }
