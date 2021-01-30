@@ -49,8 +49,8 @@ public class Shooter extends Subsystem {
         shooter_one.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         shooter_two.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         PIDFCoefficients coefficients = shooter_one.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
-        shooter_one.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(10.0, 3.0, 0.0, 12.0));
-        shooter_two.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(10.0, 3.0, 0.0, 12.0));
+        shooter_one.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(10.0, 3.0, 3.0, 12.0));
+        shooter_two.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(10.0, 3.0, 3.0, 12.0));
         shooter_one.setDirection((DcMotor.Direction.FORWARD));
         shooter_two.setDirection(DcMotorSimple.Direction.REVERSE);
         shooter_one.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
