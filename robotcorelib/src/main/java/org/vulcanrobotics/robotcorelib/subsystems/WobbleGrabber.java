@@ -75,10 +75,10 @@ public class WobbleGrabber extends Subsystem {
             this.wobbleGrabButton = false;
         }
         if(wobbleGrabOn > 0) {
-          wobbleGrab.setPosition(.5);
+          wobbleGrab.setPosition(.05);
 
         } if(wobbleGrabOn < 0) {
-            wobbleGrab.setPosition(1.2);
+            wobbleGrab.setPosition(1.5);
         }
         /*
        telemetry.addData("wobble height", wobbleLift.getCurrentPosition());
