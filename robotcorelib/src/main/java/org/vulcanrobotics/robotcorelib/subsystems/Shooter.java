@@ -5,14 +5,18 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.MotorControlAlgorithm;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.vulcanrobotics.robotcorelib.framework.Constants;
 import org.vulcanrobotics.robotcorelib.robot.Robot;
+
+import java.util.concurrent.TimeUnit;
 
 public class Shooter extends Subsystem {
     private DcMotorEx shooter_one;
     private DcMotorEx shooter_two;
     private Servo hopper;
+    private Servo powerShot;
 
     private boolean hopperButton;
     private double a = -417.9;
@@ -24,15 +28,19 @@ public class Shooter extends Subsystem {
     public double shooterPower;
     //on = goal, off = powershot
     private boolean shooterMode = true;
+    private boolean powerShotOn = false;
     private double shooterModeNum = 88.9;
     private double shooterPowerLeft;
     private double shooterPowerRight;
     private double shooterHighPower = 0.895;
     private double shooterLowPower = 0.82;
-    private double powerShotPower = 0.77;
+    private double powerShotMode = -1;
+    private boolean powerShotButton = false;
+    private double powerShotPower = 0.7;
     private float shooterHighButton;
     private float shooterLowButton;
     private int shooterOn = -1;
+    private ElapsedTime servoTimer = new ElapsedTime();
 
     public Shooter() {}
 
@@ -41,6 +49,7 @@ public class Shooter extends Subsystem {
         shooter_one = (DcMotorEx) hardwareMap.dcMotor.get("shooter_one");
         shooter_two = (DcMotorEx) hardwareMap.dcMotor.get("shooter_two");
         hopper = hardwareMap.servo.get("hopper");
+        powerShot = hardwareMap.servo.get("powershot");
         shooter_one.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         shooter_two.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         PIDFCoefficients coefficients = shooter_one.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -50,6 +59,7 @@ public class Shooter extends Subsystem {
         shooter_two.setDirection(DcMotorSimple.Direction.REVERSE);
         shooter_one.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         shooter_two.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        servoTimer.reset();
     }
 
     //TODO put the shooter power calculation in a separate method to clean up some stuff
@@ -85,16 +95,16 @@ public class Shooter extends Subsystem {
             telemetry.addData("shooter power", shooter_one.getPower());
         }
         else if(shooterHighButton > 0){
+//            if(powerShotOn) {
+//                powerShotOn = false;
+//                shooter_two.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//            }
             shooter_one.setPower(shooterHighPower);
             shooter_two.setPower(shooterHighPower);
         }
         else if(shooterLowButton > 0){
             shooter_one.setPower(shooterLowPower);
             shooter_two.setPower(shooterLowPower);
-        }
-        else if(powerShotButton) {
-            shooter_one.setPower(powerShotPower);
-            shooter_two.setPower(powerShotPower);
         }
 
         else {
@@ -103,6 +113,24 @@ public class Shooter extends Subsystem {
             pidRunning = false;
         }
 
+        if(powerShotButton && !this.powerShotButton) {
+//            if(!powerShotOn) {
+//                powerShotOn = true;
+//                shooter_two.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//            }
+            powerShotMode *= -1;
+            this.powerShotButton = true;
+        }
+        if(!powerShotButton && this.powerShotButton){
+            this.powerShotButton = false;
+        }
+
+        if(powerShotMode > 0){
+            powerShot.setPosition(.45);
+        }
+        if(powerShotMode < 0){
+            powerShot.setPosition(0);
+        }
 //        telemetry.addData("p", shooter.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER).p);
 //        telemetry.addData("i", shooter.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER).i);
 //        telemetry.addData("d", shooter.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER).d);
@@ -113,12 +141,14 @@ public class Shooter extends Subsystem {
             if(!this.hopperButton){
                 this.hopperButton = true;
                 hopperOut = true;
-                hopperBeforeTime = System.currentTimeMillis();
+//                hopperBeforeTime = System.currentTimeMillis();
+                servoTimer.reset();
             }
 
-            if ((System.currentTimeMillis() - hopperBeforeTime) >= 200) {
+            if ((servoTimer.time(TimeUnit.MILLISECONDS)) >= 200) {
                 hopperOut = !hopperOut;
-                hopperBeforeTime = System.currentTimeMillis();
+//                hopperBeforeTime = System.currentTimeMillis();
+                servoTimer.reset();
             }
 
             if(hopperOut) {
@@ -132,6 +162,7 @@ public class Shooter extends Subsystem {
 
         else {
             hopper.setPosition(0);
+//            servoTimer.reset();
         }
 
         if(!hopperButton && this.hopperButton){
@@ -148,6 +179,11 @@ public class Shooter extends Subsystem {
         if(shooterOn) {
             shooter_one.setVelocity(velocity);
         }
+    }
+
+    public void setPowers(double power) {
+        shooter_one.setPower(power);
+        shooter_two.setPower(power);
     }
 
     private long lastPidTime;

@@ -1,6 +1,5 @@
 package org.vulcanrobotics.robotcorelib.motion;
 
-import org.vulcanrobotics.robotcorelib.dashboard.Constant;
 import org.vulcanrobotics.robotcorelib.dashboard.hardware.Odometer;
 import org.vulcanrobotics.robotcorelib.framework.Constants;
 import org.vulcanrobotics.robotcorelib.framework.RobotCoreLibException;
@@ -32,7 +31,7 @@ public class Mecanum extends MotionProfile {
         radius = Constants.ODOMETRY_RADIUS;
         wheelBase = Constants.ODOMETRY_WHEELBASE;
         ticksPerRev = Constants.ODOMETRY_TICKS_PER_REV;
-        horizontalTicksPerDeg = Constants.ODOMETRY_HORIZONTAL_TICKS_PER_REV;
+        horizontalTicksPerDeg = Constants.ODOMETRY_HORIZONTAL_TICKS_PER_RAD;
         countsPerCm = Constants.ODOMETRY_COUNTS_PER_CM;
 
 
@@ -51,6 +50,8 @@ public class Mecanum extends MotionProfile {
         double rawHorizontalChange = (horizontalPosition - lastStrafePos);
         double thetaChange = (leftChange - rightChange) / (wheelBase * countsPerCm);
 
+        //toDegrees is a hotfix
+        //TODO remove toDegrees from thetaChange after recalibration
         double horizontalChange = (rawHorizontalChange - (thetaChange * horizontalTicksPerDeg));
         double robotAngle = Robot.getRobotAngleRad() + thetaChange;
 
@@ -87,10 +88,10 @@ public class Mecanum extends MotionProfile {
         double offset = Math.abs(left.getPosition()) + Math.abs(right.getPosition());
         double offsetPerDegree = offset / angle;
         double wheelBase = (2.0 * 90 * offsetPerDegree) / (Math.PI*(countsPerCm));
-        double horizontalTicksPerDegree = horizontal.getPosition() / angle;
+        double horizontalTicksPerRadian = horizontal.getPosition() / Math.toRadians(angle);
 
         Robot.telemetry.addData("wheelBase", wheelBase);
-        Robot.telemetry.addData("horizontal per deg", horizontalTicksPerDegree);
+        Robot.telemetry.addData("horizontal per rad", horizontalTicksPerRadian);
         Robot.telemetry.addData("left encoder", left.getPosition());
         Robot.telemetry.addData("right encoder", right.getPosition());
         Robot.telemetry.addData("horizontal encoder", horizontal.getPosition());

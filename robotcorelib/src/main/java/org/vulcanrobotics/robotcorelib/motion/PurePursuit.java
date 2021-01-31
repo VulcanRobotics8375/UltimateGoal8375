@@ -12,7 +12,7 @@ public class PurePursuit extends Controller {
 
     ArrayList<ArrayList<PathPoint>> sections;
 
-    private PID turnPID = new PID(1.8, 0, 1);
+    private PID turnPID = new PID(1.8, 0, 1, 1, 0.05, -0.3, 0.3);
     private volatile int currentSection = 0;
     private volatile boolean start = false;
 
@@ -108,7 +108,6 @@ public class PurePursuit extends Controller {
         return followPoint;
     }
 
-    //TODO make the point speed independent from lookahead distance, possibly with a ratio or maybe with a check to see if it is last point or not.
     //Don't implement with constantVelocity method in Drivetrain until that has been tested.
     //removing distanceToPoint and replacing it with the acceleration inside findFollowPoint()
     public void moveToPoint(PathPoint point) {

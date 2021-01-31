@@ -1,18 +1,17 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.vulcanrobotics.robotcorelib.framework.TeleOpPipeline;
 import org.vulcanrobotics.robotcorelib.math.Point;
 import org.vulcanrobotics.robotcorelib.motion.Mecanum;
-import org.vulcanrobotics.robotcorelib.motion.MecanumCurve;
 import org.vulcanrobotics.robotcorelib.robot.Robot;
 
-import java.util.concurrent.TimeUnit;
-
-@TeleOp(name = "main", group = "main")
-public class Main extends TeleOpPipeline {
+@Disabled
+@TeleOp(name = "solo", group = "main")
+public class MainSolo extends TeleOpPipeline {
 
     boolean debug = true;
 
@@ -33,10 +32,11 @@ public class Main extends TeleOpPipeline {
 
         Robot.startOdometryThread();
 
-        MecanumCurve motionProfile = (MecanumCurve) Robot.motionProfile;
+        Mecanum motionProfile = (Mecanum) Robot.motionProfile;
+        timer.reset();
 
         while (opModeIsActive()) {
-//            timer.reset();
+            timer.reset();
 
             int shoot;
             if(gamepad1.a) {
@@ -57,7 +57,7 @@ public class Main extends TeleOpPipeline {
                 Robot.setRobotPos(new Point(Robot.getRobotX(), 21.6));
             }
             if(gamepad1.right_trigger  > 0) {
-                Robot.setRobotPos(new Point(138.34, Robot.getRobotY()));
+                Robot.setRobotPos(new Point(21.6, Robot.getRobotY()));
             }
 
             //TODO disable debug for competition code
@@ -65,14 +65,13 @@ public class Main extends TeleOpPipeline {
                 debug();
             }
 
-
 //            telemetry.addData("left", motionProfile.getLeft().getPosition());
 //            telemetry.addData("right", motionProfile.getRight().getPosition());
 //            telemetry.addData("horizontal", motionProfile.getHorizontal().getPosition());
-//            telemetry.addData("loop time", time);
+            telemetry.addData("loop time", time);
             telemetry.update();
-//            time = timer.milliseconds();
-//            timer.reset();
+            time = timer.milliseconds();
+            timer.reset();
         }
 
     }

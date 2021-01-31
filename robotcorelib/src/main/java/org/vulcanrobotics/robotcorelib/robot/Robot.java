@@ -160,7 +160,7 @@ public class Robot {
     public static void init() throws RobotCoreLibException  {
 
         config.init();
-        List<Subsystem> subsystems = config.subsystems;
+        List<Subsystem> subsystems = config.getSubsystems();
 
         for (Subsystem sub : subsystems) {
 //            telemetry.addData("initializing subsystem:", sub.toString());
@@ -240,6 +240,11 @@ public class Robot {
                 motionProfile.start();
                 while(odometryRunning) {
                     motionProfile.update();
+                    try {
+                        Thread.sleep(85);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }).start();
