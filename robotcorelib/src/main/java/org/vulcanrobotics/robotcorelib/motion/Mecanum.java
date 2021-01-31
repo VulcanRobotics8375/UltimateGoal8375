@@ -52,7 +52,7 @@ public class Mecanum extends MotionProfile {
 
         //toDegrees is a hotfix
         //TODO remove toDegrees from thetaChange after recalibration
-        double horizontalChange = (rawHorizontalChange - (Math.toDegrees(thetaChange) * horizontalTicksPerDeg));
+        double horizontalChange = (rawHorizontalChange - (thetaChange * horizontalTicksPerDeg));
         double robotAngle = Robot.getRobotAngleRad() + thetaChange;
 
         double verticalChange = (leftChange + rightChange) / 2;

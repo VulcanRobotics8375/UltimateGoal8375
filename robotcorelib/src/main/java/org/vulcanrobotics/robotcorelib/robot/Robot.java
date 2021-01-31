@@ -240,11 +240,11 @@ public class Robot {
                 motionProfile.start();
                 while(odometryRunning) {
                     motionProfile.update();
-//                    try {
-//                        Thread.sleep(1);
-//                    } catch (InterruptedException e) {
-//                        e.printStackTrace();
-//                    }
+                    try {
+                        Thread.sleep(85);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }).start();
