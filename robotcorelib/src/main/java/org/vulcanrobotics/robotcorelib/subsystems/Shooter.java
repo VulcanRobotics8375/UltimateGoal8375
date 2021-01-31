@@ -126,7 +126,7 @@ public class Shooter extends Subsystem {
         }
 
         if(powerShotMode > 0){
-            powerShot.setPosition(.53);
+            powerShot.setPosition(.45);
         }
         if(powerShotMode < 0){
             powerShot.setPosition(0);

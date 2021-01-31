@@ -59,10 +59,10 @@ public class WobbleGrabber extends Subsystem {
             this.wobbleTurnButton = false;
         }
         if (wobbleTurnOn > 0) {
-            wobbleTurn.setPosition(0.1);
+            wobbleTurn.setPosition(0.02);
         }
         if (wobbleTurnOn < 0)  {
-            wobbleTurn.setPosition(.5);
+            wobbleTurn.setPosition(.52);
         }
 
 
@@ -75,10 +75,10 @@ public class WobbleGrabber extends Subsystem {
             this.wobbleGrabButton = false;
         }
         if(wobbleGrabOn > 0) {
-          wobbleGrab.setPosition(0.5);
+          wobbleGrab.setPosition(.5);
 
-        } else {
-            wobbleGrab.setPosition(0);
+        } if(wobbleGrabOn < 0) {
+            wobbleGrab.setPosition(-.5);
         }
         /*
        telemetry.addData("wobble height", wobbleLift.getCurrentPosition());
