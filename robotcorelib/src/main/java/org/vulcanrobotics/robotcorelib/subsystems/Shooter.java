@@ -16,6 +16,7 @@ public class Shooter extends Subsystem {
     private DcMotorEx shooter_one;
     private DcMotorEx shooter_two;
     private Servo hopper;
+    private Servo powerShot;
 
     private boolean hopperButton;
     private double a = -417.9;
@@ -33,6 +34,8 @@ public class Shooter extends Subsystem {
     private double shooterPowerRight;
     private double shooterHighPower = 0.895;
     private double shooterLowPower = 0.82;
+    private double powerShotMode = -1;
+    private boolean powerShotButton = false;
     private double powerShotPower = 0.7;
     private float shooterHighButton;
     private float shooterLowButton;
@@ -102,14 +105,6 @@ public class Shooter extends Subsystem {
             shooter_one.setPower(shooterLowPower);
             shooter_two.setPower(shooterLowPower);
         }
-        else if(powerShotButton) {
-//            if(!powerShotOn) {
-//                powerShotOn = true;
-//                shooter_two.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-//            }
-            shooter_one.setPower(powerShotPower);
-            shooter_two.setPower(powerShotPower);
-        }
 
         else {
             shooter_one.setPower(0);
@@ -117,6 +112,24 @@ public class Shooter extends Subsystem {
             pidRunning = false;
         }
 
+        if(powerShotButton && !this.powerShotButton) {
+//            if(!powerShotOn) {
+//                powerShotOn = true;
+//                shooter_two.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//            }
+            powerShotMode *= -1;
+            this.powerShotButton = true;
+        }
+        if(!powerShotButton && this.powerShotButton){
+            this.powerShotButton = false;
+        }
+
+        if(powerShotMode > 0){
+            powerShot.setPosition(.45);
+        }
+        if(powerShotMode < 0){
+            powerShot.setPosition(0);
+        }
 //        telemetry.addData("p", shooter.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER).p);
 //        telemetry.addData("i", shooter.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER).i);
 //        telemetry.addData("d", shooter.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER).d);

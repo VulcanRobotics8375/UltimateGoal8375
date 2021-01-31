@@ -31,7 +31,7 @@ public class RobotConfig {
         subsystems.add(drivetrain);
         subsystems.add(shooter);
         subsystems.add(intake);
-//        subsystems.add(wobbleGrabber);
+        subsystems.add(wobbleGrabber);
 
     }
 
