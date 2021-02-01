@@ -19,7 +19,7 @@ public class Drivetrain extends Subsystem {
     private DcMotor fl, fr, bl, br;
     private BNO055IMU imu;
 
-    private PID turnPid = new PID(1.8, 0.1, 1, 1, 0.05, -0.3, 0.3);
+    private PID turnPid = new PID(1.8, 0.1, 1, 2.0, 0.05, -0.3, 0.3);
 
     private boolean doingAutonomousTask;
     private boolean unlockedAim;
@@ -186,22 +186,22 @@ public class Drivetrain extends Subsystem {
             target.setPoint(new Point(FIELD_SIZE_CM_X - (1.5 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
         }
         else if(shotId == 1) {
-            target.setPoint(new Point(FIELD_SIZE_CM_X - (2.25 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
+            target.setPoint(new Point(FIELD_SIZE_CM_X - (2.1 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
         }
         else if(shotId == 2) {
-            target.setPoint(new Point(FIELD_SIZE_CM_X - (2.5 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
+            target.setPoint(new Point(FIELD_SIZE_CM_X - (2.42 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
         }
         else if(shotId == 3) {
-            target.setPoint(new Point(FIELD_SIZE_CM_X - (2.75 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
+            target.setPoint(new Point(FIELD_SIZE_CM_X - (2.73 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
         }
         else {
             target.setPoint(new Point(FIELD_SIZE_CM_X - (1.5 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
         }
 
         double absoluteAngleToTarget = Math.atan2(target.y - Robot.getRobotY(), target.x - Robot.getRobotX());
-        double error = Functions.angleWrap(absoluteAngleToTarget - (Robot.getRobotAngleRad() * -1.0));
+        double error = absoluteAngleToTarget - Functions.angleWrap((Robot.getRobotAngleRad() * -1.0) + SHOOTING_OFFSET_RAD);
         turnPid.run(absoluteAngleToTarget, Functions.angleWrap(((Robot.getRobotAngleRad() * -1.0) + SHOOTING_OFFSET_RAD)));
-        run(0, turnPid.getOutput());
+        run(0, turnPid.getOutput() * -1.0);
         if(error < errorThresh) {
             aimed = true;
         } else {
