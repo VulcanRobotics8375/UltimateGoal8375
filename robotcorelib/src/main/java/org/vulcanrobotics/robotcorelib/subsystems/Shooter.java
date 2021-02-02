@@ -40,7 +40,9 @@ public class Shooter extends Subsystem {
     private float shooterHighButton;
     private float shooterLowButton;
     private int shooterOn = -1;
+    private boolean shooting = false;
     private ElapsedTime servoTimer = new ElapsedTime();
+    private ElapsedTime motorTimer = new ElapsedTime();
 
     public Shooter() {}
 
@@ -60,6 +62,7 @@ public class Shooter extends Subsystem {
         shooter_one.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         shooter_two.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         servoTimer.reset();
+        motorTimer.reset();
     }
 
     //TODO put the shooter power calculation in a separate method to clean up some stuff
@@ -95,9 +98,17 @@ public class Shooter extends Subsystem {
             telemetry.addData("shooter power", shooter_one.getPower());
         }
         else if(shooterHighButton > 0){
-
-            shooter_one.setPower(shooterHighPower);
-            shooter_two.setPower(shooterHighPower);
+            if(!shooting) {
+                motorTimer.reset();
+                shooting = true;
+            }
+            if(motorTimer.milliseconds() < 250) {
+                shooter_one.setPower(shooterHighPower / motorTimer.milliseconds());
+                shooter_two.setPower(shooterHighPower / motorTimer.milliseconds());
+            } else {
+                shooter_one.setPower(shooterHighPower);
+                shooter_two.setPower(shooterHighPower);
+            }
         }
         else if(shooterLowButton > 0){
             shooter_one.setPower(shooterLowPower);
@@ -108,6 +119,7 @@ public class Shooter extends Subsystem {
             shooter_one.setPower(0);
             shooter_two.setPower(0);
             pidRunning = false;
+            shooting = false;
         }
 
         if(powerShotButton && !this.powerShotButton) {
@@ -149,7 +161,7 @@ public class Shooter extends Subsystem {
             }
 
             if(hopperOut) {
-                hopper.setPosition(0.15);
+                hopper.setPosition(0.18);
             }
 
             if (!hopperOut){
