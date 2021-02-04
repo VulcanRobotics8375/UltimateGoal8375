@@ -36,7 +36,7 @@ public class Main extends TeleOpPipeline {
         timer.reset();
 
         while (opModeIsActive()) {
-//            timer.reset();
+            timer.reset();
 
             int shoot;
             if(gamepad1.a) {
@@ -68,9 +68,13 @@ public class Main extends TeleOpPipeline {
 //            telemetry.addData("left", motionProfile.getLeft().getPosition());
 //            telemetry.addData("right", motionProfile.getRight().getPosition());
 //            telemetry.addData("horizontal", motionProfile.getHorizontal().getPosition());
-//            telemetry.addData("loop time", time);
+            telemetry.addData("loop time", time);
             telemetry.update();
-//            time = timer.milliseconds();
+            double TARGET_UPS = 60.0;
+            while(timer.milliseconds() < 1.0 / TARGET_UPS) {
+//               sleep(1);
+            }
+            time = timer.milliseconds();
 //            timer.reset();
         }
 
