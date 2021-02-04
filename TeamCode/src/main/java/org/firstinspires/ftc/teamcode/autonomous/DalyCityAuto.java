@@ -47,6 +47,8 @@ public class DalyCityAuto extends AutoPipeline {
 
         super.controller = controller;
 
+        telemetry.addLine("ready");
+        telemetry.update();
         waitForStart();
 
         Robot.startOdometryThread();
