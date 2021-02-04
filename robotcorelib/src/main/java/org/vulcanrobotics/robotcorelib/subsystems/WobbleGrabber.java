@@ -10,7 +10,6 @@ import org.vulcanrobotics.robotcorelib.robot.Robot;
 public class WobbleGrabber extends Subsystem {
     public Servo wobbleTurn;
     public Servo wobbleGrab;
-    public Servo wobbleLift;
     private double wobbleMode = -1.0;
     private double limitRange = 500;
     private double limitMin = 0;
