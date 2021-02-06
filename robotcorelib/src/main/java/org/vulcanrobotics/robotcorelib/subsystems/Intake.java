@@ -9,7 +9,7 @@ import static org.vulcanrobotics.robotcorelib.framework.Constants.*;
 public class Intake extends Subsystem {
     private DcMotor transfer, intake;
     private boolean intakeButton;
-    private double transferSpeed = 0.5;
+    private double transferSpeed = 1;
     private double intakeSpeed = 1;
     private ElapsedTime jamTimer = new ElapsedTime();
 
