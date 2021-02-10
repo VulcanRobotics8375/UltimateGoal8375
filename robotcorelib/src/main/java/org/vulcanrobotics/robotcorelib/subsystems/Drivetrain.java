@@ -19,7 +19,7 @@ public class Drivetrain extends Subsystem {
     private DcMotor fl, fr, bl, br;
     private BNO055IMU imu;
 
-    private PID turnPid = new PID(1.8, 0.1, 1, 2.0, 0.05, -0.3, 0.3);
+    private PID turnPid = new PID(1.8, 0.15, -2.0, 2.0, 0.05, -0.7, 0.7);
 
     private boolean doingAutonomousTask;
     private boolean unlockedAim;
@@ -72,9 +72,9 @@ public class Drivetrain extends Subsystem {
         fr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        turnPid.setKp(1.8);
-        turnPid.setKi(0.0);
-        turnPid.setKd(1.8);
+//        turnPid.setKp(1.8);
+//        turnPid.setKi(0.0);
+//        turnPid.setKd(1.8);
     }
 
     public void move(double forward, double turn) {
@@ -99,7 +99,7 @@ public class Drivetrain extends Subsystem {
         //handle/parse initial data for basic mecanum drive
         forward = curveLinearJoystick(forward);
         strafe = curveLinearJoystick(strafe);
-        turn = curveLinearJoystick(turn);
+        turn = curveLinearJoystickCubic(turn);
         double vd = Math.hypot(forward, strafe);
         double theta = Math.atan2(forward, strafe) - (Math.PI / 4);
         double multiplier = Math.sqrt(2.0);
@@ -180,29 +180,29 @@ public class Drivetrain extends Subsystem {
 
     //right to left = 1 to 3, high goal = 0
     //invalid id defaults to aim at high goal
-    public void aim(int shotId, double errorThresh) {
+    public void aim(int shotId, double offset, double errorThresh) {
         Point target = new Point();
         if(shotId == 0) {
             target.setPoint(new Point(FIELD_SIZE_CM_X - (1.5 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
         }
         else if(shotId == 1) {
-            target.setPoint(new Point(FIELD_SIZE_CM_X - (2.1 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
+            target.setPoint(new Point(FIELD_SIZE_CM_X - (2 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
         }
         else if(shotId == 2) {
-            target.setPoint(new Point(FIELD_SIZE_CM_X - (2.42 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
+            target.setPoint(new Point(FIELD_SIZE_CM_X - (2.25 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
         }
         else if(shotId == 3) {
-            target.setPoint(new Point(FIELD_SIZE_CM_X - (2.73 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
+            target.setPoint(new Point(FIELD_SIZE_CM_X - (2.5 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
         }
         else {
             target.setPoint(new Point(FIELD_SIZE_CM_X - (1.5 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
         }
 
         double absoluteAngleToTarget = Math.atan2(target.y - Robot.getRobotY(), target.x - Robot.getRobotX());
-        double error = absoluteAngleToTarget - Functions.angleWrap((Robot.getRobotAngleRad() * -1.0) + SHOOTING_OFFSET_RAD);
-        turnPid.run(absoluteAngleToTarget, Functions.angleWrap(((Robot.getRobotAngleRad() * -1.0) + SHOOTING_OFFSET_RAD)));
+        double error = absoluteAngleToTarget - Functions.angleWrap((Robot.getRobotAngleRad() * -1.0) + SHOOTING_OFFSET_RAD + offset);
+        turnPid.run(absoluteAngleToTarget, Functions.angleWrap(((Robot.getRobotAngleRad() * -1.0) + SHOOTING_OFFSET_RAD + offset)));
         run(0, turnPid.getOutput() * -1.0);
-        if(error < errorThresh) {
+        if(Math.abs(error) < errorThresh) {
             aimed = true;
         } else {
             aimed = false;
@@ -281,6 +281,10 @@ public class Drivetrain extends Subsystem {
 
     private double curveLinearJoystick(double input) {
         return (input / 1.07) * ((0.62 * Math.pow(input, 2)) + 0.45);
+    }
+
+    private double curveLinearJoystickCubic(double input) {
+        return Math.pow(input, 3);
     }
 
     private double calculateMecanumGain(double angle) {

@@ -22,6 +22,7 @@ public class Main extends TeleOpPipeline {
 
         teleopInit();
         Robot.loadRobotPosition();
+        gamepad1.setJoystickDeadzone(0.001f);
 
         telemetry.addLine("ready");
         telemetry.update();
@@ -70,8 +71,8 @@ public class Main extends TeleOpPipeline {
 //            telemetry.addData("horizontal", motionProfile.getHorizontal().getPosition());
             telemetry.addData("loop time", time);
             telemetry.update();
-            double TARGET_UPS = 60.0;
-            while(timer.milliseconds() < 1.0 / TARGET_UPS) {
+            double TARGET_UPS = 100.0;
+            while(timer.milliseconds() < 1000.0 / TARGET_UPS) {
 //               sleep(1);
             }
             time = timer.milliseconds();

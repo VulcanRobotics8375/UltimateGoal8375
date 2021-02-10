@@ -9,8 +9,8 @@ import static org.vulcanrobotics.robotcorelib.framework.Constants.*;
 public class Intake extends Subsystem {
     private DcMotor transfer, intake;
     private boolean intakeButton;
-    private double transferSpeed = 0.5;
-    private double intakeSpeed = 1;
+    private double transferSpeed = 1.0;
+    private double intakeSpeed = 1.0;
     private ElapsedTime jamTimer = new ElapsedTime();
 
 
@@ -29,22 +29,22 @@ public class Intake extends Subsystem {
     public void run(boolean intakeButton, boolean reverse, boolean transferOn) {
         //yeet. Im not throwin away my shot
         if (intakeButton) {
-//            if(!isTransferJammed()) {
-//                transfer.setPower(transferSpeed);
-//            }
-//            else{
-//                transfer.setPower(transferSpeed * -1.0);
-//            }
+            if(!isTransferJammed()) {
+                transfer.setPower(transferSpeed);
+            }
+            else{
+                transfer.setPower(transferSpeed * -1.0);
+            }
             transfer.setPower(transferSpeed);
             intake.setPower(intakeSpeed);
         }
 
         else if (reverse) {
-//            if(!isTransferJammed()) {
-//                transfer.setPower(-1.0 * intakeSpeed);
-//            } else {
-//                transfer.setPower(transferSpeed);
-//            }
+            if(!isTransferJammed()) {
+                transfer.setPower(-1.0 * intakeSpeed);
+            } else {
+                transfer.setPower(transferSpeed);
+            }
             transfer.setPower(transferSpeed * -1.0);
             intake.setPower(-1.0 * intakeSpeed);
         }
@@ -55,7 +55,7 @@ public class Intake extends Subsystem {
         }
 
         if(transferOn) {
-//            transfer.setPower(0.35);
+            transfer.setPower(0.45);
         }
 
     }
@@ -69,7 +69,7 @@ public class Intake extends Subsystem {
         //TODO remove telemetry
         telemetry.addData("transfer velocity", transferVelocity);
         //tune these
-        double transferSpeedJamThreshold = 10;
+        double transferSpeedJamThreshold = 20;
         double transferJamTimeout = 250;
         if(transferVelocity < transferSpeedJamThreshold && jamTimer.milliseconds() >= transferJamTimeout) {
             jamTimer.reset();
