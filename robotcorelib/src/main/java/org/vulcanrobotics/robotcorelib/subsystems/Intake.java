@@ -11,6 +11,7 @@ public class Intake extends Subsystem {
     private boolean intakeButton;
     private double transferSpeed = 1.0;
     private double intakeSpeed = 1.0;
+
     private ElapsedTime jamTimer = new ElapsedTime();
 
 
