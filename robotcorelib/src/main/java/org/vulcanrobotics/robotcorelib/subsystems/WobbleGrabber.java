@@ -10,7 +10,6 @@ import org.vulcanrobotics.robotcorelib.robot.Robot;
 public class WobbleGrabber extends Subsystem {
     public Servo wobbleTurn;
     public Servo wobbleGrab;
-    public Servo wobbleLift;
     private double wobbleMode = -1.0;
     private double limitRange = 500;
     private double limitMin = 0;
@@ -53,6 +52,11 @@ public class WobbleGrabber extends Subsystem {
 
         if (wobbleTurnButton && !this.wobbleTurnButton) {
             wobbleTurnOn *= -1;
+            if(wobbleTurnOn < 0) {
+                if(wobbleGrabOn < 0) {
+                    wobbleGrabOn *= -1;
+                }
+            }
             this.wobbleTurnButton = true;
         }
         if (!wobbleTurnButton && this.wobbleTurnButton) {
@@ -62,7 +66,8 @@ public class WobbleGrabber extends Subsystem {
             wobbleTurn.setPosition(0.02);
         }
         if (wobbleTurnOn < 0)  {
-            wobbleTurn.setPosition(.52);
+
+            wobbleTurn.setPosition(0.52);
         }
 
 

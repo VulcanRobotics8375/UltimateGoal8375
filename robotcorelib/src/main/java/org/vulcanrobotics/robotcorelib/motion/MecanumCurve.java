@@ -9,7 +9,7 @@ import org.vulcanrobotics.robotcorelib.robot.Robot;
 public class MecanumCurve extends MotionProfile {
 
     private Odometer left, right, horizontal;
-    private double radius, wheelBase, ticksPerRev, horizontalTicksPerDeg, countsPerCm;
+    private double radius, wheelBase, ticksPerRev, horizontalTicksPerDeg, countsPerCm, horizontalDistanceFromCenter;
 
     private double lastLeftPos = 0, lastRightPos = 0, lastStrafePos = 0, lastTheta = 0;
 
@@ -29,8 +29,10 @@ public class MecanumCurve extends MotionProfile {
         radius = Constants.ODOMETRY_RADIUS;
         wheelBase = Constants.ODOMETRY_WHEELBASE;
         ticksPerRev = Constants.ODOMETRY_TICKS_PER_REV;
-        horizontalTicksPerDeg = Constants.ODOMETRY_HORIZONTAL_TICKS_PER_REV;
+        horizontalTicksPerDeg = Constants.ODOMETRY_HORIZONTAL_TICKS_PER_RAD;
         countsPerCm = Constants.ODOMETRY_COUNTS_PER_CM;
+        //TODO add constant to Constants.java
+        horizontalDistanceFromCenter = 1.0;
 
 
     }
@@ -47,10 +49,19 @@ public class MecanumCurve extends MotionProfile {
         double rawHorizontalChange = (horizontalPosition - lastStrafePos);
         double thetaChange = (leftChange - rightChange) / (wheelBase * countsPerCm);
 
-        double horizontalChange = (rawHorizontalChange - (thetaChange * horizontalTicksPerDeg));
         double verticalArcLength = (leftChange + rightChange) / 2;
-        double turnRadius = thetaChange == 0 ? verticalArcLength : verticalArcLength / thetaChange;
-        double verticalChange = turnRadius * (Math.sin(thetaChange) / Math.cos(thetaChange / 2.0));
+        double horizontalChange;
+        double verticalChange;
+        if(thetaChange == 0) {
+            horizontalChange = rawHorizontalChange;
+            verticalChange = verticalArcLength;
+        } else {
+            double turnRadius = ((wheelBase / 2.0) * countsPerCm * (leftChange + rightChange)) / (rightChange - leftChange);
+            double strafeRadius = (rawHorizontalChange / thetaChange) - (horizontalDistanceFromCenter * countsPerCm);
+            horizontalChange = (turnRadius * Math.cos(thetaChange - 1)) + (strafeRadius * Math.sin(thetaChange));
+            verticalChange = (turnRadius * Math.sin(thetaChange)) + (strafeRadius * (1 - Math.cos(thetaChange)));
+
+        }
 
         double robotAngle = Robot.getRobotAngleRad();
 

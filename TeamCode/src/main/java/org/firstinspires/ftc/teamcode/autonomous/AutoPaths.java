@@ -61,9 +61,10 @@ public class AutoPaths extends AutoPipeline {
             ArrayList<PathPoint> cPosition3 = new ArrayList<>();
             ArrayList<PathPoint> cPosition4 = new ArrayList<>();
 
-            start.add(new PathPoint(138.34, 21.6, -1, 1, 20, 0));
-            start.add(new PathPoint(80, 80, -1, 1, 20, 0));
-            start.add(new PathPoint(105, 170, -0.5, 1, 20, 0));
+            start.add(new PathPoint(138.34, 21.6, -1, 1, 12, 0));
+            start.add(new PathPoint(138.34, 21.6, -1, 1, 12, 0));
+            start.add(new PathPoint(80, 80, -1, 1, 12, 0));
+            start.add(new PathPoint(105, 170, -0.5, 1, 12, 0));
 
             aPosition1.add(new PathPoint(188, 225, -0.03, 1, 20, 0));
 
@@ -202,7 +203,7 @@ public class AutoPaths extends AutoPipeline {
 
                     while(System.currentTimeMillis() - lastTime < 2000) {
                         subsystems.drivetrain.mecanumDrive(0, 0, 0, true, false, false, false, false, false);
-                        subsystems.shooter.setShooterPower(0.83);
+                        subsystems.shooter.setShooterPower(0.90);
                     }
 
                     lastTime = System.currentTimeMillis();

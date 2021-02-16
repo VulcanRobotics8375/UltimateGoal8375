@@ -1,6 +1,7 @@
 package org.vulcanrobotics.robotcorelib.robot;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.ReadWriteFile;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -237,14 +238,18 @@ public class Robot {
         new Thread(new Runnable() {
             @Override
             public void run() {
+                ElapsedTime time = new ElapsedTime();
                 motionProfile.start();
                 while(odometryRunning) {
                     motionProfile.update();
-                    try {
-                        Thread.sleep(85);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                    while(time.milliseconds() < 1000.0 / 100.0) {}
+                    time.reset();
+
+//                    try {
+//                        Thread.sleep(85);
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
                 }
             }
         }).start();
