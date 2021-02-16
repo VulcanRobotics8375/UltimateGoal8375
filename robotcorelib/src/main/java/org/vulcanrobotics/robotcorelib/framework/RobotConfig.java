@@ -22,12 +22,13 @@ public class RobotConfig {
     public Intake intake = new Intake();
     public WobbleGrabber wobbleGrabber = new WobbleGrabber();
 
-    public List<Subsystem> subsystems = new ArrayList<>();
+    private List<Subsystem> subsystems = new ArrayList<>();
 
     public RobotConfig() {
     }
 
     public void init() {
+        subsystems.clear();
         subsystems.add(drivetrain);
         subsystems.add(shooter);
         subsystems.add(intake);
@@ -42,6 +43,10 @@ public class RobotConfig {
 
         motionProfile = new MecanumCurve(3, left, right, strafe);
         motionProfile.init();
+    }
+
+    public List<Subsystem> getSubsystems() {
+        return subsystems;
     }
 
 }

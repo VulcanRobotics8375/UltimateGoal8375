@@ -12,6 +12,7 @@ public class OdometryCalibration extends AutoPipeline {
     public void runOpMode() {
         try {
             autoInit();
+            subsystems.drivetrain.initIMU();
         } catch (RobotCoreLibException e) {
             e.printStackTrace();
         }
@@ -21,7 +22,7 @@ public class OdometryCalibration extends AutoPipeline {
 
         waitForStart();
 
-        subsytems.motionProfile.calibrate(0.2);
+        subsystems.motionProfile.calibrate(0.2);
 
         while(opModeIsActive()) {}
 

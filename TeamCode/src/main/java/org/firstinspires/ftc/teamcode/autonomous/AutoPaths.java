@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 import org.vulcanrobotics.robotcorelib.framework.AutoPipeline;
 import org.vulcanrobotics.robotcorelib.framework.RobotCoreLibException;
@@ -12,14 +10,10 @@ import org.vulcanrobotics.robotcorelib.motion.PurePursuit;
 import org.vulcanrobotics.robotcorelib.robot.Robot;
 import org.vulcanrobotics.robotcorelib.vision.StackDetectorCV;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.util.ArrayList;
 
 //@Disabled
-@Autonomous(name = "auto -- main", group = "example")
+@Autonomous(name = "auto -- main", group = "example", preselectTeleOp = "main")
 public class AutoPaths extends AutoPipeline {
 
     volatile boolean doneShooting = false;
@@ -32,7 +26,7 @@ public class AutoPaths extends AutoPipeline {
         try {
             //backend initialization
             autoInit();
-            subsytems.drivetrain.autoInit();
+            subsystems.drivetrain.autoInit();
             //set starting coefficients, all board measurements in CM this year
             setStart(new Point(138.34, 21.6), 0);
 
@@ -67,9 +61,10 @@ public class AutoPaths extends AutoPipeline {
             ArrayList<PathPoint> cPosition3 = new ArrayList<>();
             ArrayList<PathPoint> cPosition4 = new ArrayList<>();
 
-            start.add(new PathPoint(138.34, 21.6, -0.05, 1, 20, 0));
-            start.add(new PathPoint(96, 80, -0.05, 1, 20, 0));
-            start.add(new PathPoint(105, 155, -0.025, 1, 20, 0));
+            start.add(new PathPoint(138.34, 21.6, -1, 1, 12, 0));
+            start.add(new PathPoint(138.34, 21.6, -1, 1, 12, 0));
+            start.add(new PathPoint(80, 80, -1, 1, 12, 0));
+            start.add(new PathPoint(105, 170, -0.5, 1, 12, 0));
 
             aPosition1.add(new PathPoint(188, 225, -0.03, 1, 20, 0));
 
@@ -171,14 +166,16 @@ public class AutoPaths extends AutoPipeline {
                 @Override
                 public void run() {
                     sleep(1500);
-                    controller.run();
+                    if(!isStopRequested()) {
+                        controller.run();
+                    }
                 }
             }).start();
 
             boolean secondWobble = false;
-            subsytems.drivetrain.setAngleOffset(0);
+            subsystems.drivetrain.setAngleOffset(0);
 //            subsytems.shooter.setPIDFCoefficients(new PIDFCoefficients(10.0, 3.0, 0.0, 0.0));
-            subsytems.drivetrain.setAngleOffset(3);
+            subsystems.drivetrain.setAngleOffset(3);
             while(opModeIsActive()) {
 
                 PathPoint currentPoint = internalController.getCurrentPoint();
@@ -194,8 +191,8 @@ public class AutoPaths extends AutoPipeline {
                 telemetry.update();
 //                subsytems.wobbleGrabber.run(false, true, 0);
                 if(internalController.getCurrentSection() < 2) {
-                    subsytems.wobbleGrabber.setGrabPosition(0.05);
-                    subsytems.wobbleGrabber.setTurnPosition(0.2);
+//                    subsytems.wobbleGrabber.setGrabPosition(0.05);
+//                    subsytems.wobbleGrabber.setTurnPosition(0.2);
 
                 }
 
@@ -205,15 +202,15 @@ public class AutoPaths extends AutoPipeline {
                     long lastTime = System.currentTimeMillis();
 
                     while(System.currentTimeMillis() - lastTime < 2000) {
-                        subsytems.drivetrain.mecanumDrive(0, 0, 0, true, false, false, false, false, false);
-                        subsytems.shooter.setShooterPower(0.83);
+                        subsystems.drivetrain.mecanumDrive(0, 0, 0, true, false, false, false, false, false);
+                        subsystems.shooter.setShooterPower(0.90);
                     }
 
                     lastTime = System.currentTimeMillis();
 
                     while(ringCount == 0 && !isStopRequested()) {
-                        subsytems.drivetrain.mecanumDrive(0, 0, 0, true, false, false, false, false, false);
-                        subsytems.shooter.setHopperPosition(0.35);
+                        subsystems.drivetrain.mecanumDrive(0, 0, 0, true, false, false, false, false, false);
+                        subsystems.shooter.setHopperPosition(0.35);
                         if(System.currentTimeMillis() - lastTime < 750) {
                             continue;
                         }
@@ -223,7 +220,7 @@ public class AutoPaths extends AutoPipeline {
 //                    subsytems.shooter.setHopperPosition(0.0);
 
                     while(ringCount == 1 && !isStopRequested()) {
-                        subsytems.shooter.setHopperPosition(0.0);
+                        subsystems.shooter.setHopperPosition(0.0);
                         if(System.currentTimeMillis() - lastTime < 750) {
                             continue;
                         }
@@ -233,7 +230,7 @@ public class AutoPaths extends AutoPipeline {
 
                     lastTime = System.currentTimeMillis();
                     while(ringCount == 2 && !isStopRequested()) {
-                        subsytems.shooter.setHopperPosition(0.35);
+                        subsystems.shooter.setHopperPosition(0.35);
                         if(System.currentTimeMillis() - lastTime < 750) {
                             continue;
                         }
@@ -242,7 +239,7 @@ public class AutoPaths extends AutoPipeline {
                     }
                     lastTime = System.currentTimeMillis();
                     while(ringCount == 3 && !isStopRequested()) {
-                        subsytems.shooter.setHopperPosition(0.0);
+                        subsystems.shooter.setHopperPosition(0.0);
                         if(System.currentTimeMillis() - lastTime < 750) {
                             continue;
                         }
@@ -251,29 +248,29 @@ public class AutoPaths extends AutoPipeline {
                     }
                     lastTime = System.currentTimeMillis();
                     while(ringCount == 4 && !isStopRequested()) {
-                        subsytems.shooter.setHopperPosition(0.35);
+                        subsystems.shooter.setHopperPosition(0.35);
                         if(System.currentTimeMillis() - lastTime < 750) {
                             continue;
                         }
                         ringCount++;
 
                     }
-                    subsytems.shooter.setHopperPosition(0.0);
+                    subsystems.shooter.setHopperPosition(0.0);
                     doneShooting = true;
                     if(sectionStart == 0) {
                         internalController.startNextSection();
                         sectionStart++;
                     }
                 }
-                subsytems.shooter.setShooterPower(0);
+                subsystems.shooter.setShooterPower(0);
 
                 /*
                 CASE 0
                  */
                 if (wobbleGoalPosition == 0) {
                     if (internalController.getCurrentSection() == 2) {
-                        subsytems.wobbleGrabber.setGrabPosition(1.0);
-                        subsytems.wobbleGrabber.setTurnPosition(0);
+//                        subsytems.wobbleGrabber.setGrabPosition(1.0);
+//                        subsytems.wobbleGrabber.setTurnPosition(0);
                         sleep(500);
                         if (sectionStart == 1) {
                             internalController.startNextSection();
@@ -288,8 +285,8 @@ public class AutoPaths extends AutoPipeline {
                     }
 
                     if (internalController.getCurrentSection() == 4) {
-                        subsytems.wobbleGrabber.setTurnPosition(0.2);
-                        subsytems.wobbleGrabber.setGrabPosition(0.05);
+                        subsystems.wobbleGrabber.setTurnPosition(0.2);
+                        subsystems.wobbleGrabber.setGrabPosition(0.05);
 //                            subsytems.intake.run(true, false, false);
                         sleep(1000);
                         if (sectionStart == 3) {
@@ -299,9 +296,9 @@ public class AutoPaths extends AutoPipeline {
                     }
 
                     if (internalController.getCurrentSection() == 5) {
-//                            subsytems.shooter.setShooterPower(0.82);
-                        subsytems.wobbleGrabber.setGrabPosition(0.2);
-//                            subsytems.wobbleGrabber.setTurnPosition(0.0);
+////                            subsytems.shooter.setShooterPower(0.82);
+//                        subsytems.wobbleGrabber.setGrabPosition(0.2);
+////                            subsytems.wobbleGrabber.setTurnPosition(0.0);
                         if (sectionStart == 4) {
                             internalController.startNextSection();
                             sectionStart++;
@@ -310,8 +307,8 @@ public class AutoPaths extends AutoPipeline {
                     }
 
                     if (internalController.getCurrentSection() == 6) {
-                        subsytems.wobbleGrabber.setGrabPosition(1.0);
-                        subsytems.wobbleGrabber.setTurnPosition(0.0);
+//                        subsytems.wobbleGrabber.setGrabPosition(1.0);
+//                        subsytems.wobbleGrabber.setTurnPosition(0.0);
                         if (sectionStart == 5) {
                             internalController.startNextSection();
                             sectionStart++;
@@ -324,8 +321,8 @@ public class AutoPaths extends AutoPipeline {
                      */
                 else if(wobbleGoalPosition == 1) {
                     if (internalController.getCurrentSection() == 2) {
-                        subsytems.wobbleGrabber.setGrabPosition(1.0);
-                        subsytems.wobbleGrabber.setTurnPosition(0);
+//                        subsytems.wobbleGrabber.setGrabPosition(1.0);
+//                        subsytems.wobbleGrabber.setTurnPosition(0);
                         sleep(500);
                         if (sectionStart == 1) {
                             internalController.startNextSection();
@@ -340,9 +337,9 @@ public class AutoPaths extends AutoPipeline {
                     }
 
                     if (internalController.getCurrentSection() == 4) {
-                        subsytems.wobbleGrabber.setTurnPosition(0.2);
-                        subsytems.wobbleGrabber.setGrabPosition(0.05);
-                        subsytems.intake.run(true, false, false);
+//                        subsytems.wobbleGrabber.setTurnPosition(0.2);
+//                        subsytems.wobbleGrabber.setGrabPosition(0.05);
+                        subsystems.intake.run(true, false, false);
                         sleep(1000);
                         if (sectionStart == 3) {
                             internalController.startNextSection();
@@ -352,12 +349,12 @@ public class AutoPaths extends AutoPipeline {
 
                     if (internalController.getCurrentSection() == 5 && sectionStart == 4) {
                         long lastTime = System.currentTimeMillis();
-                        subsytems.intake.run(false, false, false);
-                        subsytems.shooter.setShooterPower(0.82);
+                        subsystems.intake.run(false, false, false);
+                        subsystems.shooter.setShooterPower(0.82);
                        while(System.currentTimeMillis() - lastTime < 1500) {
-                           subsytems.drivetrain.mecanumDrive(0, 0, 0, true, false, false,false, false, false);
+                           subsystems.drivetrain.mecanumDrive(0, 0, 0, true, false, false,false, false, false);
                        }
-                        subsytems.shooter.setHopperPosition(0.35);
+                        subsystems.shooter.setHopperPosition(0.35);
                         sleep(500);
                         if (sectionStart == 4) {
                             internalController.startNextSection();
@@ -365,8 +362,8 @@ public class AutoPaths extends AutoPipeline {
                         }
                     }
                     if (internalController.getCurrentSection() == 6) {
-                        subsytems.wobbleGrabber.setGrabPosition(1.0);
-                        subsytems.wobbleGrabber.setTurnPosition(0.0);
+//                        subsytems.wobbleGrabber.setGrabPosition(1.0);
+//                        subsytems.wobbleGrabber.setTurnPosition(0.0);
                         sleep(1000);
                         if (sectionStart == 5) {
                             internalController.startNextSection();
@@ -379,8 +376,8 @@ public class AutoPaths extends AutoPipeline {
                  */
                 else if(wobbleGoalPosition == 2) {
                     if (internalController.getCurrentSection() == 2) {
-                        subsytems.wobbleGrabber.setGrabPosition(1.0);
-                        subsytems.wobbleGrabber.setTurnPosition(0);
+//                        subsytems.wobbleGrabber.setGrabPosition(1.0);
+//                        subsytems.wobbleGrabber.setTurnPosition(0);
                         sleep(500);
                         if (sectionStart == 1) {
                             internalController.startNextSection();
@@ -395,9 +392,9 @@ public class AutoPaths extends AutoPipeline {
                     }
 
                     if (internalController.getCurrentSection() == 4) {
-                        subsytems.wobbleGrabber.setTurnPosition(0.2);
-                        subsytems.wobbleGrabber.setGrabPosition(0.05);
-                        subsytems.intake.run(true, false, false);
+//                        subsytems.wobbleGrabber.setTurnPosition(0.2);
+//                        subsytems.wobbleGrabber.setGrabPosition(0.05);
+                        subsystems.intake.run(true, false, false);
                         sleep(1000);
                         if (sectionStart == 3) {
                             internalController.startNextSection();
@@ -406,15 +403,15 @@ public class AutoPaths extends AutoPipeline {
                     }
 
                     if (internalController.getCurrentSection() == 5 && sectionStart == 4) {
-                        subsytems.drivetrain.setAngleOffset(-3);
+                        subsystems.drivetrain.setAngleOffset(-3);
                         long lastTime = System.currentTimeMillis();
-                        subsytems.intake.run(true, false, false);
-                        subsytems.shooter.setShooterPower(0.82);
+                        subsystems.intake.run(true, false, false);
+                        subsystems.shooter.setShooterPower(0.82);
                         while(System.currentTimeMillis() - lastTime < 1500) {
-                            subsytems.drivetrain.mecanumDrive(0, 0, 0, true, false, false,false, false, false);
+                            subsystems.drivetrain.mecanumDrive(0, 0, 0, true, false, false,false, false, false);
                         }
-                        subsytems.intake.run(false, false, false);
-                        subsytems.shooter.setHopperPosition(0.35);
+                        subsystems.intake.run(false, false, false);
+                        subsystems.shooter.setHopperPosition(0.35);
                         sleep(500);
                         if (sectionStart == 4) {
                             internalController.startNextSection();
@@ -422,8 +419,8 @@ public class AutoPaths extends AutoPipeline {
                         }
                     }
                     if (internalController.getCurrentSection() == 6) {
-                        subsytems.wobbleGrabber.setGrabPosition(1.0);
-                        subsytems.wobbleGrabber.setTurnPosition(0.0);
+//                        subsytems.wobbleGrabber.setGrabPosition(1.0);
+//                        subsytems.wobbleGrabber.setTurnPosition(0.0);
                         sleep(500);
                         if (sectionStart == 5) {
                             internalController.startNextSection();
@@ -438,6 +435,9 @@ public class AutoPaths extends AutoPipeline {
 
             Robot.storeRobotPosition();
             controller.stop = true;
+
+            //should be a fix to the jittering issue at an early shut down event
+            subsystems.drivetrain.setPowers(0, 0, 0, 0);
 
         } catch (RobotCoreLibException e) {
             e.printStackTrace();

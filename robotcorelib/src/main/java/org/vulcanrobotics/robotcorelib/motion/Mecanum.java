@@ -1,6 +1,5 @@
 package org.vulcanrobotics.robotcorelib.motion;
 
-import org.vulcanrobotics.robotcorelib.dashboard.Constant;
 import org.vulcanrobotics.robotcorelib.dashboard.hardware.Odometer;
 import org.vulcanrobotics.robotcorelib.framework.Constants;
 import org.vulcanrobotics.robotcorelib.framework.RobotCoreLibException;
@@ -13,6 +12,8 @@ public class Mecanum extends MotionProfile {
     private double radius, wheelBase, ticksPerRev, horizontalTicksPerDeg, countsPerCm;
 
     private double lastLeftPos = 0, lastRightPos = 0, lastStrafePos = 0, lastTheta = 0;
+
+    private Point lastPosition;
 
     public Mecanum(int odometerNum, Odometer... odometer) throws RobotCoreLibException {
         super(odometerNum, odometer);
@@ -30,7 +31,7 @@ public class Mecanum extends MotionProfile {
         radius = Constants.ODOMETRY_RADIUS;
         wheelBase = Constants.ODOMETRY_WHEELBASE;
         ticksPerRev = Constants.ODOMETRY_TICKS_PER_REV;
-        horizontalTicksPerDeg = Constants.ODOMETRY_HORIZONTAL_TICKS_PER_REV;
+        horizontalTicksPerDeg = Constants.ODOMETRY_HORIZONTAL_TICKS_PER_RAD;
         countsPerCm = Constants.ODOMETRY_COUNTS_PER_CM;
 
 
@@ -38,6 +39,7 @@ public class Mecanum extends MotionProfile {
 
     public synchronized void update() {
         Point currentPos = Robot.getRobotPos();
+        Point currentVelocity = Robot.getRobotVelocity();
 
         double leftPosition = left.getPosition();
         double rightPosition = right.getPosition();
@@ -48,20 +50,29 @@ public class Mecanum extends MotionProfile {
         double rawHorizontalChange = (horizontalPosition - lastStrafePos);
         double thetaChange = (leftChange - rightChange) / (wheelBase * countsPerCm);
 
+        //toDegrees is a hotfix
+        //TODO remove toDegrees from thetaChange after recalibration
         double horizontalChange = (rawHorizontalChange - (thetaChange * horizontalTicksPerDeg));
         double robotAngle = Robot.getRobotAngleRad() + thetaChange;
 
         double verticalChange = (leftChange + rightChange) / 2;
 
-        currentPos.x += ((verticalChange * Math.sin(robotAngle)) + (horizontalChange * Math.cos(robotAngle))) * (1 / countsPerCm);
-        currentPos.y += ((verticalChange * Math.cos(robotAngle)) - (horizontalChange * Math.sin(robotAngle))) * (1 / countsPerCm);
+        double vx = ((verticalChange * Math.sin(robotAngle)) + (horizontalChange * Math.cos(robotAngle))) * (1 / countsPerCm);
+        double vy = ((verticalChange * Math.cos(robotAngle)) - (horizontalChange * Math.sin(robotAngle))) * (1 / countsPerCm);
+
+        currentPos.x += vx;
+        currentPos.y += vy;
+
+        currentVelocity.x = vx;
+        currentVelocity.y = vy;
 
         lastLeftPos = leftPosition;
         lastRightPos = rightPosition;
         lastStrafePos = horizontalPosition;
         lastTheta = robotAngle;
-        Robot.setRobotPos(currentPos);
+//        Robot.setRobotPos(currentPos);
         Robot.setRobotAngle(robotAngle);
+//        Robot.setRobotVelocity(currentVelocity);
     }
 
     public void calibrate(double gain) {
@@ -77,10 +88,10 @@ public class Mecanum extends MotionProfile {
         double offset = Math.abs(left.getPosition()) + Math.abs(right.getPosition());
         double offsetPerDegree = offset / angle;
         double wheelBase = (2.0 * 90 * offsetPerDegree) / (Math.PI*(countsPerCm));
-        double horizontalTicksPerDegree = horizontal.getPosition() / angle;
+        double horizontalTicksPerRadian = horizontal.getPosition() / Math.toRadians(angle);
 
         Robot.telemetry.addData("wheelBase", wheelBase);
-        Robot.telemetry.addData("horizontal per deg", horizontalTicksPerDegree);
+        Robot.telemetry.addData("horizontal per rad", horizontalTicksPerRadian);
         Robot.telemetry.addData("left encoder", left.getPosition());
         Robot.telemetry.addData("right encoder", right.getPosition());
         Robot.telemetry.addData("horizontal encoder", horizontal.getPosition());
