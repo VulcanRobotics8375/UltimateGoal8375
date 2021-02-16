@@ -13,7 +13,7 @@ import org.vulcanrobotics.robotcorelib.vision.StackDetectorCV;
 
 import java.util.ArrayList;
 
-@Autonomous(name = "new auto", group = "main")
+@Autonomous(name = "new auto", group = "main", preselectTeleOp = "main")
 public class DalyCityAuto extends AutoPipeline {
     @Override
     public void runOpMode() {
@@ -25,7 +25,7 @@ public class DalyCityAuto extends AutoPipeline {
         subsystems.drivetrain.autoInit();
         StackDetectorCV stackDetector = new StackDetectorCV();
         initVision(stackDetector);
-        subsystems.wobbleGrabber.wobbleGrab.setPosition(1.5);
+        subsystems.wobbleGrabber.wobbleGrab.setPosition(0.05);
 
         int path = 2;
 
@@ -96,20 +96,30 @@ public class DalyCityAuto extends AutoPipeline {
         sectionC1.add(new PathPoint(175, 300, -1, 1, 12, 0));
 
         ArrayList<PathPoint> sectionC2 = new ArrayList<>();
-        sectionC2.add(new PathPoint(135, 200, -1, 1, 12, 0));
-        sectionC2.add(new PathPoint(160, 135, -1, 0.5, 15, Math.PI));
+        sectionC2.add(new PathPoint(136, 200, -1, 1, 12, 0));
+        sectionC2.add(new PathPoint(160, 135, -1, 0.8, 15, Math.PI));
 
         ArrayList<PathPoint> sectionCTest = new ArrayList<>();
         sectionCTest.add(new PathPoint(175, 300, -1, 1, 12, 0));
         sectionCTest.add(new PathPoint(135, 200, -1, 1, 12, 0));
 
         ArrayList<PathPoint> sectionC3 = new ArrayList<>();
-        sectionC3.add(new PathPoint(160, 135, -0.5, 1, 12, Math.PI));
-        sectionC3.add(new PathPoint(200, 130, -0.5, 1, 12, Math.PI));
-        sectionC3.add(new PathPoint(201, 110, -0.5, 1, 12, Math.PI));
+        sectionC3.add(new PathPoint(160, 135, -0.5, 1, 6, Math.PI));
+        sectionC3.add(new PathPoint(190, 132, -0.5, 1, 6, Math.PI));
+        sectionC3.add(new PathPoint(206, 110, -0.5, 1, 6, Math.PI));
 
         ArrayList<PathPoint> sectionC4 = new ArrayList<>();
-        sectionC4.add(new PathPoint(170, 290, -1, 1, 12, 2.0 * Math.PI));
+        sectionC4.add(new PathPoint(170, 280, -1, 1, 12, 2.0 * Math.PI));
+
+
+
+
+        telemetry.addLine("ready");
+        telemetry.update();
+        waitForStart();
+
+        //assign path number based on stack detection
+        path = stackDetector.getStackHeight();
 
         if(path == 0) {
             sections.add(start1);
@@ -132,7 +142,7 @@ public class DalyCityAuto extends AutoPipeline {
             sections.add(start2);
             sections.add(sectionC1);
             sections.add(sectionCTest);
-            sections.add(sectionB2);
+            sections.add(sectionC2);
             sections.add(sectionC3);
             sections.add(sectionB4);
             sections.add(sectionC4);
@@ -142,10 +152,6 @@ public class DalyCityAuto extends AutoPipeline {
         final PurePursuit controller = new PurePursuit(sections);
 
         super.controller = controller;
-
-        telemetry.addLine("ready");
-        telemetry.update();
-        waitForStart();
 
         Robot.startOdometryThread();
         startInterruptHandler();
@@ -175,8 +181,8 @@ public class DalyCityAuto extends AutoPipeline {
         //im stupid,,, just remove the while(opModeIsActive()) and everything is better
         subsystems.drivetrain.resetAiming();
         while(controller.getCurrentSection() == 0 && !isStopRequested()) {
-            subsystems.shooter.setPowers(0.895);
-            subsystems.shooter.setPowerShotPosition(0.035);
+            subsystems.shooter.setPowers(0.82);
+//            subsystems.shooter.setPowerShotPosition(0.035);
             subsystems.wobbleGrabber.wobbleGrab.setPosition(0.05);
             subsystems.wobbleGrabber.wobbleTurn.setPosition(0.52);
             //any point specific actions can start here
@@ -185,37 +191,44 @@ public class DalyCityAuto extends AutoPipeline {
         controller.startNextSection();
         while(controller.getCurrentSection() == 1) {}
         sleep(50);
-        subsystems.shooter.setPowers(0.895);
+        subsystems.shooter.setPowers(0.82);
         while(!subsystems.drivetrain.isAimed() && !isStopRequested()) {
             subsystems.shooter.setHopperPosition(0.0);
-            subsystems.shooter.setPowers(0.895);
-            subsystems.drivetrain.aim(1, 0.05,0.01);
+            subsystems.shooter.setPowers(0.82);
+            subsystems.drivetrain.aim(0, 0.12,0.009);
         }
         subsystems.drivetrain.run(0, 0);
         sleep(100);
-        subsystems.shooter.setHopperPosition(0.16);
+        subsystems.shooter.setHopperPosition(0.2);
+        sleep(200);
+        subsystems.shooter.setHopperPosition(0.0);
+        sleep(200);
+        subsystems.shooter.setHopperPosition(0.2);
+        sleep(200);
+        subsystems.shooter.setHopperPosition(0.0);
+        sleep(200);
+        subsystems.shooter.setHopperPosition(0.2);
         sleep(500);
-        subsystems.drivetrain.resetAiming();
-        while(!subsystems.drivetrain.isAimed() && !isStopRequested()) {
-            subsystems.shooter.setHopperPosition(0.0);
-            subsystems.shooter.setPowers(0.895);
-            subsystems.drivetrain.aim(2, 0.02, 0.01);
-        }
-        subsystems.drivetrain.run(0, 0);
-        sleep(100);
-        subsystems.shooter.setHopperPosition(0.16);
-        sleep(500);
-        subsystems.drivetrain.resetAiming();
-        while(!subsystems.drivetrain.isAimed() && !isStopRequested()) {
-            subsystems.shooter.setHopperPosition(0.0);
-            subsystems.shooter.setPowers(0.895);
-            subsystems.drivetrain.aim(3, 0.01, 0.01);
-        }
-        subsystems.drivetrain.run(0, 0);
-        sleep(100);
-        subsystems.shooter.setHopperPosition(0.16);
-        sleep(500);
-        subsystems.drivetrain.resetAiming();
+//        while(!subsystems.drivetrain.isAimed() && !isStopRequested()) {
+//            subsystems.shooter.setHopperPosition(0.0);
+//            subsystems.shooter.setPowers(0.895);
+//            subsystems.drivetrain.aim(2, 0.02, 0.015);
+//        }
+//        subsystems.drivetrain.run(0, 0);
+//        sleep(100);
+//        subsystems.shooter.setHopperPosition(0.2);
+//        sleep(500);
+//        subsystems.drivetrain.resetAiming();
+//        while(!subsystems.drivetrain.isAimed() && !isStopRequested()) {
+//            subsystems.shooter.setHopperPosition(0.0);
+//            subsystems.shooter.setPowers(0.895);
+//            subsystems.drivetrain.aim(3, 0.01, 0.015);
+//        }
+//        subsystems.drivetrain.run(0, 0);
+//        sleep(100);
+//        subsystems.shooter.setHopperPosition(0.2);
+//        sleep(500);
+//        subsystems.drivetrain.resetAiming();
         subsystems.shooter.setHopperPosition(0.0);
         subsystems.shooter.setPowers(0.0);
         subsystems.shooter.setPowerShotPosition(0.65);
@@ -224,7 +237,7 @@ public class DalyCityAuto extends AutoPipeline {
         if(path == 0) {
             //between while loops is where we call startNextSection() and everything works out great omg
             while (controller.getCurrentSection() == 2 && !isStopRequested()) {
-                subsystems.wobbleGrabber.wobbleTurn.setPosition(0.52);
+                subsystems.wobbleGrabber.wobbleTurn.setPosition(0.05);
             }
             subsystems.wobbleGrabber.wobbleTurn.setPosition(0.05);
             subsystems.wobbleGrabber.wobbleGrab.setPosition(1.5);
@@ -248,7 +261,7 @@ public class DalyCityAuto extends AutoPipeline {
         }
         else if(path == 1) {
            while(controller.getCurrentSection() == 2 && !isStopRequested()) {
-               subsystems.wobbleGrabber.wobbleTurn.setPosition(0.52);
+               subsystems.wobbleGrabber.wobbleTurn.setPosition(0.05);
            }
            subsystems.wobbleGrabber.wobbleTurn.setPosition(0.05);
            subsystems.wobbleGrabber.wobbleGrab.setPosition(1.5);
@@ -272,7 +285,7 @@ public class DalyCityAuto extends AutoPipeline {
            }
            subsystems.drivetrain.resetAiming();
            while(!subsystems.drivetrain.isAimed() && !isStopRequested()) {
-               subsystems.drivetrain.aim(0, 0, 0.01);
+               subsystems.drivetrain.aim(0, 0.1, 0.009);
            }
            subsystems.drivetrain.run(0, 0);
            sleep(100);
@@ -280,7 +293,7 @@ public class DalyCityAuto extends AutoPipeline {
            sleep(500);
            controller.startNextSection();
            while(controller.getCurrentSection() == 6 && !isStopRequested()) {
-
+                subsystems.wobbleGrabber.wobbleTurn.setPosition(0.05);
            }
            subsystems.wobbleGrabber.wobbleTurn.setPosition(0.05);
            subsystems.wobbleGrabber.wobbleGrab.setPosition(1.5);
@@ -304,42 +317,44 @@ public class DalyCityAuto extends AutoPipeline {
             sleep(100);
             controller.startNextSection();
             while(controller.getCurrentSection() == 4 && !isStopRequested()) {
-                subsystems.intake.run(false, true, false);
+//                subsystems.intake.run(false, true, false);
+//                subsystems.intake.setIntakePower(-1.0);
             }
-            subsystems.intake.run(false, false, false);
+            subsystems.intake.run(true, false, false);
+            sleep(200);
             controller.startNextSection();
             while(controller.getCurrentSection() == 5 && !isStopRequested()) {
-                subsystems.intake.run(true, false, false);
+//                subsystems.intake.run(true, false, false);
             }
             subsystems.wobbleGrabber.wobbleGrab.setPosition(0.05);
             sleep(500);
             controller.startNextSection();
             while(controller.getCurrentSection() == 6 && !isStopRequested()) {
-                subsystems.shooter.setPowers(0.895);
+                subsystems.shooter.setPowers(0.8);
                 subsystems.shooter.setHopperPosition(0.0);
                 subsystems.wobbleGrabber.wobbleTurn.setPosition(0.52);
             }
             subsystems.intake.run(false, false, false);
             subsystems.drivetrain.resetAiming();
             while(!subsystems.drivetrain.isAimed() && !isStopRequested()) {
-                subsystems.drivetrain.aim(0, 0.05, 0.02);
+                subsystems.intake.run(false, false, true);
+                subsystems.drivetrain.aim(0, 0.1, 0.009);
             }
-            subsystems.intake.run(false, false, true);
             subsystems.drivetrain.run(0, 0);
             sleep(100);
-            subsystems.shooter.setHopperPosition(0.18);
+            subsystems.shooter.setHopperPosition(0.2);
             sleep(200);
             subsystems.shooter.setHopperPosition(0.0);
             sleep(200);
-            subsystems.shooter.setHopperPosition(0.18);
+            subsystems.shooter.setHopperPosition(0.2);
             sleep(200);
             subsystems.shooter.setHopperPosition(0.0);
             sleep(200);
-            subsystems.shooter.setHopperPosition(0.18);
+            subsystems.shooter.setHopperPosition(0.2);
             sleep(500);
             controller.startNextSection();
             while(controller.getCurrentSection() == 7 && !isStopRequested()) {
-
+                subsystems.wobbleGrabber.wobbleTurn.setPosition(0.05);
             }
             subsystems.wobbleGrabber.wobbleTurn.setPosition(0.05);
             subsystems.wobbleGrabber.wobbleGrab.setPosition(1.5);

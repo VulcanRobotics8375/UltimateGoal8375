@@ -71,13 +71,13 @@ public class StackDetectorCV extends OpenCvPipeline {
 
         stackContourHeight = boundingRect.height;
 
-        if(stackContourHeight < 2) {
+        if(stackContourHeight < 3) {
             stackHeight = 0;
         }
-        if(stackContourHeight > 2 && stackContourHeight * 2 < 20) {
+        if(stackContourHeight > 3 && stackContourHeight < 10) {
             stackHeight = 1;
         }
-        if(stackContourHeight * 2 > 20) {
+        if(stackContourHeight > 10) {
             stackHeight = 2;
         }
 

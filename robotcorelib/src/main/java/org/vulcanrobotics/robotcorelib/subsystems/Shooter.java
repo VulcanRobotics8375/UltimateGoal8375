@@ -33,7 +33,7 @@ public class Shooter extends Subsystem {
     private double shooterPowerLeft;
     private double shooterPowerRight;
     private double shooterHighPower = 0.895;
-    private double shooterLowPower = 0.82;
+    private double shooterLowPower = 0.85;
     private double powerShotMode = -1;
     private boolean powerShotButton = false;
     private double powerShotPower = 0.7;
@@ -53,10 +53,10 @@ public class Shooter extends Subsystem {
         hopper = hardwareMap.servo.get("hopper");
         powerShot = hardwareMap.servo.get("powershot");
         shooter_one.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        shooter_two.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        shooter_two.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         PIDFCoefficients coefficients = shooter_one.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
         shooter_one.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(10.0, 6.0, 0.0, 6.0));
-//        shooter_two.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(10.0, 3.0, 0.0, 12.0));
+        shooter_two.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(10.0, 3.0, 0.0, 6.0));
         shooter_one.setDirection((DcMotor.Direction.FORWARD));
         shooter_two.setDirection(DcMotorSimple.Direction.REVERSE);
         shooter_one.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -102,17 +102,28 @@ public class Shooter extends Subsystem {
                 motorTimer.reset();
                 shooting = true;
             }
-            if(motorTimer.milliseconds() < 250) {
-                shooter_one.setPower(shooterHighPower / motorTimer.milliseconds());
-                shooter_two.setPower(shooterHighPower / motorTimer.milliseconds());
+            if(motorTimer.milliseconds() < 750) {
+                shooter_one.setPower((motorTimer.milliseconds() / 250) * shooterHighPower);
+                shooter_two.setPower((motorTimer.milliseconds() / 250) * shooterHighPower);
+                telemetry.addData("timer", motorTimer.milliseconds());
             } else {
                 shooter_one.setPower(shooterHighPower);
                 shooter_two.setPower(shooterHighPower);
             }
         }
         else if(shooterLowButton > 0){
-            shooter_one.setPower(shooterLowPower);
-            shooter_two.setPower(shooterLowPower);
+            if(!shooting) {
+            motorTimer.reset();
+            shooting = true;
+            }
+            if(motorTimer.milliseconds() < 750) {
+                shooter_one.setPower((motorTimer.milliseconds() / 250) * shooterLowPower);
+                shooter_two.setPower((motorTimer.milliseconds() / 250) * shooterLowPower);
+                telemetry.addData("timer", motorTimer.milliseconds());
+            } else {
+                shooter_one.setPower(shooterLowPower);
+                shooter_two.setPower(shooterLowPower);
+            }
         }
 
         else {
@@ -138,7 +149,7 @@ public class Shooter extends Subsystem {
             powerShot.setPosition(0.65);
         }
         else if(powerShotMode < 0){
-            powerShot.setPosition(0.05);
+            powerShot.setPosition(0.035);
         }
 //        telemetry.addData("p", shooter.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER).p);
 //        telemetry.addData("i", shooter.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER).i);
@@ -161,7 +172,7 @@ public class Shooter extends Subsystem {
             }
 
             if(hopperOut) {
-                hopper.setPosition(0.18);
+                hopper.setPosition(0.2);
             }
 
             if (!hopperOut){

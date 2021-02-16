@@ -56,7 +56,7 @@ public class Intake extends Subsystem {
         }
 
         if(transferOn) {
-            transfer.setPower(0.45);
+            transfer.setPower(0.5);
         }
 
     }
@@ -68,7 +68,7 @@ public class Intake extends Subsystem {
         double transferVelocity = Math.abs(transferPos) - Math.abs(lastTransferPos);
 
         //TODO remove telemetry
-        telemetry.addData("transfer velocity", transferVelocity);
+//        telemetry.addData("transfer velocity", transferVelocity);
         //tune these
         double transferSpeedJamThreshold = 20;
         double transferJamTimeout = 250;
@@ -79,6 +79,15 @@ public class Intake extends Subsystem {
         }
         lastTransferPos = transferPos;
         return false;
+    }
+
+
+    public void setIntakePower(double power) {
+        intake.setPower(power);
+    }
+
+    public void setTransferPower(double power) {
+        transfer.setPower(power);
     }
 
     @Override
