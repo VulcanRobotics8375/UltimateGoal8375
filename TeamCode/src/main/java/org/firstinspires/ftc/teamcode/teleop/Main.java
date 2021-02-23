@@ -36,7 +36,7 @@ public class Main extends TeleOpPipeline {
         telemetry.addLine("starting");
         telemetry.update();
 
-        Robot.startOdometryThread();
+//        Robot.startOdometryThread();
 
         Mecanum motionProfile = (Mecanum) Robot.motionProfile;
         timer.reset();
@@ -154,10 +154,12 @@ public class Main extends TeleOpPipeline {
 
             }
 
+            motionProfile.update();
+
 
             //TODO disable debug for competition code
             if(debug) {
-//                debug();
+                debug();
             }
 
 //            telemetry.addData("left", motionProfile.getLeft().getPosition());
