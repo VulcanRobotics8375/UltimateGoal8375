@@ -158,6 +158,9 @@ public class Main extends TeleOpPipeline {
 
 
             //TODO disable debug for competition code
+            telemetry.addData("left", motionProfile.getLeft().getPosition());
+            telemetry.addData("right", motionProfile.getRight().getPosition());
+            telemetry.addData("horizontal", motionProfile.getHorizontal().getPosition());
             if(debug) {
                 debug();
             }
@@ -187,6 +190,9 @@ public class Main extends TeleOpPipeline {
         telemetry.addData("robot x", Robot.getRobotX());
         telemetry.addData("robot y", Robot.getRobotY());
         telemetry.addData("robot angle", Robot.getRobotAngleDeg());
+//        telemetry.addData()
+
+        telemetry.update();
 //        telemetry.addData("zAngle", subsystems.drivetrain.getZAngle());
     }
 

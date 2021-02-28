@@ -50,7 +50,8 @@ public class PID {
 
         integral = Range.clip(integral, limMinInt, limMaxInt);
 
-        derivative = (2.0 * Kd * (value - lastValue) * ((2.0 * tau) - loopTime) * derivative) / ((2.0 * tau) + loopTime);
+//        derivative = (2.0 * Kd * (value - lastValue) * ((2.0 * tau) - loopTime) * derivative) / ((2.0 * tau) + loopTime);
+        derivative = Kd * (value - lastValue);
 
         output = proportional + integral + derivative;
 

@@ -75,13 +75,24 @@ public class Mecanum extends MotionProfile {
     }
 
     public void calibrate(double gain) {
+        Robot.drivetrain.move(0, gain);
         while(Robot.drivetrain.getZAngle() < 90) {
-            Robot.drivetrain.move(0, gain);
-
+            Robot.telemetry.addData("zAngle", Robot.drivetrain.getZAngle());
+            Robot.telemetry.update();
+//            try {
+//                Thread.sleep(1);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
         }
         Robot.drivetrain.move(0, 0);
-        long lastTime = System.currentTimeMillis();
-        while(System.currentTimeMillis() - lastTime < 1000) {}
+//        long lastTime = System.currentTimeMillis();
+//        while(System.currentTimeMillis() - lastTime < 1000) {}
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         double angle = Robot.drivetrain.getZAngle();
         double offset = Math.abs(left.getPosition()) + Math.abs(right.getPosition());

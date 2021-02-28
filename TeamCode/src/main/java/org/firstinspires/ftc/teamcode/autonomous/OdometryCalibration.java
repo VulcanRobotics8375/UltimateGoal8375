@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.vulcanrobotics.robotcorelib.framework.AutoPipeline;
 import org.vulcanrobotics.robotcorelib.framework.RobotCoreLibException;
@@ -13,6 +14,7 @@ public class OdometryCalibration extends AutoPipeline {
         try {
             autoInit();
             subsystems.drivetrain.initIMU();
+            subsystems.drivetrain.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         } catch (RobotCoreLibException e) {
             e.printStackTrace();
         }
@@ -22,7 +24,7 @@ public class OdometryCalibration extends AutoPipeline {
 
         waitForStart();
 
-        subsystems.motionProfile.calibrate(0.2);
+        subsystems.motionProfile.calibrate(-0.5);
 
         while(opModeIsActive()) {}
 

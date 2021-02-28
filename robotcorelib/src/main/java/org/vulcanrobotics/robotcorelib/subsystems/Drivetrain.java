@@ -347,7 +347,7 @@ public class Drivetrain extends Subsystem {
     //this isn't actually deprecated since we need it for backend/calibration,
     // but I never want to see it be used in any main code. ever.
     public double getZAngle() {
-      return AngleUnit.DEGREES.normalize(imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
+      return imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
     }
 
     public DcMotor getFrontLeft() {
@@ -375,6 +375,13 @@ public class Drivetrain extends Subsystem {
         fr.setMode(runMode);
         bl.setMode(runMode);
         br.setMode(runMode);
+    }
+
+    public void setZeroPowerBehavior(DcMotor.ZeroPowerBehavior powerBehavior) {
+        fl.setZeroPowerBehavior(powerBehavior);
+        fr.setZeroPowerBehavior(powerBehavior);
+        bl.setZeroPowerBehavior(powerBehavior);
+        br.setZeroPowerBehavior(powerBehavior);
     }
 
     public void run(double forward, double turn) {
