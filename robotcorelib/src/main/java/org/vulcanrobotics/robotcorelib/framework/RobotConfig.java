@@ -36,9 +36,9 @@ public class RobotConfig {
     }
 
     public void setupMotionProfile() throws RobotCoreLibException {
-        Odometer left = new Odometer("left", drivetrain.getFrontLeft());
-        Odometer right = new Odometer("right", drivetrain.getFrontRight());
-        Odometer strafe = new Odometer("strafe", drivetrain.getBackRight());
+        Odometer left = new Odometer("left", shooter.getShooterOne());
+        Odometer right = new Odometer("right", intake.getIntake());
+        Odometer strafe = new Odometer("strafe", intake.getTransfer());
 
         motionProfile = new Mecanum(3, left, right, strafe);
         motionProfile.init();

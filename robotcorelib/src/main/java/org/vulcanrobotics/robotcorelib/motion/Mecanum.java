@@ -50,14 +50,13 @@ public class Mecanum extends MotionProfile {
         double rawHorizontalChange = (horizontalPosition - lastStrafePos);
         double thetaChange = (leftChange - rightChange) / (wheelBase * countsPerCm);
 
-        //toDegrees is a hotfix
         double horizontalChange = (rawHorizontalChange - (thetaChange * horizontalTicksPerDeg));
-        double robotAngle = Robot.getRobotAngleRad() + thetaChange;
+        double robotAngle = Robot.getRobotAngleRad();
 
         double verticalChange = (leftChange + rightChange) / 2;
 
-        double vx = ((verticalChange * Math.sin(robotAngle)) + (horizontalChange * Math.cos(robotAngle))) * (1 / countsPerCm);
-        double vy = ((verticalChange * Math.cos(robotAngle)) - (horizontalChange * Math.sin(robotAngle))) * (1 / countsPerCm);
+        double vx = ((verticalChange * Math.sin(robotAngle + (thetaChange / 2.0))) + (horizontalChange * Math.cos(robotAngle + (thetaChange / 2.0)))) * (1 / countsPerCm);
+        double vy = ((verticalChange * Math.cos(robotAngle + (thetaChange / 2.0))) - (horizontalChange * Math.sin(robotAngle + (thetaChange / 2.0)))) * (1 / countsPerCm);
 
         currentPos.x += vx;
         currentPos.y += vy;
@@ -68,9 +67,9 @@ public class Mecanum extends MotionProfile {
         lastLeftPos = leftPosition;
         lastRightPos = rightPosition;
         lastStrafePos = horizontalPosition;
-        lastTheta = robotAngle;
+        lastTheta = robotAngle + thetaChange;
 //        Robot.setRobotPos(currentPos);
-        Robot.setRobotAngle(robotAngle);
+        Robot.setRobotAngle(robotAngle + thetaChange);
 //        Robot.setRobotVelocity(currentVelocity);
     }
 

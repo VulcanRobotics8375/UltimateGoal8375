@@ -22,7 +22,8 @@ public class Intake extends Subsystem {
 
         intake.setDirection(DcMotorSimple.Direction.FORWARD);
         transfer.setDirection(DcMotorSimple.Direction.FORWARD);
-        transfer.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        transfer.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
     }
 
@@ -30,22 +31,11 @@ public class Intake extends Subsystem {
     public void run(boolean intakeButton, boolean reverse, boolean transferOn) {
         //yeet. Im not throwin away my shot
         if (intakeButton) {
-            if(!isTransferJammed()) {
-                transfer.setPower(transferSpeed);
-            }
-            else{
-                transfer.setPower(transferSpeed * -1.0);
-            }
             transfer.setPower(transferSpeed);
             intake.setPower(intakeSpeed);
         }
 
         else if (reverse) {
-            if(!isTransferJammed()) {
-                transfer.setPower(-1.0 * intakeSpeed);
-            } else {
-                transfer.setPower(transferSpeed);
-            }
             transfer.setPower(transferSpeed * -1.0);
             intake.setPower(-1.0 * intakeSpeed);
         }
@@ -81,6 +71,14 @@ public class Intake extends Subsystem {
         return false;
     }
 
+
+    public DcMotor getTransfer() {
+        return transfer;
+    }
+
+    public DcMotor getIntake() {
+        return intake;
+    }
 
     public void setIntakePower(double power) {
         intake.setPower(power);
