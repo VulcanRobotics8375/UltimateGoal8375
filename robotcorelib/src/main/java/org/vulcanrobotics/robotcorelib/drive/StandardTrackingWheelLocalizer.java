@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.drive;
+package org.vulcanrobotics.robotcorelib.drive;
 
 import androidx.annotation.NonNull;
 
@@ -7,7 +7,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.localization.ThreeTrackingWheelLocalizer;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import org.firstinspires.ftc.teamcode.util.Encoder;
+import org.vulcanrobotics.robotcorelib.util.Encoder;
 
 import java.util.Arrays;
 import java.util.List;
@@ -28,11 +28,11 @@ import java.util.List;
 @Config
 public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer {
     public static double TICKS_PER_REV = 1440;
-    public static double WHEEL_RADIUS = 1.9 / 2.54; // in
+    public static double WHEEL_RADIUS = 1.9; // cm
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (encoder) speed
 
-    public static double LATERAL_DISTANCE = 38.7 / 2.54; // in; distance between the left and right wheels
-    public static double FORWARD_OFFSET = 5.5; // in; offset of the lateral wheel
+    public static double LATERAL_DISTANCE = 38.7; // cm; distance between the left and right wheels
+    public static double FORWARD_OFFSET = 13.46; // cm; offset of the lateral wheel
 
     private Encoder leftEncoder, rightEncoder, frontEncoder;
 
@@ -45,9 +45,11 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
 
         leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "shooter_one"));
         rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "roller_intake"));
-        frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "transferIntake"));
+        frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "transfer_intake"));
 
         // TODO: reverse any encoders using Encoder.setDirection(Encoder.Direction.REVERSE)
+        rightEncoder.setDirection(Encoder.Direction.REVERSE);
+
     }
 
     public static double encoderTicksToInches(double ticks) {

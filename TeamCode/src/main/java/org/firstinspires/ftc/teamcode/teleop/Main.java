@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.vulcanrobotics.robotcorelib.drive.StandardTrackingWheelLocalizer;
 import org.vulcanrobotics.robotcorelib.framework.TeleOpPipeline;
 import org.vulcanrobotics.robotcorelib.math.PathPoint;
 import org.vulcanrobotics.robotcorelib.math.Point;
@@ -24,6 +26,10 @@ public class Main extends TeleOpPipeline {
     private double time;
 
     public void runOpMode() {
+        StandardTrackingWheelLocalizer drive = new StandardTrackingWheelLocalizer(hardwareMap);
+        //possible new startX is 105.5 because of X direction swap with rr code
+        //also might be horizontal encoder direction so check that as well
+        drive.setPoseEstimate(new Pose2d(138.34, 21.6, 0.0));
 
         teleopInit();
         Robot.loadRobotPosition();
@@ -38,10 +44,11 @@ public class Main extends TeleOpPipeline {
 
 //        Robot.startOdometryThread();
 
-        Mecanum motionProfile = (Mecanum) Robot.motionProfile;
+//        Mecanum motionProfile = (Mecanum) Robot.motionProfile;
         timer.reset();
 
         while (opModeIsActive()) {
+            drive.update();
             timer.reset();
             joystickCancel = gamepad1.b || gamepad1.left_stick_x != 0 || gamepad1.right_stick_y != 0 || gamepad2.right_bumper ? 1 : 0;
 
@@ -55,7 +62,7 @@ public class Main extends TeleOpPipeline {
             }
 
             if(!autoRunning) {
-                subsystems.drivetrain.mecanumDrive(gamepad1.left_stick_y, -gamepad1.right_stick_x, -gamepad1.left_stick_x, false, false, gamepad1.y, gamepad1.x, gamepad1.left_bumper, gamepad1.right_bumper);
+                subsystems.drivetrain.mecanumDrive(gamepad1.left_stick_y, -gamepad1.right_stick_x, -gamepad1.left_stick_x, gamepad1.a, false, gamepad1.y, gamepad1.x, gamepad1.left_bumper, gamepad1.right_bumper);
                 subsystems.intake.run(gamepad2.b, gamepad2.a, gamepad2.right_bumper);
                 subsystems.shooter.run(gamepad2.left_bumper, gamepad2.right_bumper, shoot, gamepad2.right_trigger, gamepad2.left_trigger, gamepad2.dpad_down);
                 subsystems.wobbleGrabber.run(gamepad2.x, gamepad2.y, -gamepad2.left_stick_y * 0.5);
@@ -68,7 +75,7 @@ public class Main extends TeleOpPipeline {
 //                Robot.setRobotPos(new Point(138.34, Robot.getRobotY()));
 //            }
 
-            if(gamepad1.a && !autoRunning) {
+            if(gamepad1.dpad_down && !autoRunning) {
                 autoRunning = true;
                 new Thread(new Runnable() {
                     @Override
@@ -154,13 +161,16 @@ public class Main extends TeleOpPipeline {
 
             }
 
-            motionProfile.update();
+//            motionProfile.update();
 
+            Pose2d poseEstimate = drive.getPoseEstimate();
+            Robot.setRobotPos(new Point(poseEstimate.getY(), poseEstimate.getX()));
+            Robot.setRobotAngle(poseEstimate.getHeading());
 
             //TODO disable debug for competition code
-            telemetry.addData("left", motionProfile.getLeft().getPosition());
-            telemetry.addData("right", motionProfile.getRight().getPosition());
-            telemetry.addData("horizontal", motionProfile.getHorizontal().getPosition());
+//            telemetry.addData("left", motionProfile.getLeft().getPosition());
+//            telemetry.addData("right", motionProfile.getRight().getPosition());
+//            telemetry.addData("horizontal", motionProfile.getHorizontal().getPosition());
             if(debug) {
                 debug();
             }
@@ -189,7 +199,7 @@ public class Main extends TeleOpPipeline {
     private void debug() {
         telemetry.addData("robot x", Robot.getRobotX());
         telemetry.addData("robot y", Robot.getRobotY());
-        telemetry.addData("robot angle", Robot.getRobotAngleDeg());
+        telemetry.addData("robot angle", Robot.getRobotAngleRad());
 //        telemetry.addData()
 
         telemetry.update();
