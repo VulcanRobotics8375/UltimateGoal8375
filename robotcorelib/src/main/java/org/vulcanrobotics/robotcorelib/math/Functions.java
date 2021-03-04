@@ -6,11 +6,18 @@ import static java.lang.Math.*;
 public class Functions {
 
     public static double angleWrap(double angle) {
-        while(angle < PI) {
+        while(angle < -PI) {
             angle += 2.0 * PI;
         }
         while(angle > PI) {
             angle -= 2.0 * PI;
+        }
+        return angle;
+    }
+
+    public static double angleWrapRR(double angle) {
+        if(angle < 0) {
+            return (2.0 * PI + angle);
         }
         return angle;
     }

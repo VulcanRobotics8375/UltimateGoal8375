@@ -32,8 +32,8 @@ public class Shooter extends Subsystem {
     private double shooterModeNum = 88.9;
     private double shooterPowerLeft;
     private double shooterPowerRight;
-    private double shooterHighPower = 0.895;
-    private double shooterLowPower = 0.85;
+    private double shooterHighPower = 1.0;
+    private double shooterLowPower = 1.0;
     private double powerShotMode = -1;
     private boolean powerShotButton = false;
     private double powerShotPower = 0.7;
@@ -52,6 +52,7 @@ public class Shooter extends Subsystem {
         shooter_two = (DcMotorEx) hardwareMap.dcMotor.get("shooter_two");
         hopper = hardwareMap.servo.get("hopper");
         powerShot = hardwareMap.servo.get("powershot");
+        shooter_one.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         shooter_one.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         shooter_two.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 //        PIDFCoefficients coefficients = shooter_one.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);

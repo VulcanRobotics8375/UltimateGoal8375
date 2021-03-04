@@ -3,6 +3,7 @@ package org.vulcanrobotics.robotcorelib.subsystems;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -27,6 +28,7 @@ public class Drivetrain extends Subsystem {
     private double variableOffset = 0;
     private boolean leftOffsetButton, rightOffsetButton;
     private boolean aimed = false;
+    private ElapsedTime accelTimer = new ElapsedTime();
 
     @Override
     public void init() {
@@ -37,7 +39,7 @@ public class Drivetrain extends Subsystem {
         imu = hardwareMap.get(BNO055IMU.class, "imu");
 
         setDrivetrainMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        setDrivetrainMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        setDrivetrainMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         Robot.setResetPosition(new Point(21.6, 21.6));
 
@@ -97,6 +99,9 @@ public class Drivetrain extends Subsystem {
 
     public void mecanumDrive(double forward, double turn, double strafe, boolean highGoal, boolean powerShotLeft, boolean powerShotCenter, boolean powerShotRight, boolean leftOffsetButton, boolean rightOffsetButton) {
         //handle/parse initial data for basic mecanum drive
+        if(forward == 0 && turn == 0 && strafe == 0) {
+            accelTimer.reset();
+        }
         forward = curveLinearJoystick(forward);
         strafe = curveLinearJoystick(strafe);
         turn = turn * 0.7;
@@ -134,7 +139,7 @@ public class Drivetrain extends Subsystem {
 
         //auto aim configuration
         double variableOffsetRad = Math.toRadians(variableOffset);
-        Point target = new Point();
+        Point target = new Point(FIELD_SIZE_CM_X - (1.5 * TILE_SIZE_CM), FIELD_SIZE_CM_Y);
         boolean aiming = false;
         if(highGoal) {
             target.setPoint(new Point(FIELD_SIZE_CM_X - (1.5 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
@@ -154,28 +159,38 @@ public class Drivetrain extends Subsystem {
         }
         //auto aim calculation and determine drive style
         if(aiming) {
-            double absoluteAngleToTarget = Math.atan2(target.y - Robot.getRobotY(), target.x - Robot.getRobotX());
+            double absoluteAngleToTarget = Math.atan2(target.x - Robot.getRobotX(), target.y - Robot.getRobotY());
             doingAutonomousTask = true;
-            double error = Functions.angleWrap(absoluteAngleToTarget - (Robot.getRobotAngleRad() * -1.0));
-            //non pid code for testing
-            turnPid.run(absoluteAngleToTarget, Functions.angleWrap(((Robot.getRobotAngleRad() * -1.0) + variableOffsetRad + SHOOTING_OFFSET_RAD)));
-//            turnPower = (error + variableOffsetRad + SHOOTING_OFFSET_RAD) * turnPid.getKp();
-            turnPower = turnPid.getOutput() * -1.0;
-            fieldCentricMove(strafe, forward, turnPower);
+            //might be necessary to make sure the turn direction is correct
+            double adjustedAngleToTarget = absoluteAngleToTarget - (Math.PI / 2.0);
+            double currentAngle = Robot.getRobotAngleRad() > Math.PI ? Robot.getRobotAngleRad() - (2.0 * Math.PI) : Robot.getRobotAngleRad();
+            turnPid.run(absoluteAngleToTarget, currentAngle);
+            turnPower = turnPid.getOutput();
+
+//            fieldCentricMove(strafe, forward, turnPower);
         } else {
-            //basic mecanum calculations
-            double[] v = {
-                    (vd * Math.cos(theta) + turnPower) * multiplier,
-                    (vd * Math.sin(theta) - turnPower) * multiplier,
-                    (vd * Math.sin(theta) + turnPower) * multiplier,
-                    (vd * Math.cos(theta) - turnPower) * multiplier
-            };
             if(doingAutonomousTask) {
                 turnPid.reset();
                 doingAutonomousTask = false;
             }
-            setPowers(v);
         }
+//        double absoluteAngleToTarget = Math.atan2(Robot.getRobotY() - target.y, Robot.getRobotX() - target.x);
+//        telemetry.addData("angle", absoluteAngleToTarget);
+        //time acceleration
+        double accelMultiplier = 1;
+        double accelRate = 1000.0;
+        if(accelTimer.milliseconds() < accelRate) {
+            accelMultiplier = accelTimer.milliseconds() / accelRate;
+        }
+        vd *= accelMultiplier;
+
+        double[] v = {
+                (vd * Math.cos(theta) + turnPower) * multiplier,
+                (vd * Math.sin(theta) - turnPower) * multiplier,
+                (vd * Math.sin(theta) + turnPower) * multiplier,
+                (vd * Math.cos(theta) - turnPower) * multiplier
+        };
+        setPowers(v);
     }
 
     //right to left = 1 to 3, high goal = 0
@@ -315,7 +330,7 @@ public class Drivetrain extends Subsystem {
 
     public void fieldCentricMove(double x, double y, double turn) {
 
-        x *= -1.0;
+//        x *= -1.0;
         double power = Math.hypot(x, y);
         double theta = Math.atan2(y, x) - Robot.getRobotAngleRad();
 
