@@ -97,6 +97,7 @@ public class Drivetrain extends Subsystem {
         setPowers(powers[0], powers[1], powers[2], powers[3]);
     }
 
+    double[] lastPowers = new double[4];
     public void mecanumDrive(double forward, double turn, double strafe, boolean highGoal, boolean powerShotLeft, boolean powerShotCenter, boolean powerShotRight, boolean leftOffsetButton, boolean rightOffsetButton) {
         //handle/parse initial data for basic mecanum drive
         if(forward == 0 && turn == 0 && strafe == 0) {
@@ -159,13 +160,12 @@ public class Drivetrain extends Subsystem {
         }
         //auto aim calculation and determine drive style
         if(aiming) {
-            double absoluteAngleToTarget = Math.atan2(target.x - Robot.getRobotX(), target.y - Robot.getRobotY());
             doingAutonomousTask = true;
-            //might be necessary to make sure the turn direction is correct
-            double adjustedAngleToTarget = absoluteAngleToTarget - (Math.PI / 2.0);
+            double absoluteAngleToTarget = Math.atan2(target.x - Robot.getRobotX(), target.y - Robot.getRobotY());
             double currentAngle = Robot.getRobotAngleRad() > Math.PI ? Robot.getRobotAngleRad() - (2.0 * Math.PI) : Robot.getRobotAngleRad();
-            turnPid.run(absoluteAngleToTarget, currentAngle);
-            turnPower = turnPid.getOutput();
+            //might have to subtract variable offset
+            turnPid.run(absoluteAngleToTarget, currentAngle + variableOffsetRad);
+            turnPower = turnPid.getOutput() * -1.0;
 
 //            fieldCentricMove(strafe, forward, turnPower);
         } else {
@@ -177,12 +177,12 @@ public class Drivetrain extends Subsystem {
 //        double absoluteAngleToTarget = Math.atan2(Robot.getRobotY() - target.y, Robot.getRobotX() - target.x);
 //        telemetry.addData("angle", absoluteAngleToTarget);
         //time acceleration
-        double accelMultiplier = 1;
-        double accelRate = 1000.0;
-        if(accelTimer.milliseconds() < accelRate) {
-            accelMultiplier = accelTimer.milliseconds() / accelRate;
-        }
-        vd *= accelMultiplier;
+//        double accelMultiplier = 1;
+//        double accelRate = 1000.0;
+//        if(accelTimer.milliseconds() < accelRate) {
+//            accelMultiplier = accelTimer.milliseconds() / accelRate;
+//        }
+//        vd *= accelMultiplier;
 
         double[] v = {
                 (vd * Math.cos(theta) + turnPower) * multiplier,
@@ -190,6 +190,25 @@ public class Drivetrain extends Subsystem {
                 (vd * Math.sin(theta) + turnPower) * multiplier,
                 (vd * Math.cos(theta) - turnPower) * multiplier
         };
+
+        //iterated acceleration
+//        double maxAccel = 0.05;
+//        for (int i = 0; i < 3; i++) {
+//            if(v[i] - lastPowers[i] > maxAccel) {
+//                v[i] += maxAccel;
+//            }
+//        }
+//        lastPowers = v;
+
+        //iterated accleration with time constraint
+        double maxAccel = 0.1;
+        double accelTime = accelTimer.milliseconds();
+        if(accelTime > 50) {
+            for (int i = 0; i < 3; i++) {
+
+            }
+        }
+
         setPowers(v);
     }
 
@@ -328,6 +347,7 @@ public class Drivetrain extends Subsystem {
         return (m * relativeAngle) + 1;
     }
 
+    //TODO fix this or auto will not work
     public void fieldCentricMove(double x, double y, double turn) {
 
 //        x *= -1.0;
