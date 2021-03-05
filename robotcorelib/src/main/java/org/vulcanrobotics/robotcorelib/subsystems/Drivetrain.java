@@ -103,9 +103,18 @@ public class Drivetrain extends Subsystem {
         if(forward == 0 && turn == 0 && strafe == 0) {
             accelTimer.reset();
         }
+
+        turn = turn * 0.7;
         forward = curveLinearJoystick(forward);
         strafe = curveLinearJoystick(strafe);
-        turn = turn * 0.7;
+        //scale inputs
+        double magnitude = Math.abs(forward) + Math.abs(strafe) + Math.abs(turn);
+        if(magnitude > 1) {
+            forward *= 1.0 / magnitude;
+            strafe *= 1.0 / magnitude;
+            turn *= 1.0 / magnitude;
+
+        }
         double vd = Math.hypot(forward, strafe);
         double theta = Math.atan2(forward, strafe) - (Math.PI / 4);
         double multiplier = Math.sqrt(2.0);
@@ -201,12 +210,15 @@ public class Drivetrain extends Subsystem {
 //        lastPowers = v;
 
         //iterated accleration with time constraint
-        double maxAccel = 0.1;
+        double maxAccel = 0.05;
         double accelTime = accelTimer.milliseconds();
         if(accelTime > 50) {
             for (int i = 0; i < 3; i++) {
-
+                if(v[i] - lastPowers[i] > maxAccel) {
+                    v[i] += maxAccel;
+                }
             }
+            accelTimer.reset();
         }
 
         setPowers(v);
