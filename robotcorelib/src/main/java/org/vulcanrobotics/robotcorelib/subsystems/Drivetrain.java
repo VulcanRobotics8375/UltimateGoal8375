@@ -123,12 +123,7 @@ public class Drivetrain extends Subsystem {
 
         //check variable offset buttons, and change accordingly
         if(leftOffsetButton && !this.leftOffsetButton) {
-            if(powerShotRight) {
-                variableOffset -= 4.5;
-            }
-            else {
-                variableOffset -= 3;
-            }
+            variableOffset -= 4.5;
             this.leftOffsetButton = true;
         }
         if(!leftOffsetButton && this.leftOffsetButton) {
@@ -136,12 +131,7 @@ public class Drivetrain extends Subsystem {
         }
 
         if(rightOffsetButton && !this.rightOffsetButton) {
-            if(powerShotRight) {
-                variableOffset += 4.5;
-            }
-            else {
-                variableOffset += 3;
-            }
+            variableOffset += 4.5;
             this.rightOffsetButton = true;
         }
         if(!rightOffsetButton && this.rightOffsetButton) {
