@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.vulcanrobotics.robotcorelib.drive.StandardTrackingWheelLocalizer;
+import org.vulcanrobotics.robotcorelib.framework.Constants;
 import org.vulcanrobotics.robotcorelib.framework.TeleOpPipeline;
 import org.vulcanrobotics.robotcorelib.math.PathPoint;
 import org.vulcanrobotics.robotcorelib.math.Point;
@@ -29,7 +30,7 @@ public class Main extends TeleOpPipeline {
         StandardTrackingWheelLocalizer drive = new StandardTrackingWheelLocalizer(hardwareMap);
         //possible new startX is 105.5 because of X direction swap with rr code
         //also might be horizontal encoder direction so check that as well
-        drive.setPoseEstimate(new Pose2d(138.34, 21.6, 0.0));
+        drive.setPoseEstimate(new Pose2d(21.6, 108, 0.0));
 
         teleopInit();
         Robot.loadRobotPosition();

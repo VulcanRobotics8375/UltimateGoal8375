@@ -16,8 +16,10 @@ public class Shooter extends Subsystem {
     private DcMotorEx shooter_one, shooter_two;
     private Servo hopper;
     private Servo powerShot;
+
     private boolean hopperButton, hopperOut, powerShotButton = false;
     public double shooterPower, powerShotMode = -1;
+
     private ElapsedTime servoTimer = new ElapsedTime();
 
     public Shooter() {}
@@ -44,28 +46,27 @@ public class Shooter extends Subsystem {
         if (shooterButton) {
             shooterPower = .70;
             shooter_two.setPower(shooterPower);
-         //   telemetry.addData("shooter power", shooter_two.getPower());
+            //   telemetry.addData("shooter power", shooter_two.getPower());
         } else {
             shooter_two.setPower(0);
         }
 
-        if(powerShotButton && !this.powerShotButton) {
+        if (powerShotButton && !this.powerShotButton) {
             powerShotMode *= -1;
             this.powerShotButton = true;
         }
-        if(!powerShotButton && this.powerShotButton){
+        if (!powerShotButton && this.powerShotButton) {
             this.powerShotButton = false;
         }
 
-        if(powerShotMode > 0){
+        if (powerShotMode > 0) {
             powerShot.setPosition(0.65);
-        }
-        else if(powerShotMode < 0){
+        } else if (powerShotMode < 0) {
             powerShot.setPosition(0.035);
         }
 
         if (hopperButton) {
-            if(!this.hopperButton){
+            if (!this.hopperButton) {
                 this.hopperButton = true;
                 hopperOut = true;
                 servoTimer.reset();
@@ -74,45 +75,44 @@ public class Shooter extends Subsystem {
                 hopperOut = !hopperOut;
                 servoTimer.reset();
             }
-            if(hopperOut) {
-                hopper.setPosition(0.2);
-            }
-            if (!hopperOut){
+            if (hopperOut) {
                 hopper.setPosition(0);
             }
-        } else {
-            hopper.setPosition(0);
+            if (!hopperOut) {
+                hopper.setPosition(0.2);
+            } else {
+                hopper.setPosition(0.2);
+//            servoTimer.reset();
+            }
+
+            if (!hopperButton && this.hopperButton) {
+                this.hopperButton = false;
+            }
+        }
+    }
+        public void setPowers ( double power){
+            shooter_two.setPower(power);
         }
 
-        if(!hopperButton && this.hopperButton){
-            this.hopperButton = false;
+        public DcMotor getShooterOne () {
+            return shooter_one;
         }
-    }
 
-    public void setPowers(double power) {
-        shooter_two.setPower(power);
-    }
+        public DcMotor getShooterTwo () {
+            return shooter_two;
+        }
 
-    public DcMotor getShooterOne() {
-        return shooter_one;
-    }
+        public void setHopperPosition ( double position){
+            hopper.setPosition(position);
+        }
 
-    public DcMotor getShooterTwo() {
-        return shooter_two;
-    }
+        public void setPowerShotPosition ( double position){
+            powerShot.setPosition(position);
+        }
 
-    public void setHopperPosition(double position) {
-        hopper.setPosition(position);
-    }
-
-    public void setPowerShotPosition(double position) {
-        powerShot.setPosition(position);
-    }
-
-    public void setShooterPower(double power) {
-        shooter_one.setPower(power);
-    }
-
+        public void setShooterPower ( double power){
+            shooter_one.setPower(power);
+        }
     @Override
     public void stop() {
     }
