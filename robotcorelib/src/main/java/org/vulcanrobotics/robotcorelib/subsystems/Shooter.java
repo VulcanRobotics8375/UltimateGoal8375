@@ -44,7 +44,7 @@ public class Shooter extends Subsystem {
     public void run(boolean shooterButton, boolean hopperButton, boolean powerShotButton) {
 
         if (shooterButton) {
-            shooterPower = .70;
+            shooterPower = 0.70;
             shooter_two.setPower(shooterPower);
             //   telemetry.addData("shooter power", shooter_two.getPower());
         } else {
