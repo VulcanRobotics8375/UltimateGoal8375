@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.vulcanrobotics.robotcorelib.drive.StandardTrackingWheelLocalizer;
 import org.vulcanrobotics.robotcorelib.framework.TeleOpPipeline;
 import org.vulcanrobotics.robotcorelib.math.Point;
 import org.vulcanrobotics.robotcorelib.motion.Mecanum;
@@ -21,7 +23,13 @@ public class MainSolo extends TeleOpPipeline {
     public void runOpMode() {
 
         teleopInit();
-        Robot.loadRobotPosition();
+//        Robot.loadRobotPosition();
+
+        StandardTrackingWheelLocalizer drive = new StandardTrackingWheelLocalizer(hardwareMap);
+        drive.setPoseEstimate(new Pose2d(21.6, 108, 0.0));
+        Pose2d poseEstimate = drive.getPoseEstimate();
+        Robot.setRobotPos(new Point(poseEstimate.getY(), poseEstimate.getX()));
+        Robot.setRobotAngle(poseEstimate.getHeading());
 
         telemetry.addLine("ready");
         telemetry.update();
@@ -30,9 +38,9 @@ public class MainSolo extends TeleOpPipeline {
         telemetry.addLine("starting");
         telemetry.update();
 
-        Robot.startOdometryThread();
+//        Robot.startOdometryThread();
 
-        Mecanum motionProfile = (Mecanum) Robot.motionProfile;
+//        Mecanum motionProfile = (Mecanum) Robot.motionProfile;
         timer.reset();
 
         boolean intakeOn = false;
@@ -69,7 +77,7 @@ public class MainSolo extends TeleOpPipeline {
                 intaking = false;
             }
 
-            subsystems.drivetrain.mecanumDrive(gamepad1.left_stick_y, -gamepad1.right_stick_x, -gamepad1.left_stick_x, gamepad2.a, gamepad2.b, gamepad2.y, gamepad2.x, gamepad1.dpad_left, gamepad1.dpad_right);
+            subsystems.drivetrain.mecanumDrive(gamepad1.left_stick_y, -gamepad1.right_stick_x, -gamepad1.left_stick_x, gamepad1.a, gamepad2.b, gamepad2.y, gamepad2.x, gamepad1.dpad_left, gamepad1.dpad_right);
             subsystems.intake.run(intakeOn, gamepad1.y, gamepad2.right_bumper);
             subsystems.shooter.run(gamepad2.left_bumper, gamepad1.right_bumper, shoot, gamepad2.right_trigger, shooterOn ? 1 : 0, gamepad2.dpad_down);
             subsystems.wobbleGrabber.run(gamepad2.x,gamepad2.y, -gamepad2.left_stick_y * 0.5);

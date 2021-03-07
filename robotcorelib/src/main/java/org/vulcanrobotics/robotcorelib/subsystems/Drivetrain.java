@@ -20,7 +20,7 @@ public class Drivetrain extends Subsystem {
     private DcMotor fl, fr, bl, br;
     private BNO055IMU imu;
 
-    private PID turnPid = new PID(0.8, 0.1, -2.0, 0.1, 0.05, -0.5, 0.5);
+    private PID turnPid = new PID(2.0, 0.1, -1.1, 0.1, 0.05, -0.5, 0.5);
 
     private boolean doingAutonomousTask;
     private boolean unlockedAim;
@@ -115,6 +115,7 @@ public class Drivetrain extends Subsystem {
             turn *= 1.0 / magnitude;
 
         }
+
         double vd = Math.hypot(forward, strafe);
         double theta = Math.atan2(forward, strafe) - (Math.PI / 4);
         double multiplier = Math.sqrt(2.0);
@@ -149,22 +150,22 @@ public class Drivetrain extends Subsystem {
 
         //auto aim configuration
         double variableOffsetRad = Math.toRadians(variableOffset);
-        Point target = new Point(FIELD_SIZE_CM_X - (1.5 * TILE_SIZE_CM), FIELD_SIZE_CM_Y);
+        Point target = new Point((1.5 * TILE_SIZE_CM), FIELD_SIZE_CM_Y);
         boolean aiming = false;
         if(highGoal) {
-            target.setPoint(new Point(FIELD_SIZE_CM_X - (1.5 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
+            target.setPoint(new Point((1.5 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
             aiming = true;
         }
         else if(powerShotLeft) {
-            target.setPoint(new Point(FIELD_SIZE_CM_X - (2.25 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
+            target.setPoint(new Point((2.25 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
             aiming = true;
         }
         else if(powerShotCenter) {
-            target.setPoint(new Point(FIELD_SIZE_CM_X - (2.5 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
+            target.setPoint(new Point((2.5 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
             aiming = true;
         }
         else if(powerShotRight) {
-            target.setPoint(new Point(FIELD_SIZE_CM_X - (2.75 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
+            target.setPoint(new Point((2.75 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
             aiming = true;
         }
         //auto aim calculation and determine drive style
@@ -174,7 +175,8 @@ public class Drivetrain extends Subsystem {
             double currentAngle = Robot.getRobotAngleRad() > Math.PI ? Robot.getRobotAngleRad() - (2.0 * Math.PI) : Robot.getRobotAngleRad();
             //might have to subtract variable offset
             turnPid.run(absoluteAngleToTarget, currentAngle + variableOffsetRad);
-            turnPower = turnPid.getOutput() * -1.0;
+            turnPower = turnPid.getOutput();
+//            telemetry.addData("error", absoluteAngleToTarget - currentAngle);
 
 //            fieldCentricMove(strafe, forward, turnPower);
         } else {
@@ -186,12 +188,12 @@ public class Drivetrain extends Subsystem {
 //        double absoluteAngleToTarget = Math.atan2(Robot.getRobotY() - target.y, Robot.getRobotX() - target.x);
 //        telemetry.addData("angle", absoluteAngleToTarget);
         //time acceleration
-//        double accelMultiplier = 1;
-//        double accelRate = 1000.0;
-//        if(accelTimer.milliseconds() < accelRate) {
-//            accelMultiplier = accelTimer.milliseconds() / accelRate;
-//        }
-//        vd *= accelMultiplier;
+        double accelMultiplier = 1;
+        double accelRate = 1000.0;
+        if(accelTimer.milliseconds() < accelRate) {
+            accelMultiplier = accelTimer.milliseconds() / accelRate;
+        }
+        vd *= accelMultiplier;
 
         double[] v = {
                 (vd * Math.cos(theta) + turnPower) * multiplier,
@@ -201,25 +203,27 @@ public class Drivetrain extends Subsystem {
         };
 
         //iterated acceleration
-//        double maxAccel = 0.05;
+//        double maxAccel = 0.25;
 //        for (int i = 0; i < 3; i++) {
-//            if(v[i] - lastPowers[i] > maxAccel) {
-//                v[i] += maxAccel;
+//            if(Math.abs(v[i]) - Math.abs(lastPowers[i]) > maxAccel) {
+//                v[i] = lastPowers[i] + (Math.signum(v[i] * maxAccel));
 //            }
 //        }
 //        lastPowers = v;
 
         //iterated accleration with time constraint
-        double maxAccel = 0.05;
-        double accelTime = accelTimer.milliseconds();
-        if(accelTime > 50) {
-            for (int i = 0; i < 3; i++) {
-                if(v[i] - lastPowers[i] > maxAccel) {
-                    v[i] += maxAccel;
-                }
-            }
-            accelTimer.reset();
-        }
+//        double maxAccel = 0.05;
+//        telemetry.addData("accel",v[0] - lastPowers[0]);
+//        double accelTime = accelTimer.milliseconds();
+//        if(accelTime > 50) {
+//            for (int i = 0; i < 3; i++) {
+//                if(v[i] - lastPowers[i] > maxAccel) {
+//                    v[i] += maxAccel;
+//                }
+//            }
+//            accelTimer.reset();
+//        }
+//        lastPowers = v;
 
         setPowers(v);
     }
@@ -362,9 +366,9 @@ public class Drivetrain extends Subsystem {
     //TODO fix this or auto will not work
     public void fieldCentricMove(double x, double y, double turn) {
 
-//        x *= -1.0;
+//        y *= -1.0;
         double power = Math.hypot(x, y);
-        double theta = Math.atan2(y, x) - Robot.getRobotAngleRad();
+        double theta = Robot.getRobotAngleRad() - Math.atan2(y, x);
 
         double rx = (Math.sin(theta + (Math.PI / 4))) * power;
         double lx = (Math.sin(theta - (Math.PI / 4))) * power;

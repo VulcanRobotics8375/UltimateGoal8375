@@ -32,8 +32,8 @@ public class Shooter extends Subsystem {
     private double shooterModeNum = 88.9;
     private double shooterPowerLeft;
     private double shooterPowerRight;
-    private double shooterHighPower = 1.0;
-    private double shooterLowPower = 1.0;
+    private double shooterHighPower = 0.7;
+    private double shooterLowPower = 0.7;
     private double powerShotMode = -1;
     private boolean powerShotButton = false;
     private double powerShotPower = 0.7;
@@ -168,16 +168,16 @@ public class Shooter extends Subsystem {
             }
 
             if(hopperOut) {
-                hopper.setPosition(0.2);
+                hopper.setPosition(0);
             }
 
             if (!hopperOut){
-                hopper.setPosition(0);
+                hopper.setPosition(0.2);
             }
         }
 
         else {
-            hopper.setPosition(0);
+            hopper.setPosition(0.2);
 //            servoTimer.reset();
         }
 
