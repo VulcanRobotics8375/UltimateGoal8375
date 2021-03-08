@@ -40,11 +40,10 @@ public class Shooter extends Subsystem {
         servoTimer.reset();
     }
 
-    //TODO put the shooter power calculation in a separate method to clean up some stuff
     public void run(boolean shooterButton, boolean hopperButton, boolean powerShotButton) {
 
         if (shooterButton) {
-            shooterPower = 0.70;
+            shooterPower = 0.5;
             shooter_two.setPower(shooterPower);
             //   telemetry.addData("shooter power", shooter_two.getPower());
         } else {
@@ -71,48 +70,48 @@ public class Shooter extends Subsystem {
                 hopperOut = true;
                 servoTimer.reset();
             }
-            if ((servoTimer.time(TimeUnit.MILLISECONDS)) >= 200) {
+            if ((servoTimer.time(TimeUnit.MILLISECONDS)) >= 75) {
                 hopperOut = !hopperOut;
                 servoTimer.reset();
             }
             if (hopperOut) {
                 hopper.setPosition(0);
             }
-            if (!hopperOut) {
+            else {
                 hopper.setPosition(0.2);
-            } else {
-                hopper.setPosition(0.2);
-//            servoTimer.reset();
             }
+        } else {
+            hopper.setPosition(0.2);
         }
 
-            if (!hopperButton && this.hopperButton) {
-                this.hopperButton = false;
-            }
+        if (!hopperButton && this.hopperButton) {
+            this.hopperButton = false;
+        }
     }
-        public void setPowers ( double power){
-            shooter_two.setPower(power);
-        }
+    public void setPowers ( double power){
+        shooter_two.setPower(power);
+    }
 
-        public DcMotor getShooterOne () {
-            return shooter_one;
-        }
+    public DcMotor getShooterOne () {
+        return shooter_one;
+    }
 
-        public DcMotor getShooterTwo () {
-            return shooter_two;
-        }
+    public DcMotor getShooterTwo () {
+        return shooter_two;
+    }
 
-        public void setHopperPosition ( double position){
-            hopper.setPosition(position);
-        }
+    public void setHopperPosition ( double position){
+        hopper.setPosition(position);
+    }
 
-        public void setPowerShotPosition ( double position){
-            powerShot.setPosition(position);
-        }
+    public void setPowerShotPosition ( double position){
+        powerShot.setPosition(position);
+    }
 
-        public void setShooterPower ( double power){
-            shooter_one.setPower(power);
-        }
+    public void setShooterPower ( double power){
+        shooter_one.setPower(power);
+    }
+
     @Override
     public void stop() {
     }

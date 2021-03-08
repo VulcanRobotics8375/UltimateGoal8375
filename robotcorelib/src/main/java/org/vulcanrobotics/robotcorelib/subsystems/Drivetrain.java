@@ -20,7 +20,7 @@ public class Drivetrain extends Subsystem {
     private DcMotor fl, fr, bl, br;
     private BNO055IMU imu;
 
-    private PID turnPid = new PID(2.0, 0.1, -1.1, 0.1, 0.05, -0.5, 0.5);
+    private PID turnPid = new PID(1.2, 0.15, -0.95, 0.1, 0.01, -0.5, 0.5);
 
     private boolean doingAutonomousTask;
     private boolean unlockedAim;
@@ -108,13 +108,13 @@ public class Drivetrain extends Subsystem {
         forward = curveLinearJoystick(forward);
         strafe = curveLinearJoystick(strafe);
         //scale inputs
-        double magnitude = Math.abs(forward) + Math.abs(strafe) + Math.abs(turn);
-        if(magnitude > 1) {
-            forward *= 1.0 / magnitude;
-            strafe *= 1.0 / magnitude;
-            turn *= 1.0 / magnitude;
-
-        }
+//        double magnitude = Math.abs(forward) + Math.abs(strafe) + Math.abs(turn);
+//        if(magnitude > 1) {
+//            forward *= 1.0 / magnitude;
+//            strafe *= 1.0 / magnitude;
+//            turn *= 1.0 / magnitude;
+//
+//        }
 
         double vd = Math.hypot(forward, strafe);
         double theta = Math.atan2(forward, strafe) - (Math.PI / 4);
@@ -353,7 +353,7 @@ public class Drivetrain extends Subsystem {
         return (m * relativeAngle) + 1;
     }
 
-    //TODO fix this or auto will not work
+    //TODO try input scaling
     public void fieldCentricMove(double x, double y, double turn) {
 
 //        y *= -1.0;

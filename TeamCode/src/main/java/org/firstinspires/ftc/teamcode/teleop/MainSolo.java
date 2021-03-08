@@ -79,7 +79,7 @@ public class MainSolo extends TeleOpPipeline {
 
             subsystems.drivetrain.mecanumDrive(gamepad1.left_stick_y, -gamepad1.right_stick_x, -gamepad1.left_stick_x, gamepad1.a, gamepad2.b, gamepad2.y, gamepad2.x, gamepad1.dpad_left, gamepad1.dpad_right);
             subsystems.intake.run(intakeOn, gamepad1.y, gamepad2.right_bumper);
-            subsystems.shooter.run(gamepad2.left_bumper, gamepad1.right_bumper, shoot, gamepad2.right_trigger, shooterOn ? 1 : 0, gamepad2.dpad_down);
+//            subsystems.shooter.run(gamepad2.left_bumper, gamepad1.right_bumper, shoot, gamepad2.right_trigger, shooterOn ? 1 : 0, gamepad2.dpad_down);
             subsystems.wobbleGrabber.run(gamepad2.x,gamepad2.y, -gamepad2.left_stick_y * 0.5);
 
 //            motionProfile.update();

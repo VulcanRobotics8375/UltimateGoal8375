@@ -51,21 +51,12 @@ public class Main extends TeleOpPipeline {
         while (opModeIsActive()) {
             drive.update();
             timer.reset();
-            joystickCancel = gamepad1.b || gamepad1.left_stick_x != 0 || gamepad1.right_stick_y != 0 || gamepad2.right_bumper ? 1 : 0;
-
-            int shoot;
-            if(gamepad1.a) {
-                shoot = 1;
-            } else if(gamepad1.b || gamepad1.y || gamepad1.x) {
-                shoot = 2;
-            } else {
-                shoot = 0;
-            }
+//            joystickCancel = gamepad1.b || gamepad1.left_stick_x != 0 || gamepad1.right_stick_y != 0 || gamepad2.right_bumper ? 1 : 0;
 
             if(!autoRunning) {
                 subsystems.drivetrain.mecanumDrive(gamepad1.left_stick_y, -gamepad1.right_stick_x, -gamepad1.left_stick_x, gamepad1.a, false, gamepad1.y, gamepad1.x, gamepad1.left_bumper, gamepad1.right_bumper);
                 subsystems.intake.run(gamepad2.b, gamepad2.a, gamepad2.right_bumper);
-                subsystems.shooter.run(gamepad2.left_bumper, gamepad2.right_bumper, shoot, gamepad2.right_trigger, gamepad2.left_trigger, gamepad2.dpad_down);
+                subsystems.shooter.run(gamepad2.left_trigger > 0, gamepad2.right_bumper, gamepad2.dpad_down);
                 subsystems.wobbleGrabber.run(gamepad2.x, gamepad2.y, -gamepad2.left_stick_y * 0.5);
             }
 //            motionProfile.update();
@@ -75,92 +66,6 @@ public class Main extends TeleOpPipeline {
 //            if(gamepad1.right_trigger  > 0) {
 //                Robot.setRobotPos(new Point(138.34, Robot.getRobotY()));
 //            }
-
-            if(gamepad1.dpad_down && !autoRunning) {
-                autoRunning = true;
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Robot.setRobotPos(new Point(32.5, 169));
-                        Robot.setRobotAngle(0.0);
-                        ArrayList<ArrayList<PathPoint>> sections = new ArrayList<>();
-
-                        ArrayList<PathPoint> powershotPos = new ArrayList<>();
-                        powershotPos.add(new PathPoint(32.5, 169, -0.5, 1, 12, 0));
-                        powershotPos.add(new PathPoint(32.5, 169, -0.5, 1, 12, 0));
-                        powershotPos.add(new PathPoint(100, 170, -0.5, 1, 12, 0));
-                        powershotPos.add(new PathPoint(100, 170, -0.5, 1, 12, 0));
-
-                        sections.add(powershotPos);
-
-                        final PurePursuit controller = new PurePursuit(sections);
-
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                controller.run();
-                            }
-                        }).start();
-
-//                        new Thread(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                while(gamepad1.left_stick_x == 0) {}
-//                                controller.stop = true;
-//                                autoRunning = false;
-//                            }
-//                        }).start();
-
-                        subsystems.drivetrain.resetAiming();
-                        while(controller.getCurrentSection() == 0 && !isStopRequested() && joystickCancel == 0) {
-                            subsystems.shooter.setPowers(0.895);
-                            subsystems.shooter.setHopperPosition(0);
-                            subsystems.shooter.setPowerShotPosition(0.04);
-
-                        }
-                        safeSleep(50, joystickCancel != 0);
-                        subsystems.shooter.setPowers(0.895);
-                        while(!subsystems.drivetrain.isAimed() && !isStopRequested() && joystickCancel == 0) {
-                            subsystems.shooter.setHopperPosition(0.0);
-                            subsystems.shooter.setPowers(0.895);
-                            subsystems.drivetrain.aim(1, 0,0.005);
-                        }
-                        subsystems.drivetrain.run(0, 0);
-                        safeSleep(100, joystickCancel != 0);
-                        subsystems.shooter.setHopperPosition(0.18);
-                        safeSleep(500, joystickCancel != 0);
-                        subsystems.drivetrain.resetAiming();
-                        while(!subsystems.drivetrain.isAimed() && !isStopRequested()&& joystickCancel == 0) {
-                            subsystems.shooter.setHopperPosition(0.0);
-                            subsystems.shooter.setPowers(0.895);
-                            subsystems.drivetrain.aim(2, 0, 0.005);
-                        }
-                        subsystems.drivetrain.run(0, 0);
-                        safeSleep(100, joystickCancel != 0);
-                        subsystems.shooter.setHopperPosition(0.18);
-                        safeSleep(500, joystickCancel != 0);
-                        subsystems.drivetrain.resetAiming();
-                        while(!subsystems.drivetrain.isAimed() && !isStopRequested() && joystickCancel == 0) {
-                            subsystems.shooter.setHopperPosition(0.0);
-                            subsystems.shooter.setPowers(0.895);
-                            subsystems.drivetrain.aim(3, 0, 0.005);
-                        }
-                        subsystems.drivetrain.run(0, 0);
-                        safeSleep(100, joystickCancel != 0);
-                        subsystems.shooter.setHopperPosition(0.18);
-                        safeSleep(500, joystickCancel != 0);
-                        subsystems.drivetrain.resetAiming();
-                        subsystems.shooter.setHopperPosition(0.0);
-                        subsystems.shooter.setPowers(0.0);
-                        subsystems.shooter.setPowerShotPosition(0.65);
-
-                        controller.stop = true;
-                        autoRunning = false;
-
-                    }
-                }).start();
-
-            }
 
 //            motionProfile.update();
 
@@ -173,7 +78,7 @@ public class Main extends TeleOpPipeline {
 //            telemetry.addData("right", motionProfile.getRight().getPosition());
 //            telemetry.addData("horizontal", motionProfile.getHorizontal().getPosition());
             if(debug) {
-                debug();
+//                debug();
             }
 
 //            telemetry.addData("left", motionProfile.getLeft().getPosition());
@@ -181,10 +86,13 @@ public class Main extends TeleOpPipeline {
 //            telemetry.addData("horizontal", motionProfile.getHorizontal().getPosition());
 //            telemetry.addData("loop time", time);
 //            telemetry.update();
-            double TARGET_UPS = 100.0;
+//            subsystems.drivetrain.tunePID(gamepad1.dpad_up, gamepad1.dpad_down, gamepad1.dpad_right);
+            double TARGET_UPS = 50.0;
             while(timer.milliseconds() < 1000.0 / TARGET_UPS) {
 //               sleep(1);
             }
+
+            telemetry.update();
             time = timer.milliseconds();
 //            timer.reset();
         }
