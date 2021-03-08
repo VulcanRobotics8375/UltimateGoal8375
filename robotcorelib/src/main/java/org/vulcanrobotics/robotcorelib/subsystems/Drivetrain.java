@@ -357,7 +357,7 @@ public class Drivetrain extends Subsystem {
     public void fieldCentricMove(double x, double y, double turn) {
 
 //        y *= -1.0;
-        //input scaling 
+        //input scaling
         double magnitude = Math.abs(x) + Math.abs(y) + Math.abs(turn);
         if(magnitude > 1.0) {
             x *= 1.0 / magnitude;
