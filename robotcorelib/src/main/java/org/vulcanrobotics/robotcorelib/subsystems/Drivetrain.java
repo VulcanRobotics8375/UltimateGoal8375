@@ -353,10 +353,18 @@ public class Drivetrain extends Subsystem {
         return (m * relativeAngle) + 1;
     }
 
-    //TODO try input scaling
+    //TODO test input scaling
     public void fieldCentricMove(double x, double y, double turn) {
 
 //        y *= -1.0;
+        //input scaling 
+        double magnitude = Math.abs(x) + Math.abs(y) + Math.abs(turn);
+        if(magnitude > 1.0) {
+            x *= 1.0 / magnitude;
+            y *= 1.0 / magnitude;
+            turn *= 1.0 / magnitude;
+        }
+
         double power = Math.hypot(x, y);
         double theta = Robot.getRobotAngleRad() - Math.atan2(y, x);
 
