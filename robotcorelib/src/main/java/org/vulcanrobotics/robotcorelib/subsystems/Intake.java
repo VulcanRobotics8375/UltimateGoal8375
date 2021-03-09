@@ -26,6 +26,7 @@ public class Intake extends Subsystem {
 
         intake.setDirection(DcMotorSimple.Direction.FORWARD);
         transfer.setDirection(DcMotorSimple.Direction.FORWARD);
+        //stop and reset encoder is important for odometry
         transfer.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         transfer.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -61,15 +62,15 @@ public class Intake extends Subsystem {
         double filterEstimate = filter.getEstimate();
 
         //TODO adjust bounds
-        double oneRingBound = 1, twoRingBound = 2, threeRingBound = 3, obstructionBound = 4;
+        double oneRingBound = 4, twoRingBound = 3, threeRingBound = 2, obstructionBound = 1;
 
-        if(filterEstimate < oneRingBound) {
+        if(filterEstimate > oneRingBound) {
             hopperState = HopperState.ZERO_RINGS;
-        } else if(filterEstimate > oneRingBound && filterEstimate < twoRingBound) {
+        } else if(filterEstimate < oneRingBound && filterEstimate > twoRingBound) {
             hopperState = HopperState.ONE_RING;
-        } else if(filterEstimate > twoRingBound && filterEstimate < threeRingBound) {
+        } else if(filterEstimate < twoRingBound && filterEstimate > threeRingBound) {
             hopperState = HopperState.TWO_RINGS;
-        } else if(filterEstimate > threeRingBound && filterEstimate < obstructionBound) {
+        } else if(filterEstimate < threeRingBound && filterEstimate > obstructionBound) {
             hopperState = HopperState.THREE_RINGS;
         } else {
             hopperState = HopperState.SENSOR_OBSTRUCTED;
