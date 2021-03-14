@@ -14,8 +14,7 @@ import java.util.concurrent.TimeUnit;
 
 public class Shooter extends Subsystem {
     private DcMotorEx shooter_one, shooter_two;
-    private Servo hopper;
-    private Servo powerShot;
+    private Servo hopper, powerShot;
 
     private boolean hopperButton, hopperOut, powerShotButton = false;
     public double shooterPower, powerShotMode = -1;

@@ -2,6 +2,7 @@ package org.vulcanrobotics.robotcorelib.subsystems;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -10,7 +11,9 @@ import org.vulcanrobotics.robotcorelib.math.KalmanFilter;
 public class Intake extends Subsystem {
     private DcMotor transfer, intake;
     private Rev2mDistanceSensor hopperSensor;
+    private Servo ringBlocker;
     private boolean intakeButton;
+
 
     private HopperState hopperState = HopperState.ZERO_RINGS;
     private KalmanFilter filter = new KalmanFilter(0.1, 0.01, 0, 0.1);
@@ -23,6 +26,7 @@ public class Intake extends Subsystem {
         transfer = hardwareMap.dcMotor.get("transfer_intake");
         intake = hardwareMap.dcMotor.get("roller_intake");
         hopperSensor = hardwareMap.get(Rev2mDistanceSensor.class, "hopper_sensor");
+        ringBlocker = (Servo) hardwareMap.get("intake_blocker");
 
         intake.setDirection(DcMotorSimple.Direction.FORWARD);
         transfer.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -74,6 +78,12 @@ public class Intake extends Subsystem {
             hopperState = HopperState.THREE_RINGS;
         } else {
             hopperState = HopperState.SENSOR_OBSTRUCTED;
+        }
+
+        if(hopperState == HopperState.THREE_RINGS){
+            ringBlocker.setPosition(.65);
+        }else{
+            ringBlocker.setPosition(0);
         }
 
 
