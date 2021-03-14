@@ -33,8 +33,8 @@ public class Shooter extends Subsystem {
         shooter_one.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         shooter_one.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         shooter_two.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        shooter_two.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(10.0, 3.0, 0.0, 6.0));
-        shooter_two.setDirection(DcMotorSimple.Direction.REVERSE);
+        shooter_two.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(20.0, 6.0, 0.0, 24.0));
+        shooter_two.setDirection(DcMotorSimple.Direction.FORWARD);
         shooter_one.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         shooter_two.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         servoTimer.reset();
@@ -43,9 +43,11 @@ public class Shooter extends Subsystem {
     public void run(boolean shooterButton, boolean hopperButton, boolean powerShotButton) {
 
         if (shooterButton) {
-            shooterPower = 0.5;
+            shooterPower = 0.8;
             shooter_two.setPower(shooterPower);
             //   telemetry.addData("shooter power", shooter_two.getPower());
+        } else if(powerShotButton){
+            shooter_two.setPower(0.6);
         } else {
             shooter_two.setPower(0);
         }
@@ -70,18 +72,18 @@ public class Shooter extends Subsystem {
                 hopperOut = true;
                 servoTimer.reset();
             }
-            if ((servoTimer.time(TimeUnit.MILLISECONDS)) >= 75) {
+            if ((servoTimer.time(TimeUnit.MILLISECONDS)) >= 100) {
                 hopperOut = !hopperOut;
                 servoTimer.reset();
             }
             if (hopperOut) {
-                hopper.setPosition(0);
-            }
-            else {
                 hopper.setPosition(0.2);
             }
+            else {
+                hopper.setPosition(0);
+            }
         } else {
-            hopper.setPosition(0.2);
+            hopper.setPosition(0);
         }
 
         if (!hopperButton && this.hopperButton) {

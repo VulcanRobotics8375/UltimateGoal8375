@@ -13,7 +13,7 @@ public class Intake extends Subsystem {
     private boolean intakeButton;
 
     private HopperState hopperState = HopperState.ZERO_RINGS;
-    private KalmanFilter filter = new KalmanFilter(0.1, 0.01, 0, 0.1);
+    private KalmanFilter filter = new KalmanFilter(0.2, 0.01, 0, 0.1);
 
     private ElapsedTime jamTimer = new ElapsedTime();
 
@@ -38,7 +38,7 @@ public class Intake extends Subsystem {
     public void run(boolean intakeButton, boolean reverse, boolean transferOn) {
         //yeet. Im not throwin away my shot
         double transferSpeed = 1.0;
-        double intakeSpeed = 1.0;
+        double intakeSpeed = hopperState.ringNum == 3 ? -1.0 : 1.0;
         if (intakeButton) {
             transfer.setPower(transferSpeed);
             intake.setPower(intakeSpeed);
@@ -62,7 +62,7 @@ public class Intake extends Subsystem {
         double filterEstimate = filter.getEstimate();
 
         //TODO adjust bounds
-        double oneRingBound = 4, twoRingBound = 3, threeRingBound = 2, obstructionBound = 1;
+        double oneRingBound = 85, twoRingBound = 65, threeRingBound = 50, obstructionBound = 20;
 
         if(filterEstimate > oneRingBound) {
             hopperState = HopperState.ZERO_RINGS;
@@ -75,6 +75,10 @@ public class Intake extends Subsystem {
         } else {
             hopperState = HopperState.SENSOR_OBSTRUCTED;
         }
+
+//        telemetry.addData("sensor", hopperSensorRaw);
+//        telemetry.addData("filter", filterEstimate);
+//        telemetry.addData("hopper state", hopperState.ringNum);
 
 
     }
@@ -116,6 +120,10 @@ public class Intake extends Subsystem {
         transfer.setPower(power);
     }
 
+    public HopperState getHopperState() {
+        return hopperState;
+    }
+
     @Override
     public void stop() {
     }
@@ -130,7 +138,7 @@ enum HopperState {
 
     public int ringNum;
 
-    private HopperState(int ringNum) {
+     HopperState(int ringNum) {
         this.ringNum = ringNum;
     }
 

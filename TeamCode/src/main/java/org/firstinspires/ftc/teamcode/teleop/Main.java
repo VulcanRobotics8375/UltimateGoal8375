@@ -21,7 +21,6 @@ public class Main extends TeleOpPipeline {
 
     boolean debug = true;
     boolean autoRunning = false;
-    volatile float joystickCancel;
 
     private ElapsedTime timer = new ElapsedTime();
     private double time;
@@ -47,14 +46,23 @@ public class Main extends TeleOpPipeline {
 
 //        Mecanum motionProfile = (Mecanum) Robot.motionProfile;
         timer.reset();
+        boolean reset = false;
 
         while (opModeIsActive()) {
             drive.update();
             timer.reset();
-//            joystickCancel = gamepad1.b || gamepad1.left_stick_x != 0 || gamepad1.right_stick_y != 0 || gamepad2.right_bumper ? 1 : 0;
+            if(gamepad1.left_trigger != 0 && !reset) {
+                drive.setPoseEstimate(new Pose2d(185, Constants.FIELD_SIZE_CM_X - 21.6, 0.0));
+                //tune this value
+                subsystems.drivetrain.setVariableOffset(0);
+                reset = true;
+            }
+            if(reset && gamepad1.left_trigger == 0) {
+                reset = false;
+            }
 
             if(!autoRunning) {
-                subsystems.drivetrain.mecanumDrive(gamepad1.left_stick_y, -gamepad1.right_stick_x, -gamepad1.left_stick_x, gamepad1.a, false, gamepad1.y, gamepad1.x, gamepad1.left_bumper, gamepad1.right_bumper);
+                subsystems.drivetrain.mecanumDrive(gamepad1.left_stick_y, -gamepad1.right_stick_x, -gamepad1.left_stick_x, gamepad1.a, gamepad1.b, gamepad1.y, gamepad1.x, gamepad1.left_bumper, gamepad1.right_bumper);
                 subsystems.intake.run(gamepad2.b, gamepad2.a, gamepad2.right_bumper);
                 subsystems.shooter.run(gamepad2.left_trigger > 0, gamepad2.right_bumper, gamepad2.dpad_down);
                 subsystems.wobbleGrabber.run(gamepad2.x, gamepad2.y, -gamepad2.left_stick_y * 0.5);
@@ -78,7 +86,7 @@ public class Main extends TeleOpPipeline {
 //            telemetry.addData("right", motionProfile.getRight().getPosition());
 //            telemetry.addData("horizontal", motionProfile.getHorizontal().getPosition());
             if(debug) {
-//                debug();
+                debug();
             }
 
 //            telemetry.addData("left", motionProfile.getLeft().getPosition());
@@ -87,7 +95,7 @@ public class Main extends TeleOpPipeline {
 //            telemetry.addData("loop time", time);
 //            telemetry.update();
 //            subsystems.drivetrain.tunePID(gamepad1.dpad_up, gamepad1.dpad_down, gamepad1.dpad_right);
-            double TARGET_UPS = 50.0;
+            double TARGET_UPS = 100.0;
             while(timer.milliseconds() < 1000.0 / TARGET_UPS) {
 //               sleep(1);
             }
@@ -111,7 +119,7 @@ public class Main extends TeleOpPipeline {
         telemetry.addData("robot angle", Robot.getRobotAngleRad());
 //        telemetry.addData()
 
-        telemetry.update();
+//        telemetry.update();
 //        telemetry.addData("zAngle", subsystems.drivetrain.getZAngle());
     }
 

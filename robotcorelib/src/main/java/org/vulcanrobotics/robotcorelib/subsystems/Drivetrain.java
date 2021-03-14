@@ -179,7 +179,7 @@ public class Drivetrain extends Subsystem {
 //        telemetry.addData("angle", absoluteAngleToTarget);
         //time acceleration
         double accelMultiplier = 1;
-        double accelRate = 1000.0;
+        double accelRate = 500.0;
         if(accelTimer.milliseconds() < accelRate) {
             accelMultiplier = accelTimer.milliseconds() / accelRate;
         }
@@ -431,6 +431,10 @@ public class Drivetrain extends Subsystem {
         fr.setZeroPowerBehavior(powerBehavior);
         bl.setZeroPowerBehavior(powerBehavior);
         br.setZeroPowerBehavior(powerBehavior);
+    }
+
+    public void setVariableOffset(double offset) {
+        variableOffset = offset;
     }
 
     public void run(double forward, double turn) {
