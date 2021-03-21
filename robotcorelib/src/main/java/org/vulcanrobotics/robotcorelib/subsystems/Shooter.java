@@ -28,7 +28,6 @@ public class Shooter extends Subsystem {
         shooter_one = (DcMotorEx) hardwareMap.dcMotor.get("shooter_one");
         shooter_two = (DcMotorEx) hardwareMap.dcMotor.get("shooter_two");
         hopper = hardwareMap.servo.get("hopper");
-//        powerShot = hardwareMap.servo.get("powershot");
         shooter_one.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         shooter_one.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         shooter_two.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -43,9 +42,6 @@ public class Shooter extends Subsystem {
 
         if (shooterButton || Robot.getComponents().intake.getHopperState() == HopperState.TWO_RINGS) {
             shooting = true;
-//            shooterPower = 0.8;
-//            shooter_two.setPower(shooterPower);
-            //   telemetry.addData("shooter power", shooter_two.getPower());
         } else if(powerShotButton){
             shooter_two.setPower(0.6);
         } else {
@@ -92,6 +88,7 @@ public class Shooter extends Subsystem {
             this.hopperButton = false;
         }
     }
+
     public void setPowers ( double power){
         shooter_two.setPower(power);
     }
