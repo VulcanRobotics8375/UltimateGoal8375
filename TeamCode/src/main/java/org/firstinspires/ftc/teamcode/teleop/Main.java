@@ -33,7 +33,7 @@ public class Main extends TeleOpPipeline {
 
         teleopInit();
         Robot.loadRobotPosition();
-        gamepad1.setJoystickDeadzone(0.001f);
+//        gamepad1.setJoystickDeadzone(0.001f);
 
         telemetry.addLine("ready");
         telemetry.update();
@@ -63,7 +63,7 @@ public class Main extends TeleOpPipeline {
 
             if(!autoRunning) {
                 subsystems.drivetrain.mecanumDrive(gamepad1.left_stick_y, -gamepad1.right_stick_x, -gamepad1.left_stick_x, gamepad1.a, gamepad1.b, gamepad1.y, gamepad1.x, gamepad1.left_bumper, gamepad1.right_bumper);
-                subsystems.intake.run(gamepad2.b, gamepad2.a, gamepad2.right_bumper);
+                subsystems.intake.run(gamepad2.b, gamepad2.a, gamepad2.right_bumper, gamepad2.dpad_up);
                 subsystems.shooter.run(gamepad2.left_trigger > 0, gamepad2.right_bumper, gamepad2.dpad_down);
                 subsystems.wobbleGrabber.run(gamepad2.x, gamepad2.y, -gamepad2.left_stick_y * 0.5);
             }
@@ -82,9 +82,9 @@ public class Main extends TeleOpPipeline {
             Robot.setRobotAngle(poseEstimate.getHeading());
 
             //TODO disable debug for competition code
-//            telemetry.addData("left", motionProfile.getLeft().getPosition());
-//            telemetry.addData("right", motionProfile.getRight().getPosition());
-//            telemetry.addData("horizontal", motionProfile.getHorizontal().getPosition());
+//            telemetry.addData("left", drive.getWheelPositions().get(0));
+//            telemetry.addData("right", drive.getWheelPositions().get(1));
+//            telemetry.addData("horizontal", drive.getWheelPositions().get(2));
             if(debug) {
                 debug();
             }

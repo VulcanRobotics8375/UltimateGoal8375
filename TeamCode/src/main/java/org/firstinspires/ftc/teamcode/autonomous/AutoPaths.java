@@ -339,7 +339,7 @@ public class AutoPaths extends AutoPipeline {
                     if (internalController.getCurrentSection() == 4) {
 //                        subsytems.wobbleGrabber.setTurnPosition(0.2);
 //                        subsytems.wobbleGrabber.setGrabPosition(0.05);
-                        subsystems.intake.run(true, false, false);
+//                        subsystems.intake.run(true, false, false);
                         sleep(1000);
                         if (sectionStart == 3) {
                             internalController.startNextSection();
@@ -349,7 +349,7 @@ public class AutoPaths extends AutoPipeline {
 
                     if (internalController.getCurrentSection() == 5 && sectionStart == 4) {
                         long lastTime = System.currentTimeMillis();
-                        subsystems.intake.run(false, false, false);
+//                        subsystems.intake.run(false, false, false);
                         subsystems.shooter.setShooterPower(0.82);
                        while(System.currentTimeMillis() - lastTime < 1500) {
                            subsystems.drivetrain.mecanumDrive(0, 0, 0, true, false, false,false, false, false);
@@ -394,7 +394,7 @@ public class AutoPaths extends AutoPipeline {
                     if (internalController.getCurrentSection() == 4) {
 //                        subsytems.wobbleGrabber.setTurnPosition(0.2);
 //                        subsytems.wobbleGrabber.setGrabPosition(0.05);
-                        subsystems.intake.run(true, false, false);
+//                        subsystems.intake.run(true, false, false);
                         sleep(1000);
                         if (sectionStart == 3) {
                             internalController.startNextSection();

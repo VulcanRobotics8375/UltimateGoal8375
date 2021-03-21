@@ -178,12 +178,12 @@ public class Drivetrain extends Subsystem {
 //        double absoluteAngleToTarget = Math.atan2(Robot.getRobotY() - target.y, Robot.getRobotX() - target.x);
 //        telemetry.addData("angle", absoluteAngleToTarget);
         //time acceleration
-        double accelMultiplier = 1;
-        double accelRate = 500.0;
-        if(accelTimer.milliseconds() < accelRate) {
-            accelMultiplier = accelTimer.milliseconds() / accelRate;
-        }
-        vd *= accelMultiplier;
+//        double accelMultiplier = 1;
+//        double accelRate = 500.0;
+//        if(accelTimer.milliseconds() < accelRate) {
+//            accelMultiplier = accelTimer.milliseconds() / accelRate;
+//        }
+//        vd *= accelMultiplier;
 
         double[] v = {
                 (vd * Math.cos(theta) + turnPower) * multiplier,

@@ -13,6 +13,8 @@ public class Intake extends Subsystem {
     private Rev2mDistanceSensor hopperSensor;
     private Servo ringBlocker;
     private boolean intakeButton;
+    private boolean overrideBlocker;
+    private boolean override = false;
 
 
     private HopperState hopperState = HopperState.ZERO_RINGS;
@@ -26,7 +28,7 @@ public class Intake extends Subsystem {
         transfer = hardwareMap.dcMotor.get("transfer_intake");
         intake = hardwareMap.dcMotor.get("roller_intake");
         hopperSensor = hardwareMap.get(Rev2mDistanceSensor.class, "hopper_sensor");
-        ringBlocker = (Servo) hardwareMap.get("intake_blocker");
+        ringBlocker = hardwareMap.servo.get("intake_blocker");
 
         intake.setDirection(DcMotorSimple.Direction.FORWARD);
         transfer.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -39,17 +41,17 @@ public class Intake extends Subsystem {
     }
 
     //TODO add sensor code/ring counter for intake stage 1
-    public void run(boolean intakeButton, boolean reverse, boolean transferOn) {
+    public void run(boolean intakeButton, boolean reverse, boolean transferOn, boolean overrideBlocker) {
         //yeet. Im not throwin away my shot
-        double transferSpeed = 1.0;
+        double transferSpeed = hopperState.ringNum == 3 ? -1.0 : 1.0;
         double intakeSpeed = hopperState.ringNum == 3 ? -1.0 : 1.0;
         if (intakeButton) {
-            transfer.setPower(transferSpeed);
+            transfer.setPower(-transferSpeed);
             intake.setPower(intakeSpeed);
         }
 
         else if (reverse) {
-            transfer.setPower(transferSpeed * -1.0);
+            transfer.setPower(-transferSpeed);
             intake.setPower(-1.0 * intakeSpeed);
         }
 
@@ -83,14 +85,30 @@ public class Intake extends Subsystem {
 //        telemetry.addData("sensor", hopperSensorRaw);
 //        telemetry.addData("filter", filterEstimate);
 //        telemetry.addData("hopper state", hopperState.ringNum);
-        if(hopperState == HopperState.THREE_RINGS){
-            ringBlocker.setPosition(.65);
-        }else{
-            ringBlocker.setPosition(0);
+
+        if(overrideBlocker && !this.overrideBlocker) {
+            override = !override;
+            this.overrideBlocker = true;
+        }
+        if(!overrideBlocker && this.overrideBlocker) {
+            this.overrideBlocker = false;
+        }
+
+        if(!override) {
+            if (hopperState == HopperState.THREE_RINGS) {
+                ringBlocker.setPosition(0.45);
+            } else {
+                ringBlocker.setPosition(0.25);
+            }
+        } else {
+            ringBlocker.setPosition(0.9);
         }
 
 
     }
+
+    //TODO placeholder, pls remove
+    public void run(boolean a, boolean b, boolean c) {}
 
     double lastTransferPos;
     private boolean isTransferJammed() {

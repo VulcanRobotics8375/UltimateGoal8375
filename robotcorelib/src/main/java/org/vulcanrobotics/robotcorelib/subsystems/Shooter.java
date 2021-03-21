@@ -14,9 +14,9 @@ import java.util.concurrent.TimeUnit;
 
 public class Shooter extends Subsystem {
     private DcMotorEx shooter_one, shooter_two;
-    private Servo hopper, powerShot;
+    private Servo hopper;
 
-    private boolean hopperButton, hopperOut, powerShotButton = false;
+    private boolean hopperButton, hopperOut, powerShotButton = false, shooting = false;
     public double shooterPower, powerShotMode = -1;
 
     private ElapsedTime servoTimer = new ElapsedTime();
@@ -28,11 +28,11 @@ public class Shooter extends Subsystem {
         shooter_one = (DcMotorEx) hardwareMap.dcMotor.get("shooter_one");
         shooter_two = (DcMotorEx) hardwareMap.dcMotor.get("shooter_two");
         hopper = hardwareMap.servo.get("hopper");
-        powerShot = hardwareMap.servo.get("powershot");
+//        powerShot = hardwareMap.servo.get("powershot");
         shooter_one.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         shooter_one.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         shooter_two.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        shooter_two.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(20.0, 6.0, 0.0, 24.0));
+        shooter_two.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(10.0, 3.0, 0.0, 12.0));
         shooter_two.setDirection(DcMotorSimple.Direction.FORWARD);
         shooter_one.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         shooter_two.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -41,14 +41,23 @@ public class Shooter extends Subsystem {
 
     public void run(boolean shooterButton, boolean hopperButton, boolean powerShotButton) {
 
-        if (shooterButton) {
-            shooterPower = 0.8;
-            shooter_two.setPower(shooterPower);
+        if (shooterButton || Robot.getComponents().intake.getHopperState() == HopperState.TWO_RINGS) {
+            shooting = true;
+//            shooterPower = 0.8;
+//            shooter_two.setPower(shooterPower);
             //   telemetry.addData("shooter power", shooter_two.getPower());
         } else if(powerShotButton){
             shooter_two.setPower(0.6);
         } else {
             shooter_two.setPower(0);
+        }
+
+        if(Robot.getComponents().intake.getHopperState() == HopperState.ZERO_RINGS && !shooterButton) {
+            shooting = false;
+        }
+
+        if(shooting) {
+            shooter_two.setPower(0.8);
         }
 
         if (powerShotButton && !this.powerShotButton) {
@@ -57,12 +66,6 @@ public class Shooter extends Subsystem {
         }
         if (!powerShotButton && this.powerShotButton) {
             this.powerShotButton = false;
-        }
-
-        if (powerShotMode > 0) {
-            powerShot.setPosition(0.65);
-        } else if (powerShotMode < 0) {
-            powerShot.setPosition(0.035);
         }
 
         if (hopperButton) {
@@ -106,7 +109,6 @@ public class Shooter extends Subsystem {
     }
 
     public void setPowerShotPosition ( double position){
-        powerShot.setPosition(position);
     }
 
     public void setShooterPower ( double power){
