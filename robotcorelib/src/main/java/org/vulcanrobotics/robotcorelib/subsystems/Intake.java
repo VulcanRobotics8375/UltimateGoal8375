@@ -12,10 +12,7 @@ public class Intake extends Subsystem {
     private DcMotor transfer, intake;
     private Rev2mDistanceSensor hopperSensor;
     private Servo ringBlocker, intakeDeploy;
-    private boolean intakeButton;
-    private boolean overrideBlocker;
-    private boolean override = false;
-
+    private boolean intakeButton, overrideBlocker, override = false;
 
     private HopperState hopperState = HopperState.ZERO_RINGS;
     private KalmanFilter filter = new KalmanFilter(0.2, 0.01, 0, 0.1);
@@ -43,9 +40,9 @@ public class Intake extends Subsystem {
 
     //TODO add sensor code/ring counter for intake stage 1
     public void run(boolean intakeButton, boolean reverse, boolean transferOn, boolean overrideBlocker) {
-        //yeet. Im not throwin away my shot
         double transferSpeed = hopperState.ringNum == 3 ? -1.0 : 1.0;
         double intakeSpeed = hopperState.ringNum == 3 ? -1.0 : 1.0;
+
         if (intakeButton) {
             transfer.setPower(transferSpeed);
             intake.setPower(intakeSpeed);
