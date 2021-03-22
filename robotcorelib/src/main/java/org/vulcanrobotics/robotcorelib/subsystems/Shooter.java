@@ -31,7 +31,7 @@ public class Shooter extends Subsystem {
         shooter_one.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         shooter_one.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         shooter_two.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        shooter_two.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(10.0, 3.0, 0.0, 12.0));
+        shooter_two.setVelocityPIDFCoefficients(1.3, 0.13, 0.0, 13.0);
         shooter_two.setDirection(DcMotorSimple.Direction.FORWARD);
         shooter_one.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         shooter_two.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
