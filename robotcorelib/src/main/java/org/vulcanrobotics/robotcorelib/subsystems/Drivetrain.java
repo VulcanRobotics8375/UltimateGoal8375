@@ -176,20 +176,8 @@ public class Drivetrain extends Subsystem {
                 doingAutonomousTask = false;
             }
         }
-//        double absoluteAngleToTarget = Math.atan2(Robot.getRobotY() - target.y, Robot.getRobotX() - target.x);
-//        telemetry.addData("angle", absoluteAngleToTarget);
-        //time acceleration
-        //robot max velocity = 135
-//        double accelMultiplier = 1;
-//        double accelRate = 500.0 * vd;
-//        if(accelTimer.milliseconds() < accelRate) {
-//            accelMultiplier = accelTimer.milliseconds() / accelRate;
-//        }
-//        vd *= accelMultiplier;
 
         Point robotVelocity = Robot.getRobotVelocity();
-
-
         double maxVelY = 135;
         double maxVelX = 115;
         Point scaledVelocity = new Point(robotVelocity.x / maxVelX, robotVelocity.y / maxVelY);
@@ -214,29 +202,6 @@ public class Drivetrain extends Subsystem {
                 (vd * Math.sin(theta) + turnPower) * multiplier,
                 (vd * Math.cos(theta) - turnPower) * multiplier
         };
-
-        //iterated acceleration
-//        double maxAccel = 0.25;
-//        for (int i = 0; i < 3; i++) {
-//            if(Math.abs(v[i]) - Math.abs(lastPowers[i]) > maxAccel) {
-//                v[i] = lastPowers[i] + (Math.signum(v[i] * maxAccel));
-//            }
-//        }
-//        lastPowers = v;
-
-        //iterated accleration with time constraint
-//        double maxAccel = 0.05;
-//        telemetry.addData("accel",v[0] - lastPowers[0]);
-//        double accelTime = accelTimer.milliseconds();
-//        if(accelTime > 50) {
-//            for (int i = 0; i < 3; i++) {
-//                if(v[i] - lastPowers[i] > maxAccel) {
-//                    v[i] += maxAccel;
-//                }
-//            }
-//            accelTimer.reset();
-//        }
-//        lastPowers = v;
 
         setPowers(v);
     }
