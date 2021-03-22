@@ -48,6 +48,8 @@ public class Main extends TeleOpPipeline {
         timer.reset();
         boolean reset = false;
 
+        gamepad1.setJoystickDeadzone(0.1f);
+
         while (opModeIsActive()) {
             drive.update();
             timer.reset();
@@ -78,8 +80,10 @@ public class Main extends TeleOpPipeline {
 //            motionProfile.update();
 
             Pose2d poseEstimate = drive.getPoseEstimate();
+            Pose2d velEstimate = drive.getPoseVelocity();
             Robot.setRobotPos(new Point(poseEstimate.getY(), poseEstimate.getX()));
             Robot.setRobotAngle(poseEstimate.getHeading());
+            Robot.setRobotVelocity(new Point(velEstimate.getY(), velEstimate.getX()));
 
             //TODO disable debug for competition code
 //            telemetry.addData("left", drive.getWheelPositions().get(0));

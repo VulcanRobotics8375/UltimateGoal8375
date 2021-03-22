@@ -11,7 +11,7 @@ import org.vulcanrobotics.robotcorelib.math.KalmanFilter;
 public class Intake extends Subsystem {
     private DcMotor transfer, intake;
     private Rev2mDistanceSensor hopperSensor;
-    private Servo ringBlocker;
+    private Servo ringBlocker, intakeDeploy;
     private boolean intakeButton;
     private boolean overrideBlocker;
     private boolean override = false;
@@ -29,6 +29,7 @@ public class Intake extends Subsystem {
         intake = hardwareMap.dcMotor.get("roller_intake");
         hopperSensor = hardwareMap.get(Rev2mDistanceSensor.class, "hopper_sensor");
         ringBlocker = hardwareMap.servo.get("intake_blocker");
+        intakeDeploy = hardwareMap.servo.get("intake_deploy");
 
         intake.setDirection(DcMotorSimple.Direction.FORWARD);
         transfer.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -46,12 +47,12 @@ public class Intake extends Subsystem {
         double transferSpeed = hopperState.ringNum == 3 ? -1.0 : 1.0;
         double intakeSpeed = hopperState.ringNum == 3 ? -1.0 : 1.0;
         if (intakeButton) {
-            transfer.setPower(-transferSpeed);
+            transfer.setPower(transferSpeed);
             intake.setPower(intakeSpeed);
         }
 
         else if (reverse) {
-            transfer.setPower(-transferSpeed);
+            transfer.setPower(transferSpeed);
             intake.setPower(-1.0 * intakeSpeed);
         }
 
@@ -103,6 +104,8 @@ public class Intake extends Subsystem {
         } else {
             ringBlocker.setPosition(0.9);
         }
+
+        intakeDeploy.setPosition(0.6);
 
 
     }

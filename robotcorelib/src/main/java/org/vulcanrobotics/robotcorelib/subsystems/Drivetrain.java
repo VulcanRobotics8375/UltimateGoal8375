@@ -21,6 +21,7 @@ public class Drivetrain extends Subsystem {
     private BNO055IMU imu;
 
     private PID turnPid = new PID(1.2, 0.15, -0.95, 0.1, 0.01, -0.5, 0.5);
+    private PID velocityPID = new PID(1, 0, 0, 0.1, 0.01, -0.2, 0.2);
 
     private boolean doingAutonomousTask;
     private boolean unlockedAim;
@@ -100,23 +101,23 @@ public class Drivetrain extends Subsystem {
     double[] lastPowers = new double[4];
     public void mecanumDrive(double forward, double turn, double strafe, boolean highGoal, boolean powerShotLeft, boolean powerShotCenter, boolean powerShotRight, boolean leftOffsetButton, boolean rightOffsetButton) {
         //handle/parse initial data for basic mecanum drive
-        if(forward == 0 && turn == 0 && strafe == 0) {
-            accelTimer.reset();
-        }
+//        if(forward == 0 && turn == 0 && strafe == 0) {
+//            accelTimer.reset();
+//        }
 
         turn = turn * 0.7;
         forward = curveLinearJoystick(forward);
         strafe = curveLinearJoystick(strafe);
         //scale inputs
-//        double magnitude = Math.abs(forward) + Math.abs(strafe) + Math.abs(turn);
-//        if(magnitude > 1) {
-//            forward *= 1.0 / magnitude;
-//            strafe *= 1.0 / magnitude;
-//            turn *= 1.0 / magnitude;
-//
-//        }
+        double magnitude = Math.abs(forward) + Math.abs(strafe) + Math.abs(turn);
+        if(magnitude > 1) {
+            forward *= 1.0 / magnitude;
+            strafe *= 1.0 / magnitude;
+            turn *= 1.0 / magnitude;
 
-        double vd = Math.hypot(forward, strafe);
+        }
+
+        double vd;
         double theta = Math.atan2(forward, strafe) - (Math.PI / 4);
         double multiplier = Math.sqrt(2.0);
         double turnPower = turn;
@@ -178,12 +179,34 @@ public class Drivetrain extends Subsystem {
 //        double absoluteAngleToTarget = Math.atan2(Robot.getRobotY() - target.y, Robot.getRobotX() - target.x);
 //        telemetry.addData("angle", absoluteAngleToTarget);
         //time acceleration
+        //robot max velocity = 135
 //        double accelMultiplier = 1;
-//        double accelRate = 500.0;
+//        double accelRate = 500.0 * vd;
 //        if(accelTimer.milliseconds() < accelRate) {
 //            accelMultiplier = accelTimer.milliseconds() / accelRate;
 //        }
 //        vd *= accelMultiplier;
+
+        Point robotVelocity = Robot.getRobotVelocity();
+
+
+        double maxVelY = 135;
+        double maxVelX = 115;
+        Point scaledVelocity = new Point(robotVelocity.x / maxVelX, robotVelocity.y / maxVelY);
+
+        double vdx = strafe;
+        double vdy = forward;
+
+        double maxAccel = 0.1;
+        if(Math.abs(strafe - scaledVelocity.x) > maxAccel) {
+            vdx = scaledVelocity.x + (Math.signum(strafe - scaledVelocity.x)*maxAccel);
+        }
+        if(Math.abs(forward - scaledVelocity.y) > maxAccel) {
+            vdy = scaledVelocity.y + (Math.signum(forward - scaledVelocity.y)*maxAccel);
+        }
+
+        vd = Math.hypot(vdx, vdy);
+
 
         double[] v = {
                 (vd * Math.cos(theta) + turnPower) * multiplier,
