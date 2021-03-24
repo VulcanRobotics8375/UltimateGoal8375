@@ -184,6 +184,7 @@ public class Drivetrain extends Subsystem {
 
         double vdx = strafe;
         double vdy = forward;
+        double unscaledVd = Math.hypot(vdx, vdy);
 
         double maxAccel = 0.1;
         if(Math.abs(strafe - scaledVelocity.x) > maxAccel) {
@@ -192,8 +193,11 @@ public class Drivetrain extends Subsystem {
         if(Math.abs(forward - scaledVelocity.y) > maxAccel) {
             vdy = scaledVelocity.y + (Math.signum(forward - scaledVelocity.y)*maxAccel);
         }
-
         vd = Math.hypot(vdx, vdy);
+        //edge case to use motor zero power behaviorx
+        if(unscaledVd == 0) {
+            vd = 0;
+        }
 
 
         double[] v = {
