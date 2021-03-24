@@ -115,7 +115,9 @@ public class PurePursuit extends Controller {
 
         double robotAngleToPoint = Robot.getRobotAngleRad();
 
-        turnPID.run(point.angle, robotAngleToPoint);
+        double pointAngle = Math.abs(point.angle - robotAngleToPoint) > Math.PI ? point.angle - (Math.signum(point.angle - robotAngleToPoint)*2.0*Math.PI) : point.angle;
+
+        turnPID.run(pointAngle, robotAngleToPoint);
 
         double turnSpeed = turnPID.getOutput() * point.turnSpeed;
 
