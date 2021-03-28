@@ -38,13 +38,12 @@ public class Drivetrain extends Subsystem {
         bl = hardwareMap.dcMotor.get("back_left");
         br = hardwareMap.dcMotor.get("back_right");
         imu = hardwareMap.get(BNO055IMU.class, "imu");
+        variableOffset = 0;
 
         setDrivetrainMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setDrivetrainMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         Robot.setResetPosition(new Point(21.6, 21.6));
-
-
 
         fl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         fr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -122,9 +121,32 @@ public class Drivetrain extends Subsystem {
         double multiplier = Math.sqrt(2.0);
         double turnPower = turn;
 
+//        Point robotVelocity = Robot.getRobotVelocity();
+//        double maxVelY = 135;
+//        double maxVelX = 115;
+//        Point scaledVelocity = new Point(robotVelocity.x / maxVelX, robotVelocity.y / maxVelY);
+
+        double vdx = strafe;
+        double vdy = forward;
+        double unscaledVd = Math.hypot(vdx, vdy);
+
+//        double maxAccel = 0.25;
+//        if(Math.abs(strafe - scaledVelocity.x) > maxAccel) {
+//            vdx = scaledVelocity.x + (Math.signum(strafe - scaledVelocity.x)*maxAccel);
+//        }
+//        if(Math.abs(forward - scaledVelocity.y) > maxAccel) {
+//            vdy = scaledVelocity.y + (Math.signum(forward - scaledVelocity.y)*maxAccel);
+//        }
+        vd = Math.hypot(vdx, vdy);
+        theta = Math.atan2(vdy, vdx) - (Math.PI / 4.0);
+        //edge case to use motor zero power behavior
+        if(unscaledVd == 0) {
+            vd = 0;
+        }
+
         //check variable offset buttons, and change accordingly
         if(leftOffsetButton && !this.leftOffsetButton) {
-            variableOffset -= 4.5;
+            variableOffset -= 2.5;
             this.leftOffsetButton = true;
         }
         if(!leftOffsetButton && this.leftOffsetButton) {
@@ -132,7 +154,7 @@ public class Drivetrain extends Subsystem {
         }
 
         if(rightOffsetButton && !this.rightOffsetButton) {
-            variableOffset += 4.5;
+            variableOffset += 2.5;
             this.rightOffsetButton = true;
         }
         if(!rightOffsetButton && this.rightOffsetButton) {
@@ -169,45 +191,22 @@ public class Drivetrain extends Subsystem {
             turnPower = turnPid.getOutput();
 //            telemetry.addData("error", absoluteAngleToTarget - currentAngle);
 
-//            fieldCentricMove(strafe, forward, turnPower);
         } else {
+//            double[] v = {
+//                    (vd * Math.cos(theta) + turnPower) * multiplier,
+//                    (vd * Math.sin(theta) - turnPower) * multiplier,
+//                    (vd * Math.sin(theta) + turnPower) * multiplier,
+//                    (vd * Math.cos(theta) - turnPower) * multiplier
+//            };
+//
+//            setPowers(v);
             if(doingAutonomousTask) {
                 turnPid.reset();
                 doingAutonomousTask = false;
             }
         }
+        fieldCentricMove(forward * multiplier, strafe * -1.0 * multiplier, turnPower * -1.0);
 
-        Point robotVelocity = Robot.getRobotVelocity();
-        double maxVelY = 135;
-        double maxVelX = 115;
-        Point scaledVelocity = new Point(robotVelocity.x / maxVelX, robotVelocity.y / maxVelY);
-
-        double vdx = strafe;
-        double vdy = forward;
-        double unscaledVd = Math.hypot(vdx, vdy);
-
-        double maxAccel = 0.1;
-        if(Math.abs(strafe - scaledVelocity.x) > maxAccel) {
-            vdx = scaledVelocity.x + (Math.signum(strafe - scaledVelocity.x)*maxAccel);
-        }
-        if(Math.abs(forward - scaledVelocity.y) > maxAccel) {
-            vdy = scaledVelocity.y + (Math.signum(forward - scaledVelocity.y)*maxAccel);
-        }
-        vd = Math.hypot(vdx, vdy);
-        //edge case to use motor zero power behaviorx
-        if(unscaledVd == 0) {
-            vd = 0;
-        }
-
-
-        double[] v = {
-                (vd * Math.cos(theta) + turnPower) * multiplier,
-                (vd * Math.sin(theta) - turnPower) * multiplier,
-                (vd * Math.sin(theta) + turnPower) * multiplier,
-                (vd * Math.cos(theta) - turnPower) * multiplier
-        };
-
-        setPowers(v);
     }
 
     //right to left = 1 to 3, high goal = 0
@@ -410,6 +409,8 @@ public class Drivetrain extends Subsystem {
     public boolean isAimed() {
         return aimed;
     }
+
+//    public boolean isAiming()
 
     public void setDrivetrainMode(DcMotor.RunMode runMode) {
         fl.setMode(runMode);

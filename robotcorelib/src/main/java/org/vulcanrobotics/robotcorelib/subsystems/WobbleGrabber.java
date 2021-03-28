@@ -16,7 +16,6 @@ public class WobbleGrabber extends Subsystem {
     private double limitMax = 1750;
     private boolean wobbleTurnButton = false;
     private boolean wobbleGrabButton = false;
-    private double liftPower;
 
     private double wobbleTurnOn = -1.0;
 
@@ -27,14 +26,6 @@ public class WobbleGrabber extends Subsystem {
 
         wobbleTurn = hardwareMap.servo.get("wobble_turn");
         wobbleGrab = hardwareMap.servo.get("wobble_grab");
-/*
-        wobbleLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        wobbleLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        wobbleLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
- */
-
     }
 
     /**

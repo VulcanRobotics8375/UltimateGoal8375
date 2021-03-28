@@ -35,6 +35,7 @@ public class Intake extends Subsystem {
         intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         transfer.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        intakeDeploy.setPosition(0.95);
 
     }
 
@@ -102,7 +103,7 @@ public class Intake extends Subsystem {
             ringBlocker.setPosition(0.9);
         }
 
-        intakeDeploy.setPosition(0.6);
+        intakeDeploy.setPosition(0.7);
 
 
     }
