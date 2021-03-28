@@ -67,7 +67,7 @@ public class Shooter extends Subsystem {
 
         if(Math.abs(Robot.getRobotXVelocity()) > 15) {
             hopperButton = false;
-        } else if(Robot.getComponents().intake.getHopperState() != HopperState.ZERO_RINGS && shooting && ) {
+        } else if(Robot.getComponents().intake.getHopperState() != HopperState.ZERO_RINGS && shooting && autoShoot) {
             hopperButton = true;
         }
 
