@@ -66,7 +66,7 @@ public class Shooter extends Subsystem {
             this.powerShotButton = false;
         }
 
-        if(Math.hypot(Robot.getRobotXVelocity(), Robot.getRobotYVelocity()) > 6 || Robot.getRobotY() > 210 || robotMove) {
+        if(Math.hypot(Robot.getRobotXVelocity(), Robot.getRobotYVelocity()) > 2 || Robot.getRobotY() > 210 || robotMove) {
             hopperButton = false;
         } else if(Robot.getComponents().intake.getHopperState() != HopperState.ZERO_RINGS && shooting && Robot.getComponents().drivetrain.isAimed()) {
             hopperButton = true;
@@ -91,7 +91,7 @@ public class Shooter extends Subsystem {
                 hopper.setPosition(0);
             }
         } else {
-            if(servoTimer.time(TimeUnit.MILLISECONDS) >= 100) {
+            if(servoTimer.time(TimeUnit.MILLISECONDS) >= 150) {
                 drivetrainStopped = false;
             }
             hopper.setPosition(0);

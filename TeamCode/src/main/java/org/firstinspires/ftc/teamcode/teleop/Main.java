@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 @TeleOp(name = "main", group = "main")
 public class Main extends TeleOpPipeline {
 
-    boolean debug = true;
+    boolean debug = false;
     boolean autoRunning = false;
 
     private ElapsedTime timer = new ElapsedTime();
@@ -104,7 +104,7 @@ public class Main extends TeleOpPipeline {
 //               sleep(1);
             }
 
-            telemetry.update();
+//            telemetry.update();
             time = timer.milliseconds();
 //            timer.reset();
         }

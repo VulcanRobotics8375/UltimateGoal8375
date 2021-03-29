@@ -189,7 +189,7 @@ public class Drivetrain extends Subsystem {
             //might have to subtract variable offset
             turnPid.run(absoluteAngleToTarget, currentAngle + variableOffsetRad);
             turnPower = turnPid.getOutput();
-            if(Math.abs(absoluteAngleToTarget - currentAngle - variableOffsetRad) < 0.03) {
+            if(Math.abs(absoluteAngleToTarget - currentAngle - variableOffsetRad) < 0.04) {
                 aimed = true;
             } else {
                 aimed = false;
@@ -199,7 +199,7 @@ public class Drivetrain extends Subsystem {
             if(Robot.getComponents().shooter.shouldDriveStop()) {
                 multiplier = 0;
             }
-            fieldCentricMove(forward * multiplier, strafe * -1.0 * multiplier, turnPower * -1.0);
+            fieldCentricMove(forward * multiplier, strafe * -1.0 * multiplier, (turnPower + (Math.abs((Robot.getRobotXVelocity() / 260.0)) * Math.signum(turnPower))) * -1.0);
         } else {
             double[] v = {
                     (vd * Math.cos(theta) + turnPower) * multiplier,
