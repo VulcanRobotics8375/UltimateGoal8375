@@ -38,7 +38,7 @@ public class Drivetrain extends Subsystem {
         bl = hardwareMap.dcMotor.get("back_left");
         br = hardwareMap.dcMotor.get("back_right");
         imu = hardwareMap.get(BNO055IMU.class, "imu");
-        variableOffset = 0;
+        variableOffset = 2;
 
         setDrivetrainMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setDrivetrainMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -189,23 +189,32 @@ public class Drivetrain extends Subsystem {
             //might have to subtract variable offset
             turnPid.run(absoluteAngleToTarget, currentAngle + variableOffsetRad);
             turnPower = turnPid.getOutput();
-//            telemetry.addData("error", absoluteAngleToTarget - currentAngle);
+            if(Math.abs(absoluteAngleToTarget - currentAngle - variableOffsetRad) < 0.03) {
+                aimed = true;
+            } else {
+                aimed = false;
+            }
+            telemetry.addData("error", Math.abs(absoluteAngleToTarget - currentAngle - variableOffsetRad));
 
+            if(Robot.getComponents().shooter.shouldDriveStop()) {
+                multiplier = 0;
+            }
+            fieldCentricMove(forward * multiplier, strafe * -1.0 * multiplier, turnPower * -1.0);
         } else {
-//            double[] v = {
-//                    (vd * Math.cos(theta) + turnPower) * multiplier,
-//                    (vd * Math.sin(theta) - turnPower) * multiplier,
-//                    (vd * Math.sin(theta) + turnPower) * multiplier,
-//                    (vd * Math.cos(theta) - turnPower) * multiplier
-//            };
-//
-//            setPowers(v);
+            double[] v = {
+                    (vd * Math.cos(theta) + turnPower) * multiplier,
+                    (vd * Math.sin(theta) - turnPower) * multiplier,
+                    (vd * Math.sin(theta) + turnPower) * multiplier,
+                    (vd * Math.cos(theta) - turnPower) * multiplier
+            };
+
+            setPowers(v);
+            aimed = false;
             if(doingAutonomousTask) {
                 turnPid.reset();
                 doingAutonomousTask = false;
             }
         }
-        fieldCentricMove(forward * multiplier, strafe * -1.0 * multiplier, turnPower * -1.0);
 
     }
 
@@ -349,12 +358,12 @@ public class Drivetrain extends Subsystem {
 
 //        y *= -1.0;
         //input scaling
-        double magnitude = Math.abs(x) + Math.abs(y) + Math.abs(turn);
-        if(magnitude > 1.0) {
-            x *= 1.0 / magnitude;
-            y *= 1.0 / magnitude;
-            turn *= 1.0 / magnitude;
-        }
+//        double magnitude = Math.abs(x) + Math.abs(y) + Math.abs(turn);
+//        if(magnitude > 1.0) {
+//            x *= 1.0 / magnitude;
+//            y *= 1.0 / magnitude;
+//            turn *= 1.0 / magnitude;
+//        }
 
         double power = Math.hypot(x, y);
         double theta = Robot.getRobotAngleRad() - Math.atan2(y, x);

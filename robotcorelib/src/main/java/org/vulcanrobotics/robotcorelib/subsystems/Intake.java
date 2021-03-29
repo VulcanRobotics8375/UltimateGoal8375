@@ -100,10 +100,15 @@ public class Intake extends Subsystem {
                 ringBlocker.setPosition(0.25);
             }
         } else {
+
             ringBlocker.setPosition(0.9);
         }
 
-        intakeDeploy.setPosition(0.7);
+        if(!override) {
+            intakeDeploy.setPosition(0.7);
+        } else {
+            intakeDeploy.setPosition(0.9);
+        }
 
 
     }

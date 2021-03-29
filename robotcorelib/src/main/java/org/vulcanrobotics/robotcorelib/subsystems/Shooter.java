@@ -16,7 +16,7 @@ public class Shooter extends Subsystem {
     private DcMotorEx shooter_one, shooter_two;
     private Servo hopper;
 
-    private boolean hopperButton, hopperOut, powerShotButton = false, shooting = false, shootTrigger = false;
+    private boolean hopperButton, hopperOut, powerShotButton = false, shooting = false, shootTrigger = false, drivetrainStopped;
     public double shooterPower, powerShotMode = -1;
 
     private ElapsedTime servoTimer = new ElapsedTime();
@@ -36,9 +36,10 @@ public class Shooter extends Subsystem {
         shooter_one.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         shooter_two.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         servoTimer.reset();
+        drivetrainStopped = false;
     }
 
-    public void run(boolean shooterButton, boolean hopperButton, boolean powerShotButton, boolean autoShoot) {
+    public void run(boolean shooterButton, boolean hopperButton, boolean powerShotButton, boolean robotMove) {
 
         if (shooterButton && !shootTrigger) {
             shootTrigger = true;
@@ -54,7 +55,7 @@ public class Shooter extends Subsystem {
         }
 
         if(shooting) {
-            shooter_two.setPower(0.85);
+            shooter_two.setPower(0.825);
         }
 
         if (powerShotButton && !this.powerShotButton) {
@@ -65,9 +66,9 @@ public class Shooter extends Subsystem {
             this.powerShotButton = false;
         }
 
-        if(Math.abs(Robot.getRobotXVelocity()) > 15) {
+        if(Math.hypot(Robot.getRobotXVelocity(), Robot.getRobotYVelocity()) > 6 || Robot.getRobotY() > 210 || robotMove) {
             hopperButton = false;
-        } else if(Robot.getComponents().intake.getHopperState() != HopperState.ZERO_RINGS && shooting && autoShoot) {
+        } else if(Robot.getComponents().intake.getHopperState() != HopperState.ZERO_RINGS && shooting && Robot.getComponents().drivetrain.isAimed()) {
             hopperButton = true;
         }
 
@@ -82,12 +83,17 @@ public class Shooter extends Subsystem {
                 servoTimer.reset();
             }
             if (hopperOut) {
+                drivetrainStopped = true;
                 hopper.setPosition(0.2);
             }
             else {
+                drivetrainStopped = false;
                 hopper.setPosition(0);
             }
         } else {
+            if(servoTimer.time(TimeUnit.MILLISECONDS) >= 100) {
+                drivetrainStopped = false;
+            }
             hopper.setPosition(0);
         }
 
@@ -117,6 +123,10 @@ public class Shooter extends Subsystem {
 
     public void setShooterPower ( double power){
         shooter_one.setPower(power);
+    }
+
+    public boolean shouldDriveStop() {
+        return drivetrainStopped;
     }
 
     @Override
