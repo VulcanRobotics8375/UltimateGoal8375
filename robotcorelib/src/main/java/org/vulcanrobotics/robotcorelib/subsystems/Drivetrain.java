@@ -118,7 +118,7 @@ public class Drivetrain extends Subsystem {
 
         double vd;
         double theta = Math.atan2(forward, strafe) - (Math.PI / 4);
-        double multiplier = Math.sqrt(2.0);
+        double multiplier = Math.sqrt(2.0) * 0.9;
         double turnPower = turn;
 
 //        Point robotVelocity = Robot.getRobotVelocity();
@@ -189,12 +189,11 @@ public class Drivetrain extends Subsystem {
             //might have to subtract variable offset
             turnPid.run(absoluteAngleToTarget, currentAngle + variableOffsetRad);
             turnPower = turnPid.getOutput();
-            if(Math.abs(absoluteAngleToTarget - currentAngle - variableOffsetRad) < 0.04) {
+            if(Math.abs(absoluteAngleToTarget - currentAngle - variableOffsetRad) < 0.03) {
                 aimed = true;
             } else {
                 aimed = false;
             }
-            telemetry.addData("error", Math.abs(absoluteAngleToTarget - currentAngle - variableOffsetRad));
 
             if(Robot.getComponents().shooter.shouldDriveStop()) {
                 multiplier = 0;

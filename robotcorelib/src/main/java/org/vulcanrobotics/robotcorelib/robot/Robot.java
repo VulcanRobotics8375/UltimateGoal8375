@@ -1,11 +1,13 @@
 package org.vulcanrobotics.robotcorelib.robot;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.ReadWriteFile;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
+import org.vulcanrobotics.robotcorelib.drive.StandardTrackingWheelLocalizer;
 import org.vulcanrobotics.robotcorelib.framework.RobotConfig;
 import org.vulcanrobotics.robotcorelib.framework.RobotCoreLibException;
 import org.vulcanrobotics.robotcorelib.math.Point;
@@ -238,18 +240,15 @@ public class Robot {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                ElapsedTime time = new ElapsedTime();
-                motionProfile.start();
+                StandardTrackingWheelLocalizer drive = new StandardTrackingWheelLocalizer(hardwareMap);
                 while(odometryRunning) {
-                    motionProfile.update();
-                    while(time.milliseconds() < 1000.0 / 100.0) {}
-                    time.reset();
+                    drive.update();
+                    Pose2d poseEstimate = drive.getPoseEstimate();
+                    Pose2d poseVelocity = drive.getPoseVelocity();
 
-//                    try {
-//                        Thread.sleep(85);
-//                    } catch (InterruptedException e) {
-//                        e.printStackTrace();
-//                    }
+                    setRobotPos(new Point(poseEstimate.getY(), poseEstimate.getX()));
+                    setRobotAngle(poseEstimate.getHeading());
+                    setRobotVelocity(new Point(poseVelocity.getY(), poseVelocity.getX()));
                 }
             }
         }).start();

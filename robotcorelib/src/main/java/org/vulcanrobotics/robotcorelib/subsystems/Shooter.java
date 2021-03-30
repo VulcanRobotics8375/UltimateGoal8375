@@ -31,12 +31,13 @@ public class Shooter extends Subsystem {
         shooter_one.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         shooter_one.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         shooter_two.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        shooter_two.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(10.3, 3.0, 0.0, 13.0));
+        shooter_two.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(10.3, 2.5, 0.0, 13.0));
         shooter_two.setDirection(DcMotorSimple.Direction.FORWARD);
         shooter_one.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         shooter_two.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         servoTimer.reset();
         drivetrainStopped = false;
+        shooting = false;
     }
 
     public void run(boolean shooterButton, boolean hopperButton, boolean powerShotButton, boolean robotMove) {
@@ -91,7 +92,7 @@ public class Shooter extends Subsystem {
                 hopper.setPosition(0);
             }
         } else {
-            if(servoTimer.time(TimeUnit.MILLISECONDS) >= 150) {
+            if(servoTimer.time(TimeUnit.MILLISECONDS) >= 200) {
                 drivetrainStopped = false;
             }
             hopper.setPosition(0);

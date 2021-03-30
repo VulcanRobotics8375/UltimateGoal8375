@@ -26,6 +26,7 @@ public class WobbleGrabber extends Subsystem {
 
         wobbleTurn = hardwareMap.servo.get("wobble_turn");
         wobbleGrab = hardwareMap.servo.get("wobble_grab");
+
     }
 
     /**

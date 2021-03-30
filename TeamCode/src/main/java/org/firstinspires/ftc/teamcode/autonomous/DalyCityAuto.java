@@ -153,7 +153,7 @@ public class DalyCityAuto extends AutoPipeline {
 
         super.controller = controller;
 
-        Robot.startOdometryThread();
+//        Robot.startOdometryThread();
         startInterruptHandler();
 
         new Thread(new Runnable() {
