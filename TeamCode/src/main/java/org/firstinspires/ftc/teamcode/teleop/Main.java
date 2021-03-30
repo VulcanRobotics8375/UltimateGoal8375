@@ -19,8 +19,7 @@ import java.util.concurrent.TimeUnit;
 @TeleOp(name = "main", group = "main")
 public class Main extends TeleOpPipeline {
 
-    boolean debug = false;
-    boolean autoRunning = false;
+    boolean driverPractice = true;
 
     private ElapsedTime timer = new ElapsedTime();
     private double time;
@@ -29,7 +28,13 @@ public class Main extends TeleOpPipeline {
         StandardTrackingWheelLocalizer drive = new StandardTrackingWheelLocalizer(hardwareMap);
         //possible new startX is 105.5 because of X direction swap with rr code
         //also might be horizontal encoder direction so check that as well
-        drive.setPoseEstimate(new Pose2d(21.6, 108, 0.0));
+        //load robot position from auto
+        if(driverPractice) {
+            drive.setPoseEstimate(new Pose2d(21.6, 108, 0.0));
+        } else {
+            Robot.loadRobotPosition();
+            drive.setPoseEstimate(new Pose2d(Robot.getRobotY(), Robot.getRobotX(), Robot.getRobotAngleRad()));
+        }
 
         teleopInit();
         Robot.loadRobotPosition();

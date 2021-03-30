@@ -47,6 +47,7 @@ public class Shooter extends Subsystem {
             shooting = !shooting;
         } else if(powerShotButton){
             shooter_two.setPower(0.6);
+            shooting = false;
         } else {
             shooter_two.setPower(0);
         }

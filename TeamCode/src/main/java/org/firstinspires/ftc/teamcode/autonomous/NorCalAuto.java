@@ -65,8 +65,11 @@ public class NorCalAuto extends AutoPipeline {
 
         while(controller.getCurrentSection() == 0) {
             //subsystem code goes here
-            
+
         }
+
+        //store robot position to file after auto finishes
+        Robot.storeRobotPosition();
 
 
     }

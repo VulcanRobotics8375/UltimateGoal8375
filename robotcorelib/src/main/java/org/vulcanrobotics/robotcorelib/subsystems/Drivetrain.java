@@ -20,16 +20,12 @@ public class Drivetrain extends Subsystem {
     private DcMotor fl, fr, bl, br;
     private BNO055IMU imu;
 
-    private PID turnPid = new PID(1.2, 0.15, -0.95, 0.1, 0.01, -0.5, 0.5);
-    private PID velocityPID = new PID(1, 0, 0, 0.1, 0.01, -0.2, 0.2);
+    private PID turnPid = new PID(1.2, 0.2, -0.95, 0.1, 0.01, -0.5, 0.5);
 
     private boolean doingAutonomousTask;
-    private boolean unlockedAim;
-    private double unlockAimAngle = 0;
     private double variableOffset = 0;
     private boolean leftOffsetButton, rightOffsetButton;
     private boolean aimed = false;
-    private ElapsedTime accelTimer = new ElapsedTime();
 
     @Override
     public void init() {
