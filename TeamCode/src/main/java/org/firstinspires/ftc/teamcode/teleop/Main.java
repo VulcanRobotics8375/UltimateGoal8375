@@ -50,14 +50,14 @@ public class Main extends TeleOpPipeline {
 //        Robot.startOdometryThread();
 
 //        Mecanum motionProfile = (Mecanum) Robot.motionProfile;
-        timer.reset();
+//        timer.reset();
         boolean reset = false;
 
         gamepad1.setJoystickDeadzone(0.1f);
 
         while (opModeIsActive()) {
             drive.update();
-            timer.reset();
+//            timer.reset();
             if(gamepad1.left_trigger != 0 && !reset) {
                 drive.setPoseEstimate(new Pose2d(185, Constants.FIELD_SIZE_CM_X - 21.6, 0.0));
                 //tune this value
@@ -71,7 +71,7 @@ public class Main extends TeleOpPipeline {
 
             subsystems.drivetrain.mecanumDrive(gamepad1.left_stick_y, -gamepad1.right_stick_x, -gamepad1.left_stick_x, gamepad1.a, gamepad1.b, gamepad1.y, gamepad1.x, gamepad1.left_bumper, gamepad1.right_bumper);
             subsystems.intake.run(gamepad2.b, gamepad2.a, gamepad2.right_bumper, gamepad2.dpad_up);
-            subsystems.shooter.run(gamepad2.left_trigger > 0, gamepad2.right_bumper, gamepad2.dpad_down, gamepad1.left_stick_x != 0 || gamepad1.left_stick_y != 0);
+            subsystems.shooter.run(gamepad2.left_trigger > 0, gamepad2.right_bumper, gamepad1.b, gamepad1.left_stick_x != 0 || gamepad1.left_stick_y != 0);
             subsystems.wobbleGrabber.run(gamepad2.x, gamepad2.y, -gamepad2.left_stick_y * 0.5);
 
             Pose2d poseEstimate = drive.getPoseEstimate();
@@ -80,12 +80,12 @@ public class Main extends TeleOpPipeline {
             Robot.setRobotAngle(poseEstimate.getHeading());
             Robot.setRobotVelocity(new Point(velEstimate.getY(), velEstimate.getX()));
 
-            double TARGET_UPS = 100.0;
-            while(timer.milliseconds() < 1000.0 / TARGET_UPS) {
-//               sleep(1);
-            }
+//            double TARGET_UPS = 100.0;
+//            while(timer.milliseconds() < 1000.0 / TARGET_UPS) {
+////               sleep(1);
+//            }
 
-            time = timer.milliseconds();
+//            time = timer.milliseconds();
         }
 
     }

@@ -60,17 +60,14 @@ public class Shooter extends Subsystem {
             shooter_two.setPower(0.825);
         }
 
-        if (powerShotButton && !this.powerShotButton) {
-            powerShotMode *= -1;
-            this.powerShotButton = true;
-        }
-        if (!powerShotButton && this.powerShotButton) {
-            this.powerShotButton = false;
-        }
+
 
         if(Math.hypot(Robot.getRobotXVelocity(), Robot.getRobotYVelocity()) > 2 || Robot.getRobotY() > 210 || robotMove) {
             hopperButton = false;
         } else if(Robot.getComponents().intake.getHopperState() != HopperState.ZERO_RINGS && shooting && Robot.getComponents().drivetrain.isAimed()) {
+            hopperButton = true;
+        }
+        if(powerShotButton && Robot.getComponents().drivetrain.isAimed()) {
             hopperButton = true;
         }
 
@@ -91,6 +88,16 @@ public class Shooter extends Subsystem {
             else {
                 drivetrainStopped = false;
                 hopper.setPosition(0);
+                if(powerShotButton) {
+                    PowerShot powerShot = Robot.getComponents().drivetrain.getPowerShot();
+                    if(powerShot == PowerShot.LEFT) {
+                        Robot.getComponents().drivetrain.setPowerShot(PowerShot.CENTER);
+                    } else if(powerShot == PowerShot.CENTER) {
+                        Robot.getComponents().drivetrain.setPowerShot(PowerShot.RIGHT);
+                    } else {
+                        Robot.getComponents().drivetrain.setPowerShot(PowerShot.NONE);
+                    }
+                }
             }
         } else {
             if(servoTimer.time(TimeUnit.MILLISECONDS) >= 200) {

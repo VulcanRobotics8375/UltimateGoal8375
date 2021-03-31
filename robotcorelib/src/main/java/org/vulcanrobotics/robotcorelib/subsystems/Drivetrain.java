@@ -26,6 +26,8 @@ public class Drivetrain extends Subsystem {
     private double variableOffset = 0;
     private boolean leftOffsetButton, rightOffsetButton;
     private boolean aimed = false;
+    private boolean powerShotSequence = false;
+    private PowerShot powerShot = PowerShot.NONE;
 
     @Override
     public void init() {
@@ -124,7 +126,7 @@ public class Drivetrain extends Subsystem {
 
         double vdx = strafe;
         double vdy = forward;
-        double unscaledVd = Math.hypot(vdx, vdy);
+//        double unscaledVd = Math.hypot(vdx, vdy);
 
 //        double maxAccel = 0.25;
 //        if(Math.abs(strafe - scaledVelocity.x) > maxAccel) {
@@ -136,9 +138,9 @@ public class Drivetrain extends Subsystem {
         vd = Math.hypot(vdx, vdy);
         theta = Math.atan2(vdy, vdx) - (Math.PI / 4.0);
         //edge case to use motor zero power behavior
-        if(unscaledVd == 0) {
-            vd = 0;
-        }
+//        if(unscaledVd == 0) {
+//            vd = 0;
+//        }
 
         //check variable offset buttons, and change accordingly
         if(leftOffsetButton && !this.leftOffsetButton) {
@@ -161,19 +163,26 @@ public class Drivetrain extends Subsystem {
         double variableOffsetRad = Math.toRadians(variableOffset);
         Point target = new Point((1.5 * TILE_SIZE_CM), FIELD_SIZE_CM_Y);
         boolean aiming = false;
+        if(powerShotLeft && !powerShotSequence) {
+           powerShotSequence = true;
+        } else if(!powerShotLeft && powerShotSequence) {
+            powerShot = PowerShot.NONE;
+            powerShotSequence = false;
+        }
+
         if(highGoal) {
             target.setPoint(new Point((1.5 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
             aiming = true;
         }
-        else if(powerShotLeft) {
+        else if(powerShotSequence && powerShot == PowerShot.LEFT) {
             target.setPoint(new Point((2.25 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
             aiming = true;
         }
-        else if(powerShotCenter) {
+        else if(powerShotSequence && powerShot == PowerShot.CENTER) {
             target.setPoint(new Point((2.5 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
             aiming = true;
         }
-        else if(powerShotRight) {
+        else if(powerShotSequence && powerShot == PowerShot.RIGHT) {
             target.setPoint(new Point((2.75 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
             aiming = true;
         }
@@ -436,6 +445,14 @@ public class Drivetrain extends Subsystem {
 
     public void run(double forward, double turn) {
         setPowers(forward - turn, forward + turn, forward - turn, forward + turn);
+    }
+
+    public void setPowerShot(PowerShot powerShot) {
+        this.powerShot = powerShot;
+    }
+
+    public PowerShot getPowerShot() {
+        return powerShot;
     }
 
     public boolean isDoingAutonomousTask() {
