@@ -165,6 +165,7 @@ public class Drivetrain extends Subsystem {
         boolean aiming = false;
         if(powerShotLeft && !powerShotSequence) {
            powerShotSequence = true;
+           powerShot = PowerShot.LEFT;
         } else if(!powerShotLeft && powerShotSequence) {
             powerShot = PowerShot.NONE;
             powerShotSequence = false;
