@@ -6,11 +6,13 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.vulcanrobotics.robotcorelib.hardware.Rev2mDistanceSensorAutoCache;
 import org.vulcanrobotics.robotcorelib.math.KalmanFilter;
 
 public class Intake extends Subsystem {
     private DcMotor transfer, intake;
     private Rev2mDistanceSensor hopperSensor;
+    private Rev2mDistanceSensorAutoCache fastSensor;
     private Servo ringBlocker, intakeDeploy;
     private boolean intakeButton, overrideBlocker, override = false;
 
@@ -27,6 +29,8 @@ public class Intake extends Subsystem {
         hopperSensor = hardwareMap.get(Rev2mDistanceSensor.class, "hopper_sensor");
         ringBlocker = hardwareMap.servo.get("intake_blocker");
         intakeDeploy = hardwareMap.servo.get("intake_deploy");
+
+        fastSensor = new Rev2mDistanceSensorAutoCache(hopperSensor, DistanceUnit.MM);
 
         intake.setDirection(DcMotorSimple.Direction.FORWARD);
         transfer.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -62,7 +66,7 @@ public class Intake extends Subsystem {
 //            transfer.setPower(0.5);
         }
 
-        double hopperSensorRaw = hopperSensor.getDistance(DistanceUnit.MM);
+        double hopperSensorRaw = fastSensor.getCachedDistance();
         filter.run(hopperSensorRaw);
         double filterEstimate = filter.getEstimate();
 
