@@ -8,8 +8,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class Rev2mDistanceSensorAutoCache {
 
+    private final int I2C_CALL_MS = 25;
     private Rev2mDistanceSensor sensor;
-    private ElapsedTime timer;
+    private ElapsedTime timer = new ElapsedTime();
     private double cachedValue;
     private DistanceUnit distanceUnit = DistanceUnit.CM;
 
@@ -22,7 +23,7 @@ public class Rev2mDistanceSensorAutoCache {
     }
 
     public double getCachedDistance() {
-        if(timer.milliseconds() > 25) {
+        if(timer.milliseconds() > I2C_CALL_MS) {
             timer.reset();
             cachedValue = sensor.getDistance(distanceUnit);
         }
