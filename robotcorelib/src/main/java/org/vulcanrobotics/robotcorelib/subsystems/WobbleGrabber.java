@@ -8,17 +8,10 @@ import org.vulcanrobotics.robotcorelib.framework.Constants;
 import org.vulcanrobotics.robotcorelib.robot.Robot;
 
 public class WobbleGrabber extends Subsystem {
-    public Servo wobbleTurn;
-    public Servo wobbleGrab;
-    private double wobbleMode = -1.0;
-    private double limitRange = 500;
-    private double limitMin = 0;
-    private double limitMax = 1750;
-    private boolean wobbleTurnButton = false;
-    private boolean wobbleGrabButton = false;
+    public Servo wobbleTurn, wobbleGrab;
+    private boolean wobbleTurnButton = false, wobbleGrabButton = false;
 
     private double wobbleTurnOn = -1.0;
-
     private double wobbleGrabOn = -1.0;
 
     @Override
@@ -26,7 +19,6 @@ public class WobbleGrabber extends Subsystem {
 
         wobbleTurn = hardwareMap.servo.get("wobble_turn");
         wobbleGrab = hardwareMap.servo.get("wobble_grab");
-
     }
 
     /**
@@ -37,7 +29,6 @@ public class WobbleGrabber extends Subsystem {
     public void autoInit() {
         wobbleLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
-
      */
 
     public void run(boolean wobbleTurnButton, boolean wobbleGrabButton, double wobbleLiftJoystick) {
@@ -100,6 +91,7 @@ public class WobbleGrabber extends Subsystem {
     public void setTurnPosition(double position) {
         wobbleTurn.setPosition(position);
     }
+
 /*
     private boolean liftRunningAuto = false;
     public void moveLiftToPosition(int position, double power) {
@@ -115,7 +107,6 @@ public class WobbleGrabber extends Subsystem {
 
 
     }
-
  */
 
         @Override

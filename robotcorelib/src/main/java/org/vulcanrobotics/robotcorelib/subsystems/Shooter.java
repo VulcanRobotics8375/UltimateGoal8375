@@ -60,8 +60,6 @@ public class Shooter extends Subsystem {
             shooter_two.setPower(0.825);
         }
 
-
-
         if(Math.hypot(Robot.getRobotXVelocity(), Robot.getRobotYVelocity()) > 2 || Robot.getRobotY() > 210 || robotMove) {
             hopperButton = false;
         } else if(Robot.getComponents().intake.getHopperState() != HopperState.ZERO_RINGS && shooting && Robot.getComponents().drivetrain.isAimed()) {
