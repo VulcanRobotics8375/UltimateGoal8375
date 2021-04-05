@@ -17,7 +17,7 @@ public class Intake extends Subsystem {
     private boolean intakeButton, overrideBlocker, override = false;
 
     private HopperState hopperState = HopperState.ZERO_RINGS;
-    private KalmanFilter filter = new KalmanFilter(0.2, 0.01, 0, 0.1);
+    private KalmanFilter filter = new KalmanFilter(0.2, 0.01, 90, 0.1);
 
     private ElapsedTime jamTimer = new ElapsedTime();
 
@@ -45,28 +45,26 @@ public class Intake extends Subsystem {
 
     //TODO add sensor code/ring counter for intake stage 1
     public void run(boolean intakeButton, boolean reverse, boolean transferOn, boolean overrideBlocker) {
-        double transferSpeed = hopperState.ringNum == 3 ? -1.0 : 1.0;
-        double intakeSpeed = hopperState.ringNum == 3 ? -1.0 : 1.0;
+        double transferSpeed = 1.0;
+        double intakeSpeed = 1.0;
 
         if (intakeButton) {
-            transfer.setPower(transferSpeed);
+//            transfer.setPower(transferSpeed);
             intake.setPower(intakeSpeed);
-        }
-
-        else if (reverse) {
-            transfer.setPower(transferSpeed);
+        } else if (reverse) {
+//            transfer.setPower(transferSpeed);
             intake.setPower(-1.0 * intakeSpeed);
-        }
-
-        else {
-            transfer.setPower(0);
+        } else {
             intake.setPower(0);
+            transferSpeed = 0;
         }
         if(transferOn) {
-//            transfer.setPower(0.5);
+            transferSpeed = -1.0;
         }
+        transfer.setPower(transferSpeed);
 
         double hopperSensorRaw = fastSensor.getCachedDistance();
+//        double hopperSensorRaw = hopperSensor.getDistance(DistanceUnit.MM);
         filter.run(hopperSensorRaw);
         double filterEstimate = filter.getEstimate();
 
@@ -98,23 +96,20 @@ public class Intake extends Subsystem {
         }
 
         if(!override) {
+            if(reverse) {
+                intakeDeploy.setPosition(0.9);
+            } else {
+                intakeDeploy.setPosition(0.7);
+            }
             if (hopperState == HopperState.THREE_RINGS) {
                 ringBlocker.setPosition(0.45);
             } else {
                 ringBlocker.setPosition(0.25);
             }
         } else {
-
             ringBlocker.setPosition(0.9);
-        }
-
-        if(!override) {
-            intakeDeploy.setPosition(0.7);
-        } else {
             intakeDeploy.setPosition(0.9);
         }
-
-
     }
 
     //TODO placeholder, pls remove

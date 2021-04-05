@@ -16,8 +16,9 @@ public class Shooter extends Subsystem {
     private DcMotorEx shooter_one, shooter_two;
     private Servo hopper;
 
-    private boolean hopperButton, hopperOut, powerShotButton = false, shooting = false, shootTrigger = false, drivetrainStopped;
+    private boolean hopperButton, hopperOut, powerShotButton = false, shooting = false, shootTrigger = false, drivetrainStopped, powerShotTrigger = false;
     public double shooterPower, powerShotMode = -1;
+    double lastVelocity;
 
     private ElapsedTime servoTimer = new ElapsedTime();
 
@@ -31,7 +32,7 @@ public class Shooter extends Subsystem {
         shooter_one.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         shooter_one.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         shooter_two.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        shooter_two.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(10.3, 2.5, 0.0, 13.0));
+        shooter_two.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(13, 0.26, 0.0, 13.0));
         shooter_two.setDirection(DcMotorSimple.Direction.FORWARD);
         shooter_one.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         shooter_two.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -42,33 +43,42 @@ public class Shooter extends Subsystem {
 
     public void run(boolean shooterButton, boolean hopperButton, boolean powerShotButton, boolean robotMove) {
 
+        boolean initialHopper = hopperButton;
         if (shooterButton && !shootTrigger) {
             shootTrigger = true;
             shooting = !shooting;
-        } else if(powerShotButton){
-            shooter_two.setPower(0.6);
+        }
+        if(powerShotButton && !this.powerShotButton){
+            this.powerShotButton = true;
+            powerShotTrigger = !powerShotTrigger;
             shooting = false;
-        } else {
-            shooter_two.setPower(0);
         }
 
         if(!shooterButton && shootTrigger) {
             shootTrigger = false;
         }
+        if(!powerShotButton && this.powerShotButton) {
+            this.powerShotButton = false;
+        }
 
         if(shooting) {
-            shooter_two.setPower(0.825);
+            shooter_two.setPower(0.805);
+        } else if(powerShotTrigger) {
+            shooter_two.setPower(0.675);
+        } else {
+            shooter_two.setPower(0);
         }
 
 
-
-        if(Math.hypot(Robot.getRobotXVelocity(), Robot.getRobotYVelocity()) > 2 || Robot.getRobotY() > 210 || robotMove) {
-            hopperButton = false;
-        } else if(Robot.getComponents().intake.getHopperState() != HopperState.ZERO_RINGS && shooting && Robot.getComponents().drivetrain.isAimed()) {
-            hopperButton = true;
-        }
-        if(powerShotButton && Robot.getComponents().drivetrain.isAimed()) {
-            hopperButton = true;
+        double velocity = Math.hypot(Robot.getRobotXVelocity(), Robot.getRobotYVelocity());
+        telemetry.addData("accel", velocity - lastVelocity);
+        if(!initialHopper) {
+            if (Math.hypot(Robot.getRobotXVelocity(), Robot.getRobotYVelocity()) > 1 || Robot.getRobotY() > 215 || robotMove) {
+                hopperButton = false;
+            } else if (Robot.getComponents().intake.getHopperState() != HopperState.ZERO_RINGS && shooting && Robot.getComponents().drivetrain.isAimed() && Math.hypot(Robot.getRobotXVelocity(), Robot.getRobotYVelocity()) < 1 && velocity - lastVelocity < 1) {
+                hopperButton = true;
+            } else
+                hopperButton = powerShotTrigger && Robot.getComponents().drivetrain.isAimed() && Robot.getComponents().drivetrain.getPowerShot() != PowerShot.NONE;
         }
 
         if (hopperButton) {
@@ -82,13 +92,10 @@ public class Shooter extends Subsystem {
                 servoTimer.reset();
             }
             if (hopperOut) {
-                drivetrainStopped = true;
+//                drivetrainStopped = true;
                 hopper.setPosition(0.2);
-            }
-            else {
-                drivetrainStopped = false;
-                hopper.setPosition(0);
-                if(powerShotButton) {
+                if(powerShotTrigger) {
+                    Robot.getComponents().drivetrain.getTurnPid().reset();
                     PowerShot powerShot = Robot.getComponents().drivetrain.getPowerShot();
                     if(powerShot == PowerShot.LEFT) {
                         Robot.getComponents().drivetrain.setPowerShot(PowerShot.CENTER);
@@ -99,16 +106,21 @@ public class Shooter extends Subsystem {
                     }
                 }
             }
-        } else {
-            if(servoTimer.time(TimeUnit.MILLISECONDS) >= 200) {
-                drivetrainStopped = false;
+            else {
+//                drivetrainStopped = false;
+                hopper.setPosition(0);
+
             }
+        } else {
+            drivetrainStopped = false;
+
             hopper.setPosition(0);
         }
 
         if (!hopperButton && this.hopperButton) {
             this.hopperButton = false;
         }
+        lastVelocity = velocity;
     }
 
     public void setPowers ( double power){

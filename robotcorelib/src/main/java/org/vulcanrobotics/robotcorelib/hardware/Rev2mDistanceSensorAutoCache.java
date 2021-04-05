@@ -8,7 +8,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class Rev2mDistanceSensorAutoCache {
 
-    private final int I2C_CALL_MS = 25;
+    private final int I2C_CALL_MS = 90;
     private Rev2mDistanceSensor sensor;
     private ElapsedTime timer = new ElapsedTime();
     private double cachedValue;

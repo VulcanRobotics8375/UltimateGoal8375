@@ -48,10 +48,39 @@ public class PID {
             limMinInt = 0.0;
         }
 
-        integral = Range.clip(integral, limMinInt, limMaxInt);
+        integral = Range.clip(integral, limMinInt, limMaxInt) * Ki;
 
 //        derivative = (2.0 * Kd * (value - lastValue) * ((2.0 * tau) - loopTime) * derivative) / ((2.0 * tau) + loopTime);
         derivative = Kd * (value - lastValue);
+
+        output = proportional + integral + derivative;
+
+        lastError = error;
+        lastValue = value;
+    }
+
+    public void runWithErrorDerivative(double target, double value) {
+
+        double error = target - value;
+        double proportional = Kp * error;
+        integral += ((error + lastError) / 2.0) * loopTime;
+
+        double limMinInt, limMaxInt;
+        if(proportional < limMax) {
+            limMaxInt = limMax;
+        } else {
+            limMaxInt = 0.0;
+        }
+        if(proportional > limMin) {
+            limMinInt = limMin;
+        } else {
+            limMinInt = 0.0;
+        }
+
+        integral = Range.clip(integral, limMinInt, limMaxInt);
+
+//        derivative = (2.0 * Kd * (value - lastValue) * ((2.0 * tau) - loopTime) * derivative) / ((2.0 * tau) + loopTime);
+        derivative = Kd * (error - lastError);
 
         output = proportional + integral + derivative;
 

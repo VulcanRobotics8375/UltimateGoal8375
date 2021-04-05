@@ -2,6 +2,7 @@ package org.vulcanrobotics.robotcorelib.framework;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -39,6 +40,27 @@ public abstract class AutoPipeline extends LinearOpMode {
         phoneCamera.openCameraDevice();
         phoneCamera.setPipeline(pipeline);
         phoneCamera.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+
+    }
+
+    public void initVision(OpenCvPipeline pipeline, boolean webcam) {
+        final OpenCvCamera camera;
+
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        if(webcam) {
+            camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+
+        } else {
+            camera = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
+        }
+
+        camera.setPipeline(pipeline);
+        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            @Override
+            public void onOpened() {
+                camera.startStreaming(320, 240);
+            }
+        });
 
     }
 

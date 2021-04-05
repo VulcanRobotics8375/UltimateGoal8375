@@ -59,7 +59,7 @@ public class WobbleGrabber extends Subsystem {
         }
         if (wobbleTurnOn < 0)  {
 
-            wobbleTurn.setPosition(0.52);
+            wobbleTurn.setPosition(0.62);
         }
 
 

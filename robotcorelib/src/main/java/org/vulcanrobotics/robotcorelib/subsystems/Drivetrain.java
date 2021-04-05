@@ -20,7 +20,7 @@ public class Drivetrain extends Subsystem {
     private DcMotor fl, fr, bl, br;
     private BNO055IMU imu;
 
-    private PID turnPid = new PID(1.2, 0.2, -0.95, 0.1, 0.01, -0.5, 0.5);
+    private PID turnPid = new PID(2.2, 0.8, -2.7, 0.1, 0.1, -0.5, 0.5);
 
     private boolean doingAutonomousTask;
     private double variableOffset = 0;
@@ -114,33 +114,10 @@ public class Drivetrain extends Subsystem {
 
         }
 
-        double vd;
-        double theta = Math.atan2(forward, strafe) - (Math.PI / 4);
-        double multiplier = Math.sqrt(2.0) * 0.9;
+        double vd = Math.hypot(strafe, forward);
+        double theta = Math.atan2(forward, strafe) - (Math.PI / 4.0);
+        double multiplier = Math.sqrt(2.0) * 1.0;
         double turnPower = turn;
-
-//        Point robotVelocity = Robot.getRobotVelocity();
-//        double maxVelY = 135;
-//        double maxVelX = 115;
-//        Point scaledVelocity = new Point(robotVelocity.x / maxVelX, robotVelocity.y / maxVelY);
-
-        double vdx = strafe;
-        double vdy = forward;
-//        double unscaledVd = Math.hypot(vdx, vdy);
-
-//        double maxAccel = 0.25;
-//        if(Math.abs(strafe - scaledVelocity.x) > maxAccel) {
-//            vdx = scaledVelocity.x + (Math.signum(strafe - scaledVelocity.x)*maxAccel);
-//        }
-//        if(Math.abs(forward - scaledVelocity.y) > maxAccel) {
-//            vdy = scaledVelocity.y + (Math.signum(forward - scaledVelocity.y)*maxAccel);
-//        }
-        vd = Math.hypot(vdx, vdy);
-        theta = Math.atan2(vdy, vdx) - (Math.PI / 4.0);
-        //edge case to use motor zero power behavior
-//        if(unscaledVd == 0) {
-//            vd = 0;
-//        }
 
         //check variable offset buttons, and change accordingly
         if(leftOffsetButton && !this.leftOffsetButton) {
@@ -176,15 +153,15 @@ public class Drivetrain extends Subsystem {
             aiming = true;
         }
         else if(powerShotSequence && powerShot == PowerShot.LEFT) {
-            target.setPoint(new Point((2.25 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
+            target.setPoint(new Point((2.1 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
             aiming = true;
         }
         else if(powerShotSequence && powerShot == PowerShot.CENTER) {
-            target.setPoint(new Point((2.5 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
+            target.setPoint(new Point((2.3 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
             aiming = true;
         }
         else if(powerShotSequence && powerShot == PowerShot.RIGHT) {
-            target.setPoint(new Point((2.75 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
+            target.setPoint(new Point((2.6 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
             aiming = true;
         }
         //auto aim calculation and determine drive style
@@ -195,16 +172,14 @@ public class Drivetrain extends Subsystem {
             //might have to subtract variable offset
             turnPid.run(absoluteAngleToTarget, currentAngle + variableOffsetRad);
             turnPower = turnPid.getOutput();
-            if(Math.abs(absoluteAngleToTarget - currentAngle - variableOffsetRad) < 0.03) {
-                aimed = true;
-            } else {
-                aimed = false;
-            }
+            double aimThresh = powerShot == PowerShot.NONE ? 0.03 : 0.015;
+            aimed = Math.abs(absoluteAngleToTarget - currentAngle - variableOffsetRad) < aimThresh && Math.abs(turnPower) < 0.05 && Math.hypot(Robot.getRobotXVelocity(), Robot.getRobotYVelocity()) < 1;
 
             if(Robot.getComponents().shooter.shouldDriveStop()) {
                 multiplier = 0;
             }
-            fieldCentricMove(forward * multiplier, strafe * -1.0 * multiplier, (turnPower + (Math.abs((Robot.getRobotXVelocity() / 260.0)) * Math.signum(turnPower))) * -1.0);
+//            double feedforward = (Robot.getRobotXVelocity() / (135.0 * 4.0));
+            fieldCentricMove(forward * multiplier, strafe * -1.0 * multiplier, (turnPower * -1.0));
         } else {
             double[] v = {
                     (vd * Math.cos(theta) + turnPower) * multiplier,
@@ -228,24 +203,27 @@ public class Drivetrain extends Subsystem {
     public void aim(int shotId, double offset, double errorThresh) {
         Point target = new Point();
         if(shotId == 0) {
-            target.setPoint(new Point(FIELD_SIZE_CM_X - (1.5 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
+            target.setPoint(new Point((1.5 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
         }
         else if(shotId == 1) {
-            target.setPoint(new Point(FIELD_SIZE_CM_X - (2 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
+            target.setPoint(new Point((1.9 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
         }
         else if(shotId == 2) {
-            target.setPoint(new Point(FIELD_SIZE_CM_X - (2.25 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
+            target.setPoint(new Point((2.2 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
         }
         else if(shotId == 3) {
-            target.setPoint(new Point(FIELD_SIZE_CM_X - (2.5 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
+            target.setPoint(new Point((2.5 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
         }
         else {
-            target.setPoint(new Point(FIELD_SIZE_CM_X - (1.5 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
+            target.setPoint(new Point((1.5 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
         }
 
-        double absoluteAngleToTarget = Math.atan2(target.y - Robot.getRobotY(), target.x - Robot.getRobotX());
-        double error = absoluteAngleToTarget - Functions.angleWrap((Robot.getRobotAngleRad() * -1.0) + SHOOTING_OFFSET_RAD + offset);
-        turnPid.run(absoluteAngleToTarget, Functions.angleWrap(((Robot.getRobotAngleRad() * -1.0) + SHOOTING_OFFSET_RAD + offset)));
+        //this is not the all angles solution, but it works fine since the goal is always in front of us
+        double absoluteAngleToTarget = Math.atan2(target.x - Robot.getRobotX(), target.y - Robot.getRobotY());
+        double currentAngle = Robot.getRobotAngleRad() > Math.PI ? Robot.getRobotAngleRad() - (2.0 * Math.PI) : Robot.getRobotAngleRad();
+        //might have to subtract variable offset
+        turnPid.run(absoluteAngleToTarget, currentAngle + offset);
+        double error = absoluteAngleToTarget - currentAngle - offset;
         run(0, turnPid.getOutput() * -1.0);
         if(Math.abs(error) < errorThresh) {
             aimed = true;
@@ -431,6 +409,10 @@ public class Drivetrain extends Subsystem {
         fr.setMode(runMode);
         bl.setMode(runMode);
         br.setMode(runMode);
+    }
+
+    public PID getTurnPid() {
+        return turnPid;
     }
 
     public void setZeroPowerBehavior(DcMotor.ZeroPowerBehavior powerBehavior) {

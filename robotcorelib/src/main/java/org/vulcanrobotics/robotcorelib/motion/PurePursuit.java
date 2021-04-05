@@ -12,7 +12,7 @@ public class PurePursuit extends Controller {
 
     ArrayList<ArrayList<PathPoint>> sections;
 
-    private PID turnPID = new PID(1.5, 0.15, -4.0, 2.0, 0.05, -0.5, 0.5);
+    private PID turnPID = new PID(1.2, 0.28, -0.95, 0.1, 0.01, -0.5, 0.5);
     private volatile int currentSection = 0;
     private volatile boolean start = false;
 
@@ -117,13 +117,13 @@ public class PurePursuit extends Controller {
 
         double pointAngle = Math.abs(point.angle - robotAngleToPoint) > Math.PI ? point.angle - (Math.signum(point.angle - robotAngleToPoint)*2.0*Math.PI) : point.angle;
 
-        turnPID.run(pointAngle, robotAngleToPoint);
+        turnPID.runWithErrorDerivative(pointAngle, robotAngleToPoint);
 
         double turnSpeed = turnPID.getOutput() * point.turnSpeed;
 
 //        double distanceToPoint = Math.hypot(point.x - Robot.getRobotX(), point.y - Robot.getRobotY()) * point.speed;
 
-        Robot.drivetrain.fieldCentricMove(Math.cos(absoluteAngleToPoint) * (point.speed * 1.5), Math.sin(absoluteAngleToPoint) * point.speed, turnSpeed);
+        Robot.drivetrain.fieldCentricMove(Math.cos(absoluteAngleToPoint) * (point.speed * 1.5), Math.sin(absoluteAngleToPoint) * point.speed * -1.0, turnSpeed);
     }
 
     public int getCurrentSection(){
