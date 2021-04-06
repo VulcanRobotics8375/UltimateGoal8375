@@ -57,6 +57,11 @@ public class Main extends TeleOpPipeline {
 
         while (opModeIsActive()) {
             drive.update();
+            Pose2d poseEstimate = drive.getPoseEstimate();
+            Pose2d velEstimate = drive.getPoseVelocity();
+            Robot.setRobotPos(new Point(poseEstimate.getY(), poseEstimate.getX()));
+            Robot.setRobotAngle(poseEstimate.getHeading());
+            Robot.setRobotVelocity(new Point(velEstimate.getY(), velEstimate.getX()));
 //            timer.reset();
 //            if(gamepad1.left_trigger != 0 && !reset) {
 //                drive.setPoseEstimate(new Pose2d(185, Constants.FIELD_SIZE_CM_X - 21.6, 0.0));
@@ -74,11 +79,7 @@ public class Main extends TeleOpPipeline {
             subsystems.shooter.run(gamepad2.left_trigger > 0, gamepad2.right_bumper, gamepad2.left_bumper, gamepad1.left_stick_x != 0 || gamepad1.left_stick_y != 0);
             subsystems.wobbleGrabber.run(gamepad2.x, gamepad2.y, -gamepad2.left_stick_y * 0.5);
 
-            Pose2d poseEstimate = drive.getPoseEstimate();
-            Pose2d velEstimate = drive.getPoseVelocity();
-            Robot.setRobotPos(new Point(poseEstimate.getY(), poseEstimate.getX()));
-            Robot.setRobotAngle(poseEstimate.getHeading());
-            Robot.setRobotVelocity(new Point(velEstimate.getY(), velEstimate.getX()));
+
 
 //            double TARGET_UPS = 100.0;
 //            while(timer.milliseconds() < 1000.0 / TARGET_UPS) {

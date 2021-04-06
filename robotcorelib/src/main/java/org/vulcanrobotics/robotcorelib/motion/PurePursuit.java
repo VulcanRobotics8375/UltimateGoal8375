@@ -81,7 +81,7 @@ public class PurePursuit extends Controller {
                 }
 
                 double slowDownStart = 15;
-                double minSpeed = 0.4;
+                double minSpeed = 0.1;
                 double distanceToTarget = Math.hypot(end.x - Robot.getRobotX(), end.y - Robot.getRobotY());
                 if(distanceToTarget < slowDownStart) {
                     double m = (1 - minSpeed) / slowDownStart;
@@ -91,15 +91,15 @@ public class PurePursuit extends Controller {
             }
 
             //start acceleration, might be redundant for actual robot bc odometry is pog
-            if(path.indexOf(start) == 0) {
-               double slowDownStart = 15;
-               double minSpeed = 0.5;
-               double distanceToTarget = Math.hypot(start.x - Robot.getRobotX(), start.y - Robot.getRobotY());
-               if(distanceToTarget < slowDownStart) {
-                   double m = (1 - minSpeed) / slowDownStart;
-                   followPoint.speed *= m * (distanceToTarget - slowDownStart) + 1;
-               }
-            }
+//            if(path.indexOf(start) == 0) {
+//               double slowDownStart = 15;
+//               double minSpeed = 0.1;
+//               double distanceToTarget = Math.hypot(start.x - Robot.getRobotX(), start.y - Robot.getRobotY());
+//               if(distanceToTarget < slowDownStart) {
+//                   double m = (1 - minSpeed) / slowDownStart;
+//                   followPoint.speed *= m * (distanceToTarget - slowDownStart) + 1;
+//               }
+//            }
 
         }
 

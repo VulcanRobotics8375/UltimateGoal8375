@@ -97,7 +97,7 @@ public class Intake extends Subsystem {
 
         if(!override) {
             if(reverse) {
-                intakeDeploy.setPosition(0.9);
+                intakeDeploy.setPosition(0.8);
             } else {
                 intakeDeploy.setPosition(0.7);
             }

@@ -47,6 +47,7 @@ public class Shooter extends Subsystem {
         if (shooterButton && !shootTrigger) {
             shootTrigger = true;
             shooting = !shooting;
+            powerShotTrigger = false;
         }
         if(powerShotButton && !this.powerShotButton){
             this.powerShotButton = true;
@@ -71,9 +72,9 @@ public class Shooter extends Subsystem {
 
 
         double velocity = Math.hypot(Robot.getRobotXVelocity(), Robot.getRobotYVelocity());
-        telemetry.addData("accel", velocity - lastVelocity);
+//        telemetry.addData("accel", velocity - lastVelocity);
         if(!initialHopper) {
-            if (Math.hypot(Robot.getRobotXVelocity(), Robot.getRobotYVelocity()) > 1 || Robot.getRobotY() > 215 || robotMove) {
+            if (velocity > 1 || Robot.getRobotY() > 215 || robotMove) {
                 hopperButton = false;
             } else if (Robot.getComponents().intake.getHopperState() != HopperState.ZERO_RINGS && shooting && Robot.getComponents().drivetrain.isAimed() && Math.hypot(Robot.getRobotXVelocity(), Robot.getRobotYVelocity()) < 1 && velocity - lastVelocity < 1) {
                 hopperButton = true;

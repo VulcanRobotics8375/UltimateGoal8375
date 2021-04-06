@@ -206,13 +206,13 @@ public class Drivetrain extends Subsystem {
             target.setPoint(new Point((1.5 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
         }
         else if(shotId == 1) {
-            target.setPoint(new Point((1.9 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
+            target.setPoint(new Point((1.75 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
         }
         else if(shotId == 2) {
-            target.setPoint(new Point((2.2 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
+            target.setPoint(new Point((2.1 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
         }
         else if(shotId == 3) {
-            target.setPoint(new Point((2.5 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
+            target.setPoint(new Point((2.35 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
         }
         else {
             target.setPoint(new Point((1.5 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
@@ -225,7 +225,7 @@ public class Drivetrain extends Subsystem {
         turnPid.run(absoluteAngleToTarget, currentAngle + offset);
         double error = absoluteAngleToTarget - currentAngle - offset;
         run(0, turnPid.getOutput() * -1.0);
-        if(Math.abs(error) < errorThresh) {
+        if(Math.abs(error) < errorThresh && Math.abs(turnPid.getOutput()) < 0.02) {
             aimed = true;
         } else {
             aimed = false;
