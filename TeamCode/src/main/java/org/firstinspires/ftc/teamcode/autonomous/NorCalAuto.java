@@ -105,7 +105,7 @@ public class NorCalAuto extends AutoPipeline {
         sectionCW1.add(new PathPoint(150, 91, -0.8, -1, 12, 0));
 
         ArrayList<PathPoint> sectionCW2 = new ArrayList<>();
-        sectionCW2.add(new PathPoint(132, 96, -0.25, -1, 12, (3.0 * Math.PI) / 2.0));
+        sectionCW2.add(new PathPoint(135, 96, -0.25, -1, 12, (3.0 * Math.PI) / 2.0));
 
         ArrayList<PathPoint> sectionC2 = new ArrayList<>();
         sectionC2.add(new PathPoint(102, 93, -0.2, -1, 12, 0));
@@ -324,7 +324,7 @@ public class NorCalAuto extends AutoPipeline {
                 controller.startNextSection();
                 while(controller.getCurrentSection() == 5) {
                     subsystems.wobbleGrabber.setGrabPosition(0.05);
-                    subsystems.shooter.setPowers(0.77);
+                    subsystems.shooter.setPowers(0.78);
                     subsystems.intake.setIntakePower(1.0);
                     subsystems.intake.setTransferPower(1.0);
                     subsystems.shooter.setHopperPosition(0.0);
@@ -338,7 +338,7 @@ public class NorCalAuto extends AutoPipeline {
                 subsystems.shooter.setHopperPosition(0.2);
                 sleep(100);
                 subsystems.shooter.setHopperPosition(0.0);
-                sleep(100);
+                sleep(150);
                 subsystems.shooter.setHopperPosition(0.2);
                 sleep(100);
                 subsystems.shooter.setHopperPosition(0.0);
@@ -371,6 +371,8 @@ public class NorCalAuto extends AutoPipeline {
                 controller.startNextSection();
 
                 while(controller.getCurrentSection() == 7) {
+                    subsystems.intake.setIntakePower(0);
+                    subsystems.intake.setTransferPower(0);
                     subsystems.wobbleGrabber.setTurnPosition(0.01);
                 }
                 subsystems.wobbleGrabber.setGrabPosition(1.5);
