@@ -172,8 +172,8 @@ public class Drivetrain extends Subsystem {
             //might have to subtract variable offset
             turnPid.run(absoluteAngleToTarget, currentAngle + variableOffsetRad);
             turnPower = turnPid.getOutput();
-            double aimThresh = powerShot == PowerShot.NONE ? 0.03 : 0.015;
-            aimed = Math.abs(absoluteAngleToTarget - currentAngle - variableOffsetRad) < aimThresh && Math.abs(turnPower) < 0.05 && Math.hypot(Robot.getRobotXVelocity(), Robot.getRobotYVelocity()) < 1;
+            double aimThresh = powerShot == PowerShot.NONE ? 0.035 : 0.015;
+            aimed = Math.abs(absoluteAngleToTarget - currentAngle - variableOffsetRad) < aimThresh && Math.abs(turnPower) < 0.05;
 
             if(Robot.getComponents().shooter.shouldDriveStop()) {
                 multiplier = 0;
@@ -203,7 +203,7 @@ public class Drivetrain extends Subsystem {
     public void aim(int shotId, double offset, double errorThresh) {
         Point target = new Point();
         if(shotId == 0) {
-            target.setPoint(new Point((1.5 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
+            target.setPoint(new Point((1.2 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
         }
         else if(shotId == 1) {
             target.setPoint(new Point((1.75 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));

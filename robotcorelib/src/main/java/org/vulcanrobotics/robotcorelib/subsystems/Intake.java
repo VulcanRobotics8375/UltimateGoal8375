@@ -17,7 +17,7 @@ public class Intake extends Subsystem {
     private boolean intakeButton, overrideBlocker, override = false;
 
     private HopperState hopperState = HopperState.ZERO_RINGS;
-    private KalmanFilter filter = new KalmanFilter(0.2, 0.01, 90, 0.1);
+    private KalmanFilter filter = new KalmanFilter(0.2, 0.03, 90, 0.1);
 
     private ElapsedTime jamTimer = new ElapsedTime();
 
@@ -67,9 +67,11 @@ public class Intake extends Subsystem {
 //        double hopperSensorRaw = hopperSensor.getDistance(DistanceUnit.MM);
         filter.run(hopperSensorRaw);
         double filterEstimate = filter.getEstimate();
+//        telemetry.addData("sensor raw", hopperSensorRaw);
+//        telemetry.addData("filter", filterEstimate);
 
         //TODO adjust bounds
-        double oneRingBound = 85, twoRingBound = 65, threeRingBound = 50, obstructionBound = 20;
+        double oneRingBound = 115, twoRingBound = 95, threeRingBound = 75, obstructionBound = 20;
 
         if(filterEstimate > oneRingBound) {
             hopperState = HopperState.ZERO_RINGS;
@@ -150,6 +152,10 @@ public class Intake extends Subsystem {
 
     public void setTransferPower(double power) {
         transfer.setPower(power);
+    }
+
+    public void setDeployPosition(double pos) {
+        intakeDeploy.setPosition(pos);
     }
 
     public HopperState getHopperState() {

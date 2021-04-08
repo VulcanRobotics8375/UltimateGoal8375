@@ -81,7 +81,7 @@ public class PurePursuit extends Controller {
                 }
 
                 double slowDownStart = 15;
-                double minSpeed = 0.1;
+                double minSpeed = 0.05;
                 double distanceToTarget = Math.hypot(end.x - Robot.getRobotX(), end.y - Robot.getRobotY());
                 if(distanceToTarget < slowDownStart) {
                     double m = (1 - minSpeed) / slowDownStart;
