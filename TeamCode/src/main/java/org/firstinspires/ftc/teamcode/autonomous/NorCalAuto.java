@@ -118,8 +118,9 @@ public class NorCalAuto extends AutoPipeline {
 
         ArrayList<PathPoint> sectionC5 = new ArrayList<>();
 //        sectionC5.add(new PathPoint(70, 290, -1, -1, 12, 0));
-//        sectionC5.add(new PathPoint(70, 290, -1, -1, 12, 0));
-        sectionC5.add(new PathPoint(110, 210, -1, -1, 12, 0));
+        sectionC5.add(new PathPoint(60, 280, -1, -1, 12, 0));
+        sectionC5.add(new PathPoint(110, 200, -1, -1, 12, 0));
+        sectionC5.add(new PathPoint(120, 210, -0.2, -1, 12, 0));
 
         waitForStart();
 
@@ -329,7 +330,7 @@ public class NorCalAuto extends AutoPipeline {
                     subsystems.intake.setTransferPower(1.0);
                     subsystems.shooter.setHopperPosition(0.0);
                 }
-                subsystems.intake.setDeployPosition(0.52);
+                subsystems.intake.setDeployPosition(0.5);
                 sleep(2000);
                 while(!subsystems.drivetrain.isAimed() && !isStopRequested()) {
                     subsystems.drivetrain.aim(0, 0.0, 0.015);
