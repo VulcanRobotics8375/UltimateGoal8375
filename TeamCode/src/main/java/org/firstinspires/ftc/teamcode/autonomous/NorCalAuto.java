@@ -352,8 +352,8 @@ public class NorCalAuto extends AutoPipeline {
                 }
                 while(!subsystems.drivetrain.isAimed() && !isStopRequested()) {
                     subsystems.drivetrain.aim(0, 0.0, 0.015);
-                    telemetry.addLine("aiming");
-                    telemetry.update();
+//                    telemetry.addLine("aiming");
+//                    telemetry.update();
                 }
 //                telemetry.update();
                 subsystems.drivetrain.run(0, 0);
