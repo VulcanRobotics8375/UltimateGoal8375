@@ -28,7 +28,7 @@ public class NorCalAuto extends AutoPipeline {
             e.printStackTrace();
         }
         StackDetectorCV stackDetector = new StackDetectorCV();
-//        initVision(stackDetector);
+        initVision(stackDetector, false);
         subsystems.wobbleGrabber.wobbleGrab.setPosition(0.05);
         drive = new StandardTrackingWheelLocalizer(hardwareMap);
         drive.setPoseEstimate(new Pose2d(21.6, 108, 0.0));
@@ -49,21 +49,23 @@ public class NorCalAuto extends AutoPipeline {
          */
         ArrayList<PathPoint> section1 = new ArrayList<>();
         section1.add(new PathPoint(149, 170, -1, -1, 15, 0));
+        section1.add(new PathPoint(149, 170, -1, -1, 15, 0));
         section1.add(new PathPoint(50, 180, -1, -1, 15, 0));
 
         ArrayList<PathPoint> section2 = new ArrayList<>();
 //        section2.add(new PathPoint(185, 180, -1, 1, 15, 0));
-        section2.add(new PathPoint(55, 165, -1, -1, 10, 0.1));
-        section2.add(new PathPoint(55, 165, -1, -1, 10, 0.1));
-        section2.add(new PathPoint(35, 150, -0.5, -1, 10, Math.PI - 0.05));
+//        section2.add(new PathPoint(50, 180, -0.5, -1, 10, 0));
+        section2.add(new PathPoint(40, 170, -0.5, -1, 10, 0.25));
+//        section2.add(new PathPoint(40, 165, -0.5, -1, 10, 0.25));
+        section2.add(new PathPoint(34, 92, -0.5, -1, 10, Math.PI - 0.01));
 
         ArrayList<PathPoint> section3 = new ArrayList<>();
-        section3.add(new PathPoint(35, 150, -0.5, -1, 15, 2.0 * Math.PI));
-        section3.add(new PathPoint(50, 165, -0.7, -1, 15, 2.0 * Math.PI));
+//        section3.add(new PathPoint(35, 150, -0.5, -1, 15, 2.0 * Math.PI));
+        section3.add(new PathPoint(45, 165, -0.7, -1, 15, 2.0 * Math.PI));
 
         ArrayList<PathPoint> section4 = new ArrayList<>();
-        section4.add(new PathPoint(50, 165, -0.7, -1, 12, 2.0 * Math.PI));
-        section4.add(new PathPoint(100, 185, -0.7, -1, 12, 2.0 * Math.PI));
+        section4.add(new PathPoint(45, 165, -0.7, -1, 12, 2.0 * Math.PI - 0.3));
+        section4.add(new PathPoint(100, 105, -0.7, -1, 12, 2.0 * Math.PI - 0.3));
         section4.add(new PathPoint(145, 210, -1, -1, 12, 2.0 * Math.PI));
 
         /*
@@ -72,14 +74,14 @@ public class NorCalAuto extends AutoPipeline {
         ArrayList<PathPoint> sectionB1 = new ArrayList<>();
         sectionB1.add(new PathPoint(149, 170, -0.5, -1, 12, 0));
         sectionB1.add(new PathPoint(149, 170, -0.5, -1, 12, 0));
-        sectionB1.add(new PathPoint(103, 230, -0.5, -1, 12, 0));
+        sectionB1.add(new PathPoint(103, 238, -0.5, -1, 12, 0));
 
         ArrayList<PathPoint> sectionB2 = new ArrayList<>();
         sectionB2.add(new PathPoint(150, 170, -1, -1, 12, 0));
-        sectionB2.add(new PathPoint(160, 93, -1, -1, 12, 0));
+        sectionB2.add(new PathPoint(160, 62, -1, -1, 12, 0));
 
         ArrayList<PathPoint> sectionB3 = new ArrayList<>();
-        sectionB3.add(new PathPoint(132, 98, -0.25, -1, 12, (3.0 * Math.PI) / 2.0));
+        sectionB3.add(new PathPoint(112, 65, -0.25, -1, 12, (3.0 * Math.PI) / 2.0));
 
         ArrayList<PathPoint> sectionB4 = new ArrayList<>();
         sectionB4.add(new PathPoint(95, 155, -0.5, -1, 12, 0));
@@ -123,7 +125,7 @@ public class NorCalAuto extends AutoPipeline {
         sectionC5.add(new PathPoint(120, 210, -0.2, -1, 12, 0));
 
         waitForStart();
-
+        autoPath = stackDetector.getStackHeight();
         if(autoPath == 0) {
             sections.add(start1);
             sections.add(start2);
@@ -154,6 +156,8 @@ public class NorCalAuto extends AutoPipeline {
             sections.add(sectionC4);
             sections.add(sectionC5);
         }
+        //prevent mem leak
+        stopVision();
 
         final PurePursuit controller = new PurePursuit(sections);
         super.controller = controller;
@@ -254,6 +258,16 @@ public class NorCalAuto extends AutoPipeline {
                 }
 
                 //store robot position to file after auto finishes
+                subsystems.drivetrain.resetAiming();
+                while(!subsystems.drivetrain.isAimed() && !isStopRequested()) {
+                    subsystems.drivetrain.turn(0.0);
+                }
+//        sleep(500);
+                telemetry.addData("x", Robot.getRobotX());
+                telemetry.addData("y", Robot.getRobotY());
+                telemetry.addData("theta", Robot.getRobotAngleRad());
+                telemetry.update();
+                Robot.storeRobotPosition();
                 return;
             case 1:
                 while(controller.getCurrentSection() == 2) {
@@ -302,6 +316,16 @@ public class NorCalAuto extends AutoPipeline {
                 }
 //                sleep(500);
 //                controller.startNextSection();
+                subsystems.drivetrain.resetAiming();
+                while(!subsystems.drivetrain.isAimed() && !isStopRequested()) {
+                    subsystems.drivetrain.turn(0.0);
+                }
+//        sleep(500);
+                telemetry.addData("x", Robot.getRobotX());
+                telemetry.addData("y", Robot.getRobotY());
+                telemetry.addData("theta", Robot.getRobotAngleRad());
+                telemetry.update();
+                Robot.storeRobotPosition();
                 return;
 
             case 2:
@@ -320,8 +344,8 @@ public class NorCalAuto extends AutoPipeline {
                 }
                 subsystems.wobbleGrabber.setGrabPosition(0.05);
                 sleep(500);
-                subsystems.wobbleGrabber.setTurnPosition(0.65);
-                sleep(500);
+                subsystems.wobbleGrabber.setTurnPosition(0.8);
+                sleep(1500);
                 controller.startNextSection();
                 while(controller.getCurrentSection() == 5) {
                     subsystems.wobbleGrabber.setGrabPosition(0.05);
@@ -330,8 +354,10 @@ public class NorCalAuto extends AutoPipeline {
                     subsystems.intake.setTransferPower(1.0);
                     subsystems.shooter.setHopperPosition(0.0);
                 }
-                subsystems.intake.setDeployPosition(0.5);
-                sleep(2000);
+                subsystems.intake.setDeployPosition(0.62);
+                sleep(1000);
+                subsystems.intake.setDeployPosition(0.55);
+                sleep(1000);
                 while(!subsystems.drivetrain.isAimed() && !isStopRequested()) {
                     subsystems.drivetrain.aim(0, 0.0, 0.015);
                 }
@@ -384,10 +410,21 @@ public class NorCalAuto extends AutoPipeline {
                     subsystems.wobbleGrabber.setTurnPosition(0.65);
                 }
                 sleep(500);
+                subsystems.drivetrain.resetAiming();
+                while(!subsystems.drivetrain.isAimed() && !isStopRequested()) {
+                    subsystems.drivetrain.turn(0.0);
+                }
+//        sleep(500);
+                telemetry.addData("x", Robot.getRobotX());
+                telemetry.addData("y", Robot.getRobotY());
+                telemetry.addData("theta", Robot.getRobotAngleRad());
+                telemetry.update();
+                Robot.storeRobotPosition();
                 return;
         }
 
-        Robot.storeRobotPosition();
+
+
 
     }
 

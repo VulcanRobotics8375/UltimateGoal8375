@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 @TeleOp(name = "main", group = "main")
 public class Main extends TeleOpPipeline {
 
-    boolean driverPractice = true;
+    protected boolean driverPractice = false;
 
     private ElapsedTime timer = new ElapsedTime();
     private double time;
@@ -63,21 +63,22 @@ public class Main extends TeleOpPipeline {
             Robot.setRobotAngle(poseEstimate.getHeading());
             Robot.setRobotVelocity(new Point(velEstimate.getY(), velEstimate.getX()));
 //            timer.reset();
-//            if(gamepad1.left_trigger != 0 && !reset) {
-//                drive.setPoseEstimate(new Pose2d(185, Constants.FIELD_SIZE_CM_X - 21.6, 0.0));
-//                //tune this value
-//                subsystems.drivetrain.setVariableOffset(0);
-//                reset = true;
-//            }
-//            if(reset && gamepad1.left_trigger == 0) {
-//                reset = false;
-//            }
+            if(gamepad1.right_trigger != 0 && !reset) {
+                drive.setPoseEstimate(new Pose2d(170, poseEstimate.getY(), poseEstimate.getHeading()));
+                //tune this value
+//                subsystems.drivetrain.setVariableOffset(2.5);
+                reset = true;
+            }
+            if(reset && gamepad1.left_trigger == 0) {
+                reset = false;
+            }
 
 
             subsystems.drivetrain.mecanumDrive(gamepad1.left_stick_y, -gamepad1.right_stick_x, -gamepad1.left_stick_x, gamepad1.a, gamepad1.b, gamepad1.y, gamepad1.x, gamepad1.left_bumper, gamepad1.right_bumper);
             subsystems.intake.run(gamepad2.b, gamepad2.a, gamepad2.dpad_down, gamepad2.dpad_up);
             subsystems.shooter.run(gamepad2.left_trigger > 0, gamepad2.right_bumper, gamepad2.left_bumper, gamepad1.left_stick_x != 0 || gamepad1.left_stick_y != 0);
-            subsystems.wobbleGrabber.run(gamepad2.x, gamepad2.y, -gamepad2.left_stick_y * 0.5);
+//            subsystems.wobbleGrabber.run(gamepad2.x, gamepad2.y, -gamepad2.left_stick_y * 0.5);
+            subsystems.wobbleGrabber.setTurnPosition(0.65);
 
 
 
@@ -88,7 +89,9 @@ public class Main extends TeleOpPipeline {
 
 //            subsystems.drivetrain.tunePID(gamepad1.dpad_up, gamepad1.dpad_down, gamepad1.dpad_right);
 //            telemetry.addData("velocity", Math.hypot(Robot.getRobotXVelocity(), Robot.getRobotYVelocity()));
-//            telemetry.update();
+//            telemetry.addData("y pos", Robot.getRobotY());
+            telemetry.addData("theta", Robot.getRobotAngleRad());
+            telemetry.update();
 
 //            time = timer.milliseconds();
         }

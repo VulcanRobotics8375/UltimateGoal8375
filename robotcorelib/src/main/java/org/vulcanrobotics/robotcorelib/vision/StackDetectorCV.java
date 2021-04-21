@@ -31,7 +31,7 @@ public class StackDetectorCV extends OpenCvPipeline {
     @Override
     public Mat processFrame(Mat input) {
         Mat output = input.clone();
-        Rect cropRect = new Rect((input.width() / 2) - 40, (input.height() / 2) - 70, 60, 60);
+        Rect cropRect = new Rect((input.width() / 2) - 40, (input.height() / 2), 60, 60);
 //        input = input.submat(cropRect);
         Imgproc.blur(input, workingMat, new Size(5, 5));
         Imgproc.cvtColor(workingMat, workingMat, Imgproc.COLOR_BGR2HSV);
@@ -71,18 +71,18 @@ public class StackDetectorCV extends OpenCvPipeline {
 
         stackContourHeight = boundingRect.height;
 
-        if(stackContourHeight < 3) {
+        if(stackContourHeight <= 5) {
             stackHeight = 0;
         }
-        if(stackContourHeight > 3 && stackContourHeight < 10) {
+        if(stackContourHeight > 5 && stackContourHeight < 15) {
             stackHeight = 1;
         }
-        if(stackContourHeight > 10) {
+        if(stackContourHeight >= 15) {
             stackHeight = 2;
         }
 
-        ringColorFilter.release();
-        workingMat.release();
+//        ringColorFilter.release();
+//        workingMat.release();
 //        input.release();
 //        output.release();
 

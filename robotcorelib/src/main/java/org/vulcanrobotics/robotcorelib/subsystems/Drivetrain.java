@@ -24,6 +24,7 @@ public class Drivetrain extends Subsystem {
 
     private boolean doingAutonomousTask;
     private double variableOffset = 0;
+    private double previousOffset;
     private boolean leftOffsetButton, rightOffsetButton;
     private boolean aimed = false;
     private boolean powerShotSequence = false;
@@ -121,7 +122,7 @@ public class Drivetrain extends Subsystem {
 
         //check variable offset buttons, and change accordingly
         if(leftOffsetButton && !this.leftOffsetButton) {
-            variableOffset -= 2.5;
+            variableOffset -= 1.25;
             this.leftOffsetButton = true;
         }
         if(!leftOffsetButton && this.leftOffsetButton) {
@@ -129,7 +130,7 @@ public class Drivetrain extends Subsystem {
         }
 
         if(rightOffsetButton && !this.rightOffsetButton) {
-            variableOffset += 2.5;
+            variableOffset += 1.25;
             this.rightOffsetButton = true;
         }
         if(!rightOffsetButton && this.rightOffsetButton) {
@@ -137,31 +138,36 @@ public class Drivetrain extends Subsystem {
         }
 
         //auto aim configuration
-        double variableOffsetRad = Math.toRadians(variableOffset);
         Point target = new Point((1.5 * TILE_SIZE_CM), FIELD_SIZE_CM_Y);
         boolean aiming = false;
         if(powerShotLeft && !powerShotSequence) {
+//            previousOffset = variableOffset;
+//            variableOffset -= 8.1;
            powerShotSequence = true;
            powerShot = PowerShot.LEFT;
         } else if(!powerShotLeft && powerShotSequence) {
+//            variableOffset = previousOffset;
             powerShot = PowerShot.NONE;
             powerShotSequence = false;
         }
-
+        double variableOffsetRad = Math.toRadians(variableOffset);
         if(highGoal) {
             target.setPoint(new Point((1.5 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
             aiming = true;
         }
         else if(powerShotSequence && powerShot == PowerShot.LEFT) {
             target.setPoint(new Point((2.1 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
+//            target.setPoint(new Point((1.5 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
             aiming = true;
         }
         else if(powerShotSequence && powerShot == PowerShot.CENTER) {
-            target.setPoint(new Point((2.3 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
+            target.setPoint(new Point((2.35 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
+//            target.setPoint(new Point((1.5 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
             aiming = true;
         }
         else if(powerShotSequence && powerShot == PowerShot.RIGHT) {
-            target.setPoint(new Point((2.6 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
+            target.setPoint(new Point((2.65 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
+//            target.setPoint(new Point((1.5 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
             aiming = true;
         }
         //auto aim calculation and determine drive style
@@ -172,7 +178,7 @@ public class Drivetrain extends Subsystem {
             //might have to subtract variable offset
             turnPid.run(absoluteAngleToTarget, currentAngle + variableOffsetRad);
             turnPower = turnPid.getOutput();
-            double aimThresh = powerShot == PowerShot.NONE ? 0.035 : 0.015;
+            double aimThresh = powerShot == PowerShot.NONE ? 0.035 : 0.01;
             aimed = Math.abs(absoluteAngleToTarget - currentAngle - variableOffsetRad) < aimThresh && Math.abs(turnPower) < 0.05;
 
             if(Robot.getComponents().shooter.shouldDriveStop()) {
@@ -206,13 +212,13 @@ public class Drivetrain extends Subsystem {
             target.setPoint(new Point((1.2 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
         }
         else if(shotId == 1) {
-            target.setPoint(new Point((1.75 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
+            target.setPoint(new Point((1.85 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
         }
         else if(shotId == 2) {
-            target.setPoint(new Point((2.1 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
+            target.setPoint(new Point((2.15 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
         }
         else if(shotId == 3) {
-            target.setPoint(new Point((2.35 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
+            target.setPoint(new Point((2.4 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
         }
         else {
             target.setPoint(new Point((1.5 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
@@ -225,12 +231,15 @@ public class Drivetrain extends Subsystem {
         turnPid.run(absoluteAngleToTarget, currentAngle + offset);
         double error = absoluteAngleToTarget - currentAngle - offset;
         run(0, turnPid.getOutput() * -1.0);
-        if(Math.abs(error) < errorThresh && Math.abs(turnPid.getOutput()) < 0.02) {
-            aimed = true;
-        } else {
-            aimed = false;
-        }
+        aimed = Math.abs(error) < errorThresh && Math.abs(turnPid.getOutput()) < 0.02;
 
+    }
+
+    public void turn(double angle) {
+        double targetAngle = Math.abs(angle - Robot.getRobotAngleRad()) > Math.PI ? angle - (2.0 * Math.PI * Math.signum(angle - Robot.getRobotAngleRad())) : angle;
+        turnPid.runWithErrorDerivative(targetAngle, Robot.getRobotAngleRad());
+        double error = targetAngle - Robot.getRobotAngleRad();
+        aimed = Math.abs(error) < 0.01 && Math.abs(turnPid.getOutput()) < 0.02;
     }
 
     public void resetAiming() {
@@ -440,6 +449,14 @@ public class Drivetrain extends Subsystem {
 
     public boolean isDoingAutonomousTask() {
         return doingAutonomousTask;
+    }
+
+    public void changeVariableOffset(double offset) {
+        variableOffset += offset;
+    }
+
+    public double getVariableOffset() {
+        return variableOffset;
     }
 
     @Override

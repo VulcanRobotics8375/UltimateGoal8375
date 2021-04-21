@@ -16,6 +16,7 @@ public abstract class AutoPipeline extends LinearOpMode {
 
     protected Controller controller;
     protected RobotConfig subsystems;
+    private OpenCvCamera camera;
 
     public abstract void runOpMode();
 
@@ -44,7 +45,7 @@ public abstract class AutoPipeline extends LinearOpMode {
     }
 
     public void initVision(OpenCvPipeline pipeline, boolean webcam) {
-        final OpenCvCamera camera;
+//        final OpenCvCamera camera;
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         if(webcam) {
@@ -54,14 +55,21 @@ public abstract class AutoPipeline extends LinearOpMode {
             camera = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
         }
 
-        camera.setPipeline(pipeline);
+//        camera.openCameraDevice();
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
-                camera.startStreaming(320, 240);
+                camera.startStreaming(320, 240, OpenCvCameraRotation.UPSIDE_DOWN);
             }
         });
+        camera.setPipeline(pipeline);
 
+
+    }
+
+    public void stopVision() {
+        camera.stopStreaming();
+//        camera.closeCameraDevice();
     }
 
     public void initVision(OpenCvPipeline pipeline, OpenCvInternalCamera.CameraDirection direction, OpenCvCameraRotation rotation, Point resolution) {

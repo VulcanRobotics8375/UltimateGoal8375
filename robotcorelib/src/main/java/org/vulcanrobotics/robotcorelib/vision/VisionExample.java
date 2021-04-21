@@ -12,7 +12,7 @@ public class VisionExample extends AutoPipeline {
 
     @Override
     public void runOpMode() {
-        initVision(stackDetector);
+        initVision(stackDetector, false);
 
         waitForStart();
 

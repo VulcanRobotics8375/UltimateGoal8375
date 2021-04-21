@@ -65,7 +65,7 @@ public class Shooter extends Subsystem {
         if(shooting) {
             shooter_two.setPower(0.805);
         } else if(powerShotTrigger) {
-            shooter_two.setPower(0.675);
+            shooter_two.setPower(0.66);
         } else {
             shooter_two.setPower(0);
         }
@@ -96,11 +96,20 @@ public class Shooter extends Subsystem {
 //                drivetrainStopped = true;
                 hopper.setPosition(0.2);
                 if(powerShotTrigger) {
-                    Robot.getComponents().drivetrain.getTurnPid().reset();
+//                    Robot.getComponents().drivetrain.getTurnPid().reset();
+                    //don't ever copy this, desperate times call for desperate measures ok
+                    try {
+                        Thread.sleep(200);
+                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+                    }
+
                     PowerShot powerShot = Robot.getComponents().drivetrain.getPowerShot();
                     if(powerShot == PowerShot.LEFT) {
+//                        Robot.getComponents().drivetrain.changeVariableOffset(-6.1);
                         Robot.getComponents().drivetrain.setPowerShot(PowerShot.CENTER);
                     } else if(powerShot == PowerShot.CENTER) {
+//                        Robot.getComponents().drivetrain.changeVariableOffset(-5.5);
                         Robot.getComponents().drivetrain.setPowerShot(PowerShot.RIGHT);
                     } else {
                         Robot.getComponents().drivetrain.setPowerShot(PowerShot.NONE);

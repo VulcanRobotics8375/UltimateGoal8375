@@ -71,7 +71,7 @@ public class Intake extends Subsystem {
 //        telemetry.addData("filter", filterEstimate);
 
         //TODO adjust bounds
-        double oneRingBound = 115, twoRingBound = 95, threeRingBound = 75, obstructionBound = 20;
+        double oneRingBound = 90, twoRingBound = 70, threeRingBound = 50, obstructionBound = 20;
 
         if(filterEstimate > oneRingBound) {
             hopperState = HopperState.ZERO_RINGS;
