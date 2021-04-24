@@ -212,10 +212,10 @@ public class Drivetrain extends Subsystem {
             target.setPoint(new Point((1.2 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
         }
         else if(shotId == 1) {
-            target.setPoint(new Point((1.85 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
+            target.setPoint(new Point((1.75 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
         }
         else if(shotId == 2) {
-            target.setPoint(new Point((2.15 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
+            target.setPoint(new Point((2.1 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));
         }
         else if(shotId == 3) {
             target.setPoint(new Point((2.4 * TILE_SIZE_CM), FIELD_SIZE_CM_Y));

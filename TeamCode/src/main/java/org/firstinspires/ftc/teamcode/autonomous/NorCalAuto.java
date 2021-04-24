@@ -78,10 +78,10 @@ public class NorCalAuto extends AutoPipeline {
 
         ArrayList<PathPoint> sectionB2 = new ArrayList<>();
         sectionB2.add(new PathPoint(150, 170, -1, -1, 12, 0));
-        sectionB2.add(new PathPoint(160, 62, -1, -1, 12, 0));
+        sectionB2.add(new PathPoint(160, 92, -1, -1, 12, 0));
 
         ArrayList<PathPoint> sectionB3 = new ArrayList<>();
-        sectionB3.add(new PathPoint(112, 65, -0.25, -1, 12, (3.0 * Math.PI) / 2.0));
+        sectionB3.add(new PathPoint(108, 70, -0.25, -1, 12, (3.0 * Math.PI) / 2.0));
 
         ArrayList<PathPoint> sectionB4 = new ArrayList<>();
         sectionB4.add(new PathPoint(95, 155, -0.5, -1, 12, 0));
@@ -107,7 +107,7 @@ public class NorCalAuto extends AutoPipeline {
         sectionCW1.add(new PathPoint(150, 91, -0.8, -1, 12, 0));
 
         ArrayList<PathPoint> sectionCW2 = new ArrayList<>();
-        sectionCW2.add(new PathPoint(135, 96, -0.25, -1, 12, (3.0 * Math.PI) / 2.0));
+        sectionCW2.add(new PathPoint(108, 70, -0.25, -1, 12, (3.0 * Math.PI) / 2.0));
 
         ArrayList<PathPoint> sectionC2 = new ArrayList<>();
         sectionC2.add(new PathPoint(102, 93, -0.2, -1, 12, 0));
